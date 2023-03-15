@@ -1,0 +1,33 @@
+#ifndef MACHINE_H
+#define MACHINE_H
+
+
+#define PIN_M1            3
+#define PIN_M2            0
+#define PIN_M3            25
+#define PIN_M4            17
+
+#define PIN_BUZZER        11
+#define PIN_CURR          1
+#define PIN_VBAT_ADC      27
+#define VBAT_ADC_INPUT_NUMBER   1
+#define PIN_IMU_INTERRUPT 2
+#define PIN_RX_ESC        29
+
+#define IMU_I2C_NUMBER 0
+#define PIN_SDA0          4
+#define PIN_SCL0          5
+#define PIN_SDA1          6
+#define PIN_SCL1          7
+
+#define PIN_TX1           8
+#define PIN_RX1           9
+#define PIN_TX0           12
+#define PIN_RX0           13
+
+#define PIN_LED           10
+#define PIN_LED_BLUE      18
+#define PIN_LED_GREEN     19
+#define PIN_LED_RED       26
+
+#endif

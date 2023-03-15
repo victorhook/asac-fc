@@ -1,0 +1,19 @@
+{
+  "configurations": [
+    {
+      "name": "Linux",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "${env:PICO_SDK_PATH}/**",
+        "${env:PICO_SDK_PATH}/src/rp2_common/hardware_adc/include/hardware/"
+      ],
+      "defines": [],
+      "compilerPath": "/usr/lib/ccache/arm-none-eabi-gcc",
+      "cStandard": "gnu17",
+      "cppStandard": "gnu++14",
+      "intelliSenseMode": "linux-gcc-arm",
+      "configurationProvider" : "ms-vscode.cmake-tools"
+    }
+  ],
+  "version": 4
+}

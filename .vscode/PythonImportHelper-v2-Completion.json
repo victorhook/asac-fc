@@ -1,0 +1,29 @@
+[
+    {
+        "label": "serial",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "serial",
+        "description": "serial",
+        "detail": "serial",
+        "documentation": {}
+    },
+    {
+        "label": "s",
+        "kind": 5,
+        "importPath": "goserial",
+        "description": "goserial",
+        "peekOfCode": "s = serial.Serial('/dev/ttyUSB0')\ns.timeout = None\nwhile True:\n    k = s.read(32)\n    #hexx = [hex(a)[2:].zfill(2) for a in k]\n    print(' '.join([hex(a) for a in k]))",
+        "detail": "goserial",
+        "documentation": {}
+    },
+    {
+        "label": "s.timeout",
+        "kind": 5,
+        "importPath": "goserial",
+        "description": "goserial",
+        "peekOfCode": "s.timeout = None\nwhile True:\n    k = s.read(32)\n    #hexx = [hex(a)[2:].zfill(2) for a in k]\n    print(' '.join([hex(a) for a in k]))",
+        "detail": "goserial",
+        "documentation": {}
+    }
+]
