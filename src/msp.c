@@ -3,6 +3,24 @@
 #include "stdbool.h"
 #include "string.h"
 
+/*
+msp_state_t msp_usb;
+
+void uart_tx(const uint8_t* data, const uint8_t len) {
+    // Sent data through UART
+}
+
+void uart_rx() {
+    uint8_t byte;
+    msp_process_byte(&msp_usb, byte);
+}
+
+void setup() {
+    msp_set_response_callback(&msp_usb, uart_tx);
+}
+
+*/
+
 
 #define DEBUG_PRINTF(msg, ...)
 

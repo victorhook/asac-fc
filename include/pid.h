@@ -12,7 +12,7 @@ typedef struct {
     uint16_t feed_forward;
     float err_integral;
     float last_err;
-} pid_t;
+}__attribute__((packed)) pid_state_t;
 
 
 // Rotation rates in degrees per second (deg/s)
@@ -32,7 +32,7 @@ typedef struct {
 } pid_adjust_t;
 
 
-float pid_update(pid_t* pid, const float measured, const float desired, float dt_s)
+float pid_update(pid_state_t* pid, const float measured, const float desired, float dt_s);
 
 
 #endif /* PID_H */

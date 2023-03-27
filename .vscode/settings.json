@@ -18,6 +18,8 @@
       "pwm.h": "c",
       "*.tcc": "c",
       "adc.h": "c",
-      "pico.h": "c"
+      "pico.h": "c",
+      "i2c.h": "c",
+      "ibus.h": "c"
     },
 }

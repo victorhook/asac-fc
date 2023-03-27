@@ -1,6 +1,8 @@
 #ifndef MOTOR_MIXER_H
 #define MOTOR_MIXER_H
 
+#include "pid.h"
+
 
 typedef struct {
 

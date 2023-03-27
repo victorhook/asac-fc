@@ -1,7 +1,7 @@
 #ifndef MACHINE_H
 #define MACHINE_H
 
-
+/*
 #define PIN_M1            3
 #define PIN_M2            0
 #define PIN_M3            25
@@ -29,5 +29,28 @@
 #define PIN_LED_BLUE      18
 #define PIN_LED_GREEN     19
 #define PIN_LED_RED       26
+*/
+
+#define PIN_M1          18
+#define PIN_M2          13
+#define PIN_M3          2
+#define PIN_M4          27
+
+#define PIN_VUSB_SENSE  24
+#define PIN_LED_ONBOARD 25
+
+#define PIN_LED_RED     10
+#define PIN_LED_GREEN   5
+
+#define PIN_RX1         9
+#define PIN_SCL1        7
+#define PIN_SDA1        6
+
+#define PIN_IBUS_RX PIN_RX1
+#define IBUS_UART uart1
+
+#define VBAT_ADC_INPUT_NUMBER 2
+#define PIN_VBAT_ADC          28
+
 
 #endif

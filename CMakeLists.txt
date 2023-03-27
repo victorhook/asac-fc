@@ -26,6 +26,16 @@ pico_sdk_init()
 add_executable(asac-fc
   src/main.c
   src/battery.c
+  src/settings.c
+  src/pid_controller.c
+  src/pid.c
+  src/ibus.c
+  src/imu.c
+  src/receiver.c
+  src/controller.c
+  src/motor.c
+  src/motor_mixer.c
+  src/led.c
 )
 
 pico_set_program_name(asac-fc "asac-fc")
@@ -49,6 +59,9 @@ target_include_directories(asac-fc PRIVATE
 target_link_libraries(asac-fc
         hardware_i2c
         hardware_adc
+        hardware_flash
+        hardware_sync
+        hardware_pwm
 )
 
 pico_add_extra_outputs(asac-fc)

@@ -3,6 +3,7 @@
 
 
 #include "stdint.h"
+#include "stdio.h"
 
 
 typedef struct {
@@ -19,7 +20,7 @@ typedef struct {
 int imu_init();
 
 
-void imu_get_latest_reading();
+void imu_get_latest_reading(imu_reading_t* reading);
 
 
 void imu_read();

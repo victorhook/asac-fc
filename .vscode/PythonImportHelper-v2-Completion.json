@@ -1,29 +1,524 @@
 [
     {
-        "label": "serial",
+        "label": "socket",
         "kind": 6,
         "isExtraImport": true,
+        "importPath": "socket",
+        "description": "socket",
+        "detail": "socket",
+        "documentation": {}
+    },
+    {
+        "label": "Thread",
+        "importPath": "threading",
+        "description": "threading",
+        "isExtraImport": true,
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "Event",
+        "importPath": "threading",
+        "description": "threading",
+        "isExtraImport": true,
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "Thread",
+        "importPath": "threading",
+        "description": "threading",
+        "isExtraImport": true,
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "Event",
+        "importPath": "threading",
+        "description": "threading",
+        "isExtraImport": true,
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "Queue",
+        "importPath": "queue",
+        "description": "queue",
+        "isExtraImport": true,
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "Queue",
+        "importPath": "queue",
+        "description": "queue",
+        "isExtraImport": true,
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "ArgumentParser",
+        "importPath": "argparse",
+        "description": "argparse",
+        "isExtraImport": true,
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "Namespace",
+        "importPath": "argparse",
+        "description": "argparse",
+        "isExtraImport": true,
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "ArgumentParser",
+        "importPath": "argparse",
+        "description": "argparse",
+        "isExtraImport": true,
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "asdict",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "field",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "logging",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "abstractmethod",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "ABC",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "Serial",
         "importPath": "serial",
         "description": "serial",
+        "isExtraImport": true,
         "detail": "serial",
         "documentation": {}
     },
     {
-        "label": "s",
-        "kind": 5,
-        "importPath": "goserial",
-        "description": "goserial",
-        "peekOfCode": "s = serial.Serial('/dev/ttyUSB0')\ns.timeout = None\nwhile True:\n    k = s.read(32)\n    #hexx = [hex(a)[2:].zfill(2) for a in k]\n    print(' '.join([hex(a) for a in k]))",
-        "detail": "goserial",
+        "label": "SerialTimeoutException",
+        "importPath": "serial",
+        "description": "serial",
+        "isExtraImport": true,
+        "detail": "serial",
         "documentation": {}
     },
     {
-        "label": "s.timeout",
+        "label": "struct",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "struct",
+        "description": "struct",
+        "detail": "struct",
+        "documentation": {}
+    },
+    {
+        "label": "IntEnum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
+        "label": "copy",
+        "importPath": "copy",
+        "description": "copy",
+        "isExtraImport": true,
+        "detail": "copy",
+        "documentation": {}
+    },
+    {
+        "label": "MSP_Client_Serial",
+        "importPath": "msp",
+        "description": "msp",
+        "isExtraImport": true,
+        "detail": "msp",
+        "documentation": {}
+    },
+    {
+        "label": "MSP_RX",
+        "importPath": "msp",
+        "description": "msp",
+        "isExtraImport": true,
+        "detail": "msp",
+        "documentation": {}
+    },
+    {
+        "label": "MSP_Packet",
+        "importPath": "msp",
+        "description": "msp",
+        "isExtraImport": true,
+        "detail": "msp",
+        "documentation": {}
+    },
+    {
+        "label": "MSP_Command",
+        "importPath": "msp",
+        "description": "msp",
+        "isExtraImport": true,
+        "detail": "msp",
+        "documentation": {}
+    },
+    {
+        "label": "list_ports",
+        "importPath": "serial.tools",
+        "description": "serial.tools",
+        "isExtraImport": true,
+        "detail": "serial.tools",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "CalServer",
+        "kind": 6,
+        "importPath": "tools.cal_server",
+        "description": "tools.cal_server",
+        "peekOfCode": "class CalServer:\n    def __init__(self, listen_port: int) -> None:\n        self.listen_port = listen_port\n        self.listen_socket: socket.socket = None\n        self.telemtry_socket: socket.socket = None\n        self.listen_request_queue = Queue()\n        self._listen_thread_flag = Event()\n    def is_connected(self) -> bool:\n        return self.listen_socket is not None\n    def route_traffic(self) -> None:",
+        "detail": "tools.cal_server",
+        "documentation": {}
+    },
+    {
+        "label": "MemParam",
+        "kind": 6,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "class MemParam:\n    name: str\n    dtype: str\n    initial_value: str\n    address: int\n    type: str # [Measurement, Calibration]\n    line_number: int\n    source_file: str\n    children: List[str]\ndef parse_param_from_string(string: str, type: str) -> MemParam:",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "ParamTypeDef",
+        "kind": 6,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "class ParamTypeDef:\n    pass\ndef is_primitive_type(param_type: str) -> bool:\n    return param_type in PARAM_TYPES\ndef find_param_typedef_in_sourcefiles(source_files: List[str], param_type: str) -> ParamTypeDef:\n    for src_file in source_files:\n        with open(src_file) as f:\n            src_code = f.read()\n            print('typedef\\s+struct\\s*\\{(.*?)}(.*?)%s' % param_type)\n            #m = re.search('typedef\\s+struct\\s*\\{(.*?)}(.*?)%s' % param_type, src_code, flags=re.DOTALL)",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "parse_param_from_string",
+        "kind": 2,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "def parse_param_from_string(string: str, type: str) -> MemParam:\n    string = re.sub('\\s+', ' ', string)\n    split = string.split(' ')\n    dtype = split[0]\n    name = split[1]\n    if split[2] == '=':\n        initial_value = split[3]\n    else:\n        initial_value = None\n    return MemParam(name, dtype, initial_value, 0, type, 0, '', [])",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "get_param_strings_from_file",
+        "kind": 2,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "def get_param_strings_from_file(filepath: Path) -> List[MemParam]:\n    with open(filepath) as f:\n        data = f.read()\n    params = []\n    def get_param_with_regex(line: str, regex: str) -> MemParam:\n        # Search for measurement parameters\n        match = re.search(f'(.*)@{regex}', line)\n        if match:\n            decl = match.group(1).split(';')[0]\n            param = parse_param_from_string(decl, regex)",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "lookup_memory_addresses",
+        "kind": 2,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "def lookup_memory_addresses(mem_params: List[MemParam]) -> List[MemParam]:\n    for mem_param in mem_params:\n        addr = re.search(f'0x(.*)\\s*{mem_param.name}', map_data)\n        if addr:\n            addr = int(addr.group(1), 16)\n            mem_param.address = addr\n    return mem_params\ndef parse_args() -> Namespace:\n    parser = ArgumentParser()\n    parser.add_argument('-m', '--map_file', type=str, required=True,",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "parse_args",
+        "kind": 2,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "def parse_args() -> Namespace:\n    parser = ArgumentParser()\n    parser.add_argument('-m', '--map_file', type=str, required=True,\n                        help='Filepath to memory file')\n    parser.add_argument('-s', '--source_dir', type=str, required=True,\n                        help='Directory of where to search for source code')\n    parser.add_argument('-o', '--output', type=str, required=True,\n                        help='Output directory to write results to')\n    return parser.parse_args()\nmem_params: List[MemParam] = []",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "get_filepaths_to_search",
+        "kind": 2,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "def get_filepaths_to_search(source_dirs: List[str]) -> List[Path]:\n    filepaths = []\n    for src in source_dirs:\n        for dirpath, dirnames, filenames in os.walk(src):\n            for filename in filenames:\n                abspath = Path(dirpath).joinpath(filename)\n                filepaths.append(abspath)\n    return filepaths\ndef calc_param_size(param: MemParam) -> int:\n    pass",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "calc_param_size",
+        "kind": 2,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "def calc_param_size(param: MemParam) -> int:\n    pass\nPARAM_TYPES = {\n    'int': 4,\n    'float': 4\n}\n@dataclass\nclass ParamTypeDef:\n    pass\ndef is_primitive_type(param_type: str) -> bool:",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "is_primitive_type",
+        "kind": 2,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "def is_primitive_type(param_type: str) -> bool:\n    return param_type in PARAM_TYPES\ndef find_param_typedef_in_sourcefiles(source_files: List[str], param_type: str) -> ParamTypeDef:\n    for src_file in source_files:\n        with open(src_file) as f:\n            src_code = f.read()\n            print('typedef\\s+struct\\s*\\{(.*?)}(.*?)%s' % param_type)\n            #m = re.search('typedef\\s+struct\\s*\\{(.*?)}(.*?)%s' % param_type, src_code, flags=re.DOTALL)\n            #if m:\n            #    print('HIT', m.group())",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "find_param_typedef_in_sourcefiles",
+        "kind": 2,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "def find_param_typedef_in_sourcefiles(source_files: List[str], param_type: str) -> ParamTypeDef:\n    for src_file in source_files:\n        with open(src_file) as f:\n            src_code = f.read()\n            print('typedef\\s+struct\\s*\\{(.*?)}(.*?)%s' % param_type)\n            #m = re.search('typedef\\s+struct\\s*\\{(.*?)}(.*?)%s' % param_type, src_code, flags=re.DOTALL)\n            #if m:\n            #    print('HIT', m.group())\ndef build_param_children(filepaths: List[str], param: MemParam) -> int:\n    if is_primitive_type(param.dtype):",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "build_param_children",
+        "kind": 2,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "def build_param_children(filepaths: List[str], param: MemParam) -> int:\n    if is_primitive_type(param.dtype):\n        return\n    find_param_typedef_in_sourcefiles(filepaths, param.dtype)\nif __name__ == '__main__':\n    args = parse_args()\n    logging.basicConfig(level=logging.DEBUG)\n    source_dirs = args.source_dir.split(' ')\n    filepaths = get_filepaths_to_search(source_dirs)\n    print(f'Found {len(filepaths)} files to search')",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
         "kind": 5,
-        "importPath": "goserial",
-        "description": "goserial",
-        "peekOfCode": "s.timeout = None\nwhile True:\n    k = s.read(32)\n    #hexx = [hex(a)[2:].zfill(2) for a in k]\n    print(' '.join([hex(a) for a in k]))",
-        "detail": "goserial",
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nFILE_EXTENSIONS_TO_SEARCH = [\n    '.h',\n    '.c'\n]\nMEASUREMENT = 'meas'\nCALIBRATION = 'cal'\n@dataclass\nclass MemParam:\n    name: str",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "FILE_EXTENSIONS_TO_SEARCH",
+        "kind": 5,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "FILE_EXTENSIONS_TO_SEARCH = [\n    '.h',\n    '.c'\n]\nMEASUREMENT = 'meas'\nCALIBRATION = 'cal'\n@dataclass\nclass MemParam:\n    name: str\n    dtype: str",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "MEASUREMENT",
+        "kind": 5,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "MEASUREMENT = 'meas'\nCALIBRATION = 'cal'\n@dataclass\nclass MemParam:\n    name: str\n    dtype: str\n    initial_value: str\n    address: int\n    type: str # [Measurement, Calibration]\n    line_number: int",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "CALIBRATION",
+        "kind": 5,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "CALIBRATION = 'cal'\n@dataclass\nclass MemParam:\n    name: str\n    dtype: str\n    initial_value: str\n    address: int\n    type: str # [Measurement, Calibration]\n    line_number: int\n    source_file: str",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "PARAM_TYPES",
+        "kind": 5,
+        "importPath": "tools.mem_addr",
+        "description": "tools.mem_addr",
+        "peekOfCode": "PARAM_TYPES = {\n    'int': 4,\n    'float': 4\n}\n@dataclass\nclass ParamTypeDef:\n    pass\ndef is_primitive_type(param_type: str) -> bool:\n    return param_type in PARAM_TYPES\ndef find_param_typedef_in_sourcefiles(source_files: List[str], param_type: str) -> ParamTypeDef:",
+        "detail": "tools.mem_addr",
+        "documentation": {}
+    },
+    {
+        "label": "MSP_TX",
+        "kind": 6,
+        "importPath": "tools.msp",
+        "description": "tools.msp",
+        "peekOfCode": "class MSP_TX(ABC):\n    @abstractmethod\n    def send(self, data: bytes) -> None:\n        pass\n@dataclass\nclass MSP_Packet:\n    size: int = 0\n    command: int = 0\n    data: bytes = field(default_factory=bytearray)\n    crc: int = 0",
+        "detail": "tools.msp",
+        "documentation": {}
+    },
+    {
+        "label": "MSP_Packet",
+        "kind": 6,
+        "importPath": "tools.msp",
+        "description": "tools.msp",
+        "peekOfCode": "class MSP_Packet:\n    size: int = 0\n    command: int = 0\n    data: bytes = field(default_factory=bytearray)\n    crc: int = 0\n    raw: bytearray = field(default_factory=bytearray)\nclass MSP_RX(ABC):\n    @abstractmethod\n    def receive_packet(self, packet: MSP_Packet) -> None:\n        pass",
+        "detail": "tools.msp",
+        "documentation": {}
+    },
+    {
+        "label": "MSP_RX",
+        "kind": 6,
+        "importPath": "tools.msp",
+        "description": "tools.msp",
+        "peekOfCode": "class MSP_RX(ABC):\n    @abstractmethod\n    def receive_packet(self, packet: MSP_Packet) -> None:\n        pass\nclass MSP_Command(IntEnum):\n    MSP_API_VERSION \t  = 1\n    MSP_FC_VARIANT \t      = 2\n    MSP_FC_VERSION \t      = 3\n    MSP_BOARD_INFO        = 4\n    MSP_BUILD_INFO        = 5",
+        "detail": "tools.msp",
+        "documentation": {}
+    },
+    {
+        "label": "MSP_Command",
+        "kind": 6,
+        "importPath": "tools.msp",
+        "description": "tools.msp",
+        "peekOfCode": "class MSP_Command(IntEnum):\n    MSP_API_VERSION \t  = 1\n    MSP_FC_VARIANT \t      = 2\n    MSP_FC_VERSION \t      = 3\n    MSP_BOARD_INFO        = 4\n    MSP_BUILD_INFO        = 5\n    MSP_IDENT             = 100\n    MSP_RAW_IMU           = 102\n    MSP_MOTOR             = 104\n    MSP_SET_MOTOR         = 214",
+        "detail": "tools.msp",
+        "documentation": {}
+    },
+    {
+        "label": "MSP_StateMachine",
+        "kind": 6,
+        "importPath": "tools.msp",
+        "description": "tools.msp",
+        "peekOfCode": "class MSP_StateMachine:\n    def __init__(self, rx: MSP_RX) -> None:\n        self._malformed_packets = 0\n        self._rx = rx\n        self._bytes_read = 0\n        self._rx_buf = bytearray()\n        self._crc = 0\n        self._packet = MSP_Packet()\n    def process_byte(self, byte: int) -> None:\n        bytes_read = len(self._rx_buf)",
+        "detail": "tools.msp",
+        "documentation": {}
+    },
+    {
+        "label": "MSP_Client",
+        "kind": 6,
+        "importPath": "tools.msp",
+        "description": "tools.msp",
+        "peekOfCode": "class MSP_Client(MSP_RX):\n    header = b'$M<'\n    read_timeout = 1\n    def __init__(self, callback: MSP_RX = None) -> None:\n        self._rx_packets = Queue()\n        self._is_running = Event()\n        self.msp_fsm = MSP_StateMachine(self)\n        self._rx_callback = callback\n    def receive_packet(self, packet: MSP_Packet) -> None:\n        print(f'RX: (len={len(packet.raw)}) {hex_string(packet.raw)}')",
+        "detail": "tools.msp",
+        "documentation": {}
+    },
+    {
+        "label": "MSP_Client_Serial",
+        "kind": 6,
+        "importPath": "tools.msp",
+        "description": "tools.msp",
+        "peekOfCode": "class MSP_Client_Serial(MSP_Client):\n    def __init__(self, port: str, baudrate: int, callback: MSP_RX = None) -> None:\n        super().__init__(callback)\n        self.port = port\n        self.baudrate = baudrate\n        self._serial: Serial = None\n    def do_connect(self) -> None:\n        self._serial = Serial(self.port, self.baudrate, timeout=self.read_timeout)\n    def do_disconnect(self) -> None:\n        self._serial.close()",
+        "detail": "tools.msp",
+        "documentation": {}
+    },
+    {
+        "label": "calculate_crc",
+        "kind": 2,
+        "importPath": "tools.msp",
+        "description": "tools.msp",
+        "peekOfCode": "def calculate_crc(data: bytes) -> int:\n    crc = 0\n    for byte in data:\n        crc ^= byte\n    return crc\ndef hex_string(data: bytes) -> str:\n    return ' '.join(hex(a)[2:].zfill(2) for a in data)\nclass MSP_StateMachine:\n    def __init__(self, rx: MSP_RX) -> None:\n        self._malformed_packets = 0",
+        "detail": "tools.msp",
+        "documentation": {}
+    },
+    {
+        "label": "hex_string",
+        "kind": 2,
+        "importPath": "tools.msp",
+        "description": "tools.msp",
+        "peekOfCode": "def hex_string(data: bytes) -> str:\n    return ' '.join(hex(a)[2:].zfill(2) for a in data)\nclass MSP_StateMachine:\n    def __init__(self, rx: MSP_RX) -> None:\n        self._malformed_packets = 0\n        self._rx = rx\n        self._bytes_read = 0\n        self._rx_buf = bytearray()\n        self._crc = 0\n        self._packet = MSP_Packet()",
+        "detail": "tools.msp",
+        "documentation": {}
+    },
+    {
+        "label": "A",
+        "kind": 6,
+        "importPath": "tools.msp_client",
+        "description": "tools.msp_client",
+        "peekOfCode": "class A(MSP_RX):\n    def receive_packet(self, packet: MSP_Packet) -> None:\n        print(packet)\nif __name__ == '__main__':\n    parser = ArgumentParser()\n    parser.add_argument('-p', '--port', type=str, default=None)\n    parser.add_argument('-b', '--baud', type=int, default=115200)\n    args = parser.parse_args()\n    if args.port is None:\n        available_ports = [port.device for port in list_ports.comports()]",
+        "detail": "tools.msp_client",
         "documentation": {}
     }
 ]
