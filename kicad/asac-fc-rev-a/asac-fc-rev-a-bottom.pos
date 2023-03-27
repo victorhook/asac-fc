@@ -1,0 +1,16 @@
+### Module positions - created on lör 25 mar 2023 14:52:50 ###
+### Printed by Pcbnew version 6.0.11-2627ca5db0~126~ubuntu22.04.1
+## Unit = mm, Angle = deg.
+## Side : bottom
+# Ref     Val          Package                                                PosX       PosY       Rot  Side
+C20       10uF         C_0805_2012Metric                                 -127.4500  -132.4750   90.0000  bottom
+C21       10uF         C_0805_2012Metric                                 -113.5500  -127.0000   90.0000  bottom
+C22       10uF         C_0805_2012Metric                                 -127.4900  -128.9400   90.0000  bottom
+C23       10uF         C_0805_2012Metric                                 -115.7700  -126.9700   90.0000  bottom
+D4        D_Schottky   D_SOD-123                                         -115.6700  -131.2500  -90.0000  bottom
+J11       Conn_01x08   JST_SH_SM08B-SRSS-TB_1x08-1MP_P1.00mm_Horizontal  -138.6500  -117.5250  -90.0000  bottom
+Q1        Q_PMOS_GSD   SOT-23                                            -112.6000  -131.6600  -90.0000  bottom
+R14       10k          R_0402_1005Metric                                 -111.2900  -128.3300   90.0000  bottom
+U4        AMS1117-5.0  SOT-223-3_TabPin2                                 -132.2000  -129.9750   90.0000  bottom
+U5        AMS1117-3.3  SOT-223-3_TabPin2                                 -120.8750  -130.3250   90.0000  bottom
+## End
