@@ -2,6 +2,7 @@
 #define MACHINE_H
 
 /*
+Pin definitions for custom PCB
 #define PIN_M1            3
 #define PIN_M2            0
 #define PIN_M3            25
@@ -31,8 +32,9 @@
 #define PIN_LED_RED       26
 */
 
-#define PIN_M1          18
-#define PIN_M2          13
+// Pin definitions for dev-and breakout boards.
+#define PIN_M1          13
+#define PIN_M2          18
 #define PIN_M3          2
 #define PIN_M4          27
 
@@ -48,6 +50,8 @@
 
 #define PIN_IBUS_RX PIN_RX1
 #define IBUS_UART uart1
+
+#define I2C_BUS_IMU i2c1
 
 #define VBAT_ADC_INPUT_NUMBER 2
 #define PIN_VBAT_ADC          28

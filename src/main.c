@@ -33,7 +33,7 @@ static int init_result = 0;
 static void init_driver(int (*init_function)(), const char* name) {
     int res = init_function();
     printf("  Init: %s ", name);
-    if (init_result == 0) {
+    if (res == 0) {
         printf("OK\n");
     } else {
         printf("Error: %d\n", res);
@@ -42,25 +42,36 @@ static void init_driver(int (*init_function)(), const char* name) {
     init_result |= res;
 }
 
+
 int main() {
     stdio_init_all();
+
+    // Initialize LED driver and blink led boot-up sequence
+    init_driver(led_init, "Led");
+    led_run_boot_sequence();
+
+    // Turn RED led high to indicate we're booting
+    led_set(LED_RED, 1);
 
     // Initialize all drivers
     printf("Booting up...\n");
     printf("Initializing drivers\n");
 
     init_driver(receiver_init, "Receiver");
-    init_driver(motors_init, "Motors");
+    //init_driver(motors_init, "Motors");
     init_driver(imu_init, "IMU");
-    init_driver(led_init, "Led");
 
-    led_run_boot_sequence();
+    // Done booting
+    led_set(LED_RED, 0);
 
     //vsrtos_create_task()
 
     rc_input_t rc_input;
 
+    static int i = 0;
+    uint64_t t0 = time_us_64();
     while (1) {
+        /*
         receiver_get_last_packet(&rc_input);
         float p = rc_input.channels[2] / 200.0;
         if (p < 5) {
@@ -68,16 +79,32 @@ int main() {
         } else if (p > 10) {
             p = 10;
         }
-        printf("Packet received: %d, %.2f\n", rc_input.channels[2], p);
+        */
+        //printf("Packet received: %d, %.2f\n", rc_input.channels[2], p);
 
-        if (is_armed) {
-            //set_motor_pwm(p);
+        imu_reading_t imu_reading;
+
+        uint64_t before = time_us_64();
+        imu_read(&imu_reading);
+        printf("Delay: %lld\n", time_us_64() - before);
+        i++;
+
+        sleep_ms(250);
+        continue;
+
+        uint64_t now = time_us_64();
+        if ((now - t0) > 1000000) {
+            printf("S: %d\n", i);
+            t0 = now;
+            i = 0;
         }
 
-        //ibus_packet.channels[0];
-
         //scan_bus();
-        //sleep_ms(500);
+        //scan_bus();
+        led_set(LED_RED, 0);
+        //sleep_ms(100);
+        led_set(LED_RED, 1);
+        //sleep_ms(300);
     }
 
     return 0;

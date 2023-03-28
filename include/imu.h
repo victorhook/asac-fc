@@ -23,7 +23,7 @@ int imu_init();
 void imu_get_latest_reading(imu_reading_t* reading);
 
 
-void imu_read();
+void imu_read(imu_reading_t* reading);
 
 
 #endif
