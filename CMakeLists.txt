@@ -36,13 +36,14 @@ add_executable(asac-fc
   src/motor.c
   src/motor_mixer.c
   src/led.c
+  src/drivers/mpu6050.c
 )
 
 pico_set_program_name(asac-fc "asac-fc")
 pico_set_program_version(asac-fc "0.1")
 
-pico_enable_stdio_uart(asac-fc 0)
-pico_enable_stdio_usb(asac-fc 1)
+#pico_enable_stdio_uart(asac-fc 0)
+#pico_enable_stdio_usb(asac-fc 1)
 
 # Add the standard library to the build
 target_link_libraries(asac-fc

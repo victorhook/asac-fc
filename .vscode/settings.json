@@ -20,6 +20,8 @@
       "adc.h": "c",
       "pico.h": "c",
       "i2c.h": "c",
-      "ibus.h": "c"
+      "ibus.h": "c",
+      "functional": "c"
     },
+    "esbonio.sphinx.confDir": "",
 }

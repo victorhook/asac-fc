@@ -5,19 +5,21 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Cortex Debug",
+      "name": "Pico Debug",
       "cwd": "${workspaceRoot}",
-      "executable": "build/rc-car.elf",//"${command:cmake.launchTargetPath}",
+      "executable": "build/asac-fc.elf",//"${command:cmake.launchTargetPath}",
       "request": "launch",
       "type": "cortex-debug",
       "servertype": "openocd",
-      "gdbPath": "gdb-multiarch",
+      //"gdbPath": "gdb-multiarch",
+      "gdbPath": "arm-none-eabi-gdb",
       "device": "RP2040",
       "configFiles": [
         "interface/cmsis-dap.cfg",
         "target/rp2040.cfg"
-        ],
+      ],
       "svdFile": "${env:PICO_SDK_PATH}/src/rp2040/hardware_regs/rp2040.svd",
+      "runToMain": true,
       "runToEntryPoint": "main",
       // Give restart the same functionality as runToEntryPoint - main
       "postRestartCommands": [
