@@ -13,10 +13,16 @@ typedef struct {
 }__attribute__((packed)) settings_t;
 
 
+int settings_init();
+
+
 int settings_read_from_flash(settings_t* settings);
 
 
 int settings_write_to_flash(const settings_t* settings);
+
+
+extern settings_t settings;
 
 
 #endif /* SETTINGS_H */

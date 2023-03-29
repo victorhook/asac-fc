@@ -32,6 +32,8 @@ Pin definitions for custom PCB
 #define PIN_LED_RED       26
 */
 
+#define ASAC_FC_FLASH_SIZE        (2 * 1024 * 1024)
+
 // Pin definitions for dev-and breakout boards.
 #define PIN_M1          13
 #define PIN_M2          18

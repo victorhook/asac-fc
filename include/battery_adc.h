@@ -5,11 +5,11 @@
 
 
 /* Initializes the battery ADC. */
-void battery_measure_init();
+int battery_adc_init();
 
 
 /* Reads the battery voltage and returns as float. */
-float battery_measure_read();
+float battery_adc_read();
 
 
 #endif /* BATTERY_H */

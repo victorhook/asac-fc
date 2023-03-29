@@ -25,7 +25,7 @@ pico_sdk_init()
 
 add_executable(asac-fc
   src/main.c
-  src/battery.c
+  src/battery_adc.c
   src/settings.c
   src/pid_controller.c
   src/pid.c
@@ -37,6 +37,13 @@ add_executable(asac-fc
   src/motor_mixer.c
   src/led.c
   src/drivers/mpu6050.c
+  src/controller.c
+  src/vsrtos.c
+  src/state.c
+)
+
+add_compile_definitions(
+  RP2040
 )
 
 pico_set_program_name(asac-fc "asac-fc")

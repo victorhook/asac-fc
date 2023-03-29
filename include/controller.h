@@ -2,7 +2,8 @@
 #define CONTROLLER_H
 
 
-void controller_init();
+int controller_init();
+
 
 void controller_update();
 

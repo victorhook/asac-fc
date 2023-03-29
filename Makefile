@@ -3,7 +3,7 @@ CFLAGS = -g
 
 
 all:
-	cd build && make -j4 && cd ..
+	cd build && cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_C_FLAGS_DEBUG="-g -O0" -DCMAKE_CXX_FLAGS_DEBUG="-g -O0" .. && make -j4 && cd ..
 
 flash:
 	cd build && make -j4 && cd .. && openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 500" -c "program build/asac-fc.elf verify reset exit"

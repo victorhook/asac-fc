@@ -21,7 +21,14 @@
       "pico.h": "c",
       "i2c.h": "c",
       "ibus.h": "c",
-      "functional": "c"
+      "functional": "c",
+      "asac-fc.h": "c",
+      "*.in": "c",
+      "cstdlib": "c",
+      "memory": "c",
+      "inttypes.h": "c",
+      "pid_controller.h": "c",
+      "stdlib.h": "c"
     },
     "esbonio.sphinx.confDir": "",
 }

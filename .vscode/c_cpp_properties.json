@@ -3,7 +3,6 @@
     {
       "name": "Linux",
       "includePath": [
-        "${workspaceFolder}/**",
         "${workspaceFolder}/include/**",
         "${env:PICO_SDK_PATH}/**",
         "${env:PICO_SDK_PATH}/src/rp2_common/hardware_adc/include/hardware/"
