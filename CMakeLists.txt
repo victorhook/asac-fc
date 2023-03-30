@@ -29,6 +29,7 @@ add_executable(asac-fc
   src/settings.c
   src/pid_controller.c
   src/pid.c
+  src/pid_controller.c
   src/ibus.c
   src/imu.c
   src/receiver.c

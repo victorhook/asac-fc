@@ -7,6 +7,7 @@
 #include "string.h"
 #include "stdio.h"
 
+// Inspired by: https://www.makermatrix.com/blog/read-and-write-data-with-the-pi-pico-onboard-flash/
 
 
 #define FLASH_TARGET_OFFSET    (ASAC_FC_FLASH_SIZE - FLASH_SECTOR_SIZE)
@@ -46,7 +47,7 @@ int settings_init() {
     page_nbr = *page_nbr_ptr;
     if (page_nbr > FLASH_PAGES_PER_SECTOR) {
         printf(
-            "Flash page number invalid read: %d, must be between 0-%d\n",
+            "Flash page number invalid read: %d, must be between 0-%d, ",
             page_nbr,
             FLASH_PAGES_PER_SECTOR
         );

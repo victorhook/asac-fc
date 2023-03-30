@@ -11,7 +11,7 @@
 #include "battery_adc.h"
 #include "settings.h"
 #include "state.h"
-
+#include "pid_controller.h"
 
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
@@ -68,6 +68,7 @@ int main() {
     init_driver(receiver_init, "Receiver");
     init_driver(battery_adc_init, "Battery ADC");
     init_driver(imu_init, "IMU");
+    init_driver(pid_controller_init, "PID Ctrl");
     init_driver(controller_init, "Controller");
     //init_driver(motors_init, "Motors");
 
@@ -75,7 +76,7 @@ int main() {
     led_set(LED_RED, 0);
 
     // -- Create tasks -- /
-    vsrtos_create_task(controller_update, "Controller", 100, 1);
+    vsrtos_create_task(controller_update, "Controller", 5, 1);
 
     state.mode = MODE_IDLE;
 

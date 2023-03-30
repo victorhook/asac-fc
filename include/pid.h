@@ -26,9 +26,9 @@ typedef struct {
 // The pid adjust are used to know how much to adjust each motor speed, depending
 // on the pid parameter values, and the error. This is the result of a pid update loop.
 typedef struct {
-    uint16_t roll;
-    uint16_t pitch;
-    uint16_t yaw;
+    int16_t roll;
+    int16_t pitch;
+    int16_t yaw;
 } pid_adjust_t;
 
 
