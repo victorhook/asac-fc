@@ -16,8 +16,8 @@
 static ibus_packet_t last_packet;
 
 
-uint64_t getCurrentTime() {
-    return to_ms_since_boot(get_absolute_time());
+uint32_t getCurrentTime() {
+    return time_us_32();
 }
 
 void ibus_process_byte(uint8_t data)

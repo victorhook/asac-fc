@@ -5,12 +5,12 @@
 #include "pico/stdlib.h"
 
 typedef struct {
-    uint64_t timestamp;
-    uint16_t      channels[14];
+    uint32_t timestamp;
+    uint16_t channels[14];
 }__attribute__((packed)) ibus_packet_t;
 
 
-uint64_t getCurrentTime();
+uint32_t getCurrentTime();
 
 /*
  * Processes a single byte in the internal state machine.

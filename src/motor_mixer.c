@@ -12,7 +12,7 @@ int8_t m3[] = {1,  1,  1,  1};  // Rear left
 int8_t m4[] = {1,  1, -1, -1};  // Front left
 
 
-void motor_mixer_update(const uint16_t throttle, const pid_adjust_t* adjust, motor_command_t* motor_command) {
+void motor_mixer_update(const uint16_t throttle, const pid_adjust_t* adjust, motor_mixer_command_t* motor_command) {
     motor_command->m1 = (throttle * m1[0]) + (adjust->roll * m1[1]) + (adjust->pitch * m1[2]) + (adjust->yaw * m1[3]);
     motor_command->m2 = (throttle * m2[0]) + (adjust->roll * m2[1]) + (adjust->pitch * m2[2]) + (adjust->yaw * m2[3]);
     motor_command->m3 = (throttle * m3[0]) + (adjust->roll * m3[1]) + (adjust->pitch * m3[2]) + (adjust->yaw * m3[3]);
@@ -20,6 +20,6 @@ void motor_mixer_update(const uint16_t throttle, const pid_adjust_t* adjust, mot
 }
 
 
-void set_motor_speeds(const motor_command_t* motor_command) {
+void set_motor_speeds(const motor_mixer_command_t* motor_command) {
 
 }

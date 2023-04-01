@@ -22,7 +22,6 @@ int led_init() {
     return 0;
 }
 
-
 void led_set(uint8_t pin, uint8_t value) {
     gpio_put(pin, value);
 }

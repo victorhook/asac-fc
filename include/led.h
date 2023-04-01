@@ -2,6 +2,7 @@
 #define LED_H
 
 #include "stdint.h"
+#include "machine.h"
 
 #define LED_RED PIN_LED_RED
 #define LED_GREEN PIN_LED_GREEN

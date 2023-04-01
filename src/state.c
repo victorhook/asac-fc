@@ -3,6 +3,6 @@
 
 state_t state = {
     .is_armed = false,
-    .last_recieved_rx_packet = 0,
+    .is_connected = false,
     .mode = MODE_BOOTING
 };

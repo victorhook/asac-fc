@@ -5,7 +5,7 @@
 
 
 typedef struct {
-    uint64_t timestamp;
+    uint32_t timestamp;
     uint16_t channels[14];
 }__attribute__((packed)) rc_input_t;
 
