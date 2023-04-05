@@ -6,6 +6,7 @@
 
 
 typedef struct {
+    int result;
     i2c_inst_t* i2c;
 } mpu6050_t;
 

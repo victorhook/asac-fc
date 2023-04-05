@@ -53,18 +53,22 @@
 
 
 // -- Helper functions -- //
-static void mpu6050_read_bytes(mpu6050_t* mpu6050, const uint8_t address, uint8_t* buf, const uint8_t len);
+static int mpu6050_read_bytes(mpu6050_t* mpu6050, const uint8_t address, uint8_t* buf, const uint8_t len);
 
-static void mpu6050_read_reg(mpu6050_t* mpu6050, const uint8_t address, uint8_t* reg);
+static int mpu6050_read_reg(mpu6050_t* mpu6050, const uint8_t address, uint8_t* reg);
 
-static void mpu6050_write_reg(mpu6050_t* mpu6050, const uint8_t reg, const uint8_t value);
+static int mpu6050_write_reg(mpu6050_t* mpu6050, const uint8_t reg, const uint8_t value);
 
 
 int mpu6050_init(mpu6050_t* mpu, i2c_inst_t* i2c_bus) {
     mpu->i2c = i2c_bus;
 
     // Reset IMU. First perform complete device reset wand wait 100 ms
-    mpu6050_write_reg(mpu, REG_PWR_MGMT_1, REG_PWR_MGMT_1_DEVICE_RESET);
+    mpu->result = mpu6050_write_reg(mpu, REG_PWR_MGMT_1, REG_PWR_MGMT_1_DEVICE_RESET);
+    if (mpu->result < 0) {
+        return mpu->result;
+    }
+
     sleep_ms(100);
     // Then we'll reset all signal paths
     mpu6050_write_reg(mpu, REG_SIGNAL_PATH_RESET, REG_SIGNAL_PATH_RESET_GYRO_RESET | REG_SIGNAL_PATH_RESET_ACCEL_RESET | REG_SIGNAL_PATH_RESET_TEMP_RESET);
@@ -81,6 +85,8 @@ int mpu6050_init(mpu6050_t* mpu, i2c_inst_t* i2c_bus) {
 
     // Set Gyro scale, Bits[4:3]
     mpu6050_write_reg(mpu, REG_GYRO_CONFIG, REG_GYRO_CONFIG_FS_SEL_1000 << 3);
+
+    return 0;
 }
 
 
@@ -109,19 +115,25 @@ int mpu6050_read(mpu6050_t* mpu, float acc[3], float gyro[3]) {
 }
 
 
-static void mpu6050_read_bytes(mpu6050_t* mpu, const uint8_t address, uint8_t* buf, const uint8_t len) {
-    i2c_write_blocking(mpu->i2c, 0x68, &address, 1, true);
-    i2c_read_blocking(mpu->i2c, 0x68, buf, len, false);
+static int mpu6050_read_bytes(mpu6050_t* mpu, const uint8_t address, uint8_t* buf, const uint8_t len) {
+    int res = i2c_write_timeout_us(mpu->i2c, 0x68, &address, 1, true, 10000);
+    if (res < 0) {
+        return res;
+    }
+    return i2c_read_timeout_us(mpu->i2c, 0x68, buf, len, false, 10000);
 }
 
-static void mpu6050_read_reg(mpu6050_t* mpu, const uint8_t address, uint8_t* reg) {
-    i2c_write_blocking(mpu->i2c, 0x68, &address, 1, true);
-    i2c_read_blocking(mpu->i2c, 0x68, reg, 1, false);
+static int mpu6050_read_reg(mpu6050_t* mpu, const uint8_t address, uint8_t* reg) {
+    int res = i2c_write_timeout_us(mpu->i2c, 0x68, &address, 1, true, 10000);
+    if (res < 0) {
+        return res;
+    }
+    return i2c_read_timeout_us(mpu->i2c, 0x68, reg, 1, false, 10000);
 }
 
-static void mpu6050_write_reg(mpu6050_t* mpu, const uint8_t reg, const uint8_t value) {
+static int mpu6050_write_reg(mpu6050_t* mpu, const uint8_t reg, const uint8_t value) {
     uint8_t buf[] = {reg, value};
-    i2c_write_blocking(mpu->i2c, 0x68, buf, 2, false);
+    return i2c_write_timeout_us(mpu->i2c, 0x68, buf, 2, false, 10000);
 }
 
 

@@ -7,7 +7,8 @@
 typedef enum {
     MODE_BOOTING,
     MODE_IDLE,
-    MODE_PANIC
+    MODE_PANIC,
+    MODE_ERROR
 } drone_mode_t;
 
 

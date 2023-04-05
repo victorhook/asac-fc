@@ -39,6 +39,7 @@ Pin definitions for custom PCB
 #define PIN_M2          19 // 1B
 #define PIN_M3          2  // 1A
 #define PIN_M4          27 // 5B
+#define PIN_M_DEBUG     16 // 0A
 
 #define PIN_VUSB_SENSE  24
 #define PIN_LED_ONBOARD 25

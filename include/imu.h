@@ -5,7 +5,11 @@
 #include "stdint.h"
 #include "stdio.h"
 
-
+typedef struct {
+    float x;
+    float y;
+    float z;
+}__attribute__((packed)) vector_3d_t;
 typedef struct {
     float gyro_x;
     float gyro_y;
@@ -13,14 +17,20 @@ typedef struct {
     float acc_x;
     float acc_y;
     float acc_z;
-    uint64_t timestamp_us;
-} imu_reading_t;
+    uint32_t timestamp_us;
+}__attribute__((packed)) imu_reading_t;
 
 
 int imu_init();
 
 
-void imu_get_latest_reading(imu_reading_t* reading);
+int imu_calibrate();
+
+
+const imu_reading_t* imu_get_bias();
+
+
+void imu_filter_gyro(const vector_3d_t* raw, vector_3d_t* filtered);
 
 
 void imu_read(imu_reading_t* reading);

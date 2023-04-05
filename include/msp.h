@@ -68,6 +68,8 @@ typedef struct {
 } msp_state_t;
 
 
+int msp_init(msp_state_t* state);
+
 /* Processes a single byte of an MSP packet. */
 void msp_process_byte(msp_state_t* state, const uint8_t byte);
 

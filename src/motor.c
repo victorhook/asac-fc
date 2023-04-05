@@ -25,14 +25,16 @@ static esc_protocol_t esc_protocol = ESC_PROTOCOL_PWM;
 static float pwm_perc_low;
 static float pwm_perc_high;
 
-#define MOTOR_PWM_LEVEL_SCALER ((uint16_t) 1000)
+#define MOTOR_PWM_LEVEL_SCALER ((uint16_t) 10000)
 
 static pwm_t pwm_m1;
 static pwm_t pwm_m2;
 static pwm_t pwm_m3;
 static pwm_t pwm_m4;
+static pwm_t pwm_m_debug;
 
 static pwm_t* pwm_motors[] = {
+    &pwm_m_debug,
     &pwm_m1,
     &pwm_m2,
     &pwm_m3,
@@ -51,7 +53,7 @@ static void init_pwm(pwm_t* pwm, uint gpio, float clk_divider, uint16_t wrap);
 // -- Public API -- //
 
 int motors_init() {
-    uint16_t wrap = 1000;
+    uint16_t wrap = MOTOR_PWM_LEVEL_SCALER;
     float clk_div;
 
     // Clock divider is given by:
@@ -59,7 +61,7 @@ int motors_init() {
 
     switch (esc_protocol) {
         case ESC_PROTOCOL_PWM:
-            clk_div = 255.10204081632654;
+            clk_div = 250;//255.10204081632654;
             pwm_perc_low  = 0.05;
             pwm_perc_high = 0.1;
             break;
@@ -79,11 +81,13 @@ int motors_init() {
             return -1;
     }
 
+    init_pwm(&pwm_m_debug, PIN_M_DEBUG, clk_div, wrap);
     init_pwm(&pwm_m1, PIN_M1, clk_div, wrap);
     init_pwm(&pwm_m2, PIN_M2, clk_div, wrap);
     init_pwm(&pwm_m3, PIN_M3, clk_div, wrap);
     init_pwm(&pwm_m4, PIN_M4, clk_div, wrap);
 
+    set_motor_pwm(MOTOR_DEBUG, 0.0);
     set_motor_pwm(MOTOR_1, 0.0);
     set_motor_pwm(MOTOR_2, 0.0);
     set_motor_pwm(MOTOR_3, 0.0);
@@ -98,7 +102,7 @@ void set_motor_pwm(const uint8_t motor, const float pwm) {
 
     uint16_t pwm_value = pulse * MOTOR_PWM_LEVEL_SCALER;
     //printf("M: %d, Org: %f, pulse: %f, pwm_value: %d\n", motor, pwm, pulse, pwm_value);
-    pwm_set(pwm_motors[motor-1], pwm_value);
+    pwm_set_level(pwm_motors[motor], pwm_value);
 }
 
 void set_all_motors_pwm(const motor_command_t* motor_command) {
@@ -107,7 +111,6 @@ void set_all_motors_pwm(const motor_command_t* motor_command) {
     set_motor_pwm(MOTOR_3, motor_command->m3);
     set_motor_pwm(MOTOR_4, motor_command->m4);
 }
-
 
 // -- Private -- //
 

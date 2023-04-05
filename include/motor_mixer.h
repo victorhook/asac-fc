@@ -5,10 +5,10 @@
 #include "stdint.h"
 
 typedef struct {
-    uint16_t m1;
-    uint16_t m2;
-    uint16_t m3;
-    uint16_t m4;
+    float m1;
+    float m2;
+    float m3;
+    float m4;
 }__attribute__((packed)) motor_mixer_command_t;
 
 

@@ -88,11 +88,11 @@ typedef struct {
 }__attribute__((packed)) msp_packet_build_info_t;
 
 
-// CUSTOM
+// -- CUSTOM -- //
 
 typedef struct {
     uint32_t address;
-    uint8_t size;
+    uint8_t  size;
 }__attribute__((packed)) msp_packet_read_mem_address_t;
 
 typedef struct {
@@ -116,6 +116,8 @@ typedef struct {
     } value;
 }__attribute__((packed)) msp_packet_write_mem_address_t;
 
+
+// -- Helper functions -- //
 
 static uint8_t calculate_crc(const msp_packet_t* rx_pkt) {
     uint8_t crc = rx_pkt->size ^ rx_pkt->command;
@@ -295,6 +297,7 @@ static void handle_packet(msp_state_t* state) {
             msp_packet_pid_t* set_pid = (msp_packet_pid_t*) tx_data;
             tx_data_len = sizeof(msp_packet_pid_t);
             break;
+        // -- Custom commands --/
         case MSP_READ_MEM_ADDRESS:
             msp_packet_read_mem_address_t* read_mem_address = (msp_packet_read_mem_address_t*) state->rx_pkt.data;
             msp_packet_read_mem_address_resp_t* read_mem_address_resp = (msp_packet_read_mem_address_resp_t*) tx_data;
@@ -308,6 +311,15 @@ static void handle_packet(msp_state_t* state) {
             msp_packet_write_mem_address_t* write_mem_address = (msp_packet_write_mem_address_t*) state->rx_pkt.data;
             memcpy(&(write_mem_address->address), &write_mem_address->value, write_mem_address->size);
             send_response = false;
+            break;
+        case MSP_TELEM_ACTIVATION_CONFIRM:
+            state->cb_telem_activation_confirm();
+            break;
+        case MSP_TELEM_ACTIVATION_DECLINE:
+            state->cb_telem_activation_decline();
+            break;
+        case MSP_TELEM_SESSION_ABORT:
+            state->cb_telem_session_abort();
             break;
     }
 
@@ -324,4 +336,8 @@ static void handle_packet(msp_state_t* state) {
         state->callback(state->tx_buf, state->tx_len);
     }
 
+}
+
+int msp_init(msp_state_t* state) {
+    return 0;
 }
