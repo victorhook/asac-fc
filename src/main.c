@@ -10,14 +10,18 @@
 #include "battery_adc.h"
 #include "settings.h"
 #include "state.h"
-#include "pid_controller.h"
+
+#include "uart_test.h"
 
 #include "pico/stdio.h"
+#include "pico/multicore.h"
 
 
 static void init_driver(int (*init_function)(), const char* name);
 
 static void go_to_error_during_startup();
+
+static void core1_entry();
 
 static int init_result = 0;
 
@@ -41,9 +45,10 @@ int main() {
     init_driver(receiver_init,       "Receiver");
     init_driver(battery_adc_init,    "Battery ADC");
     init_driver(imu_init,            "IMU");
-    init_driver(pid_controller_init, "PID Ctrl");
     init_driver(controller_init,     "Controller");
     init_driver(motors_init,         "Motors");
+
+    init_driver(uart_test_init,       "UART TEST");
 
     // Done booting
     led_set(LED_RED, 0);
@@ -54,11 +59,14 @@ int main() {
     }
 
     // Create tasks
+    //vsrtos_create_task(uart_test_update, "UART", 5, 1);
     vsrtos_create_task(controller_update, "Controller", 1000, 1);
-    //vsrtos_create_task(controller_debug, "Controller debug", 50, 1);
+    vsrtos_create_task(controller_debug, "Controller debug", 50, 1);
     vsrtos_create_task(controller_set_motors, "Motor Controller", 50, 1);
 
     state.mode = MODE_IDLE;
+
+    //multicore_launch_core1(core1_entry);
 
     // Start scheduler
     vsrtos_scheduler_start();
@@ -80,6 +88,10 @@ static void init_driver(int (*init_function)(), const char* name) {
     }
 
     init_result |= res;
+}
+
+static void core1_entry() {
+    
 }
 
 

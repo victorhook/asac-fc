@@ -6,12 +6,12 @@
 #include "string.h"
 
 // How much we trust each sample?
-#define GYRO_FILTER_ORDER 4
-static float gyro_filter_params[] = {0.25, 0.25, 0.25, 0.25};
-static vector_3d_t gyro_filter_mem[4];
+#define GYRO_FILTER_ORDER 10
+static float gyro_filter_params[GYRO_FILTER_ORDER];// = {0.5, 0.25, 0.125, 0.125};
+static vector_3d_t gyro_filter_mem[GYRO_FILTER_ORDER];
 static int gyro_filter_index;
 
-#define CALIBRATION_SAMPLES                  500
+#define CALIBRATION_SAMPLES                  1000
 #define CALIBRATION_DELAY_BETWEEN_SAMPLES_MS 1
 imu_reading_t last_reading;
 mpu6050_t mpu;
@@ -20,6 +20,10 @@ static imu_reading_t imu_bias;
 
 
 int imu_init() {
+    for (int i = 0; i < GYRO_FILTER_ORDER; i++) {
+        gyro_filter_params[i] = 1.0 / GYRO_FILTER_ORDER;
+    }
+
     imu_bias.gyro_x = 0;
     imu_bias.gyro_y = 0;
     imu_bias.gyro_z = 0;
@@ -69,9 +73,9 @@ int imu_calibrate() {
         imu_bias.gyro_x  += calibration.gyro_x;
         imu_bias.gyro_y  += calibration.gyro_y;
         imu_bias.gyro_z  += calibration.gyro_z;
-        imu_bias.acc_x += calibration.acc_x;
-        imu_bias.acc_y += calibration.acc_y;
-        imu_bias.acc_z += calibration.acc_z;
+        imu_bias.acc_x   += calibration.acc_x;
+        imu_bias.acc_y   += calibration.acc_y;
+        imu_bias.acc_z   += calibration.acc_z;
         //printf("%d Gx: %f, Gy: %f, Gz: %f",
         //    samples,
         //    calibration.gyro_x,
@@ -104,7 +108,7 @@ void imu_read(imu_reading_t* reading) {
     // printf("GYRO %f, %f, %f\n", reading->gyro_x, reading->gyro_y, reading->gyro_z);
 }
 
-void imu_filter_gyro(const vector_3d_t* raw, vector_3d_t* filtered) {
+void imu_filter_gyro(vector_3d_t* filtered, const vector_3d_t* raw) {
     // Shift all samples to the left
     for (int i = GYRO_FILTER_ORDER-1; i > 0; i--) {
         memcpy(&gyro_filter_mem[i], &gyro_filter_mem[i-1], sizeof(vector_3d_t));

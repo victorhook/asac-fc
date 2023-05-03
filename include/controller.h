@@ -39,8 +39,12 @@ extern pid_adjust_t          ctrl_attitude_rates_adjust; // @cal;
 extern motor_mixer_command_t ctrl_motor_mixer_command;
 extern motor_command_t       ctrl_motor_command_non_restricted;
 extern motor_command_t       ctrl_motor_command;
-extern uint32_t              last_update;
+extern uint32_t              last_ctrl_update;
 extern bool                  can_run_motors;
+extern pid_state_t           pid_roll;
+extern pid_state_t           pid_pitch;
+extern pid_state_t           pid_yaw;
+
 
 
 #endif /* CONTROLLER_H */

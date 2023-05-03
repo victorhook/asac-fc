@@ -10,12 +10,18 @@ typedef struct {
     float Kp;
     float Ki;
     float Kd;
-    uint16_t feed_forward;
+    float p;
+    float i;
+    float d;
+    float err;
     float err_integral;
     float last_err;
+    float d_err;
+    float pid;
     float integral_limit_threshold;
     bool  integral_disabled;
     uint32_t integral_disabled_timestamp;
+    uint16_t feed_forward;
 } pid_state_t;
 
 
