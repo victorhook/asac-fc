@@ -11,3 +11,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.nav-brand {
+  font-family: 'laila' !important;
+}
+
+@font-face {
+  font-family: 'laila';
+  src: url("./fonts//logo_font.ttf") format('truetype');
+}
