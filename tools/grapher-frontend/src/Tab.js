@@ -1,22 +1,33 @@
 import { useEffect, useState } from "react";
-import AVAILABLE_LOG_TYPES from "./LogTypes.js";
 
+function DisplayParam({ param }) {
+    return (
+        <div className="row">
+            <span className="col-8">
+                {param.name}
+            </span>
+            <span className="col-4">
+                {param.value}
+            </span>
+        </div>
+    )
+}
 
-function SideBarParam({ param, onCheckChange }) {
+function SideBarParam({ param, onPlotChecked, onDisplayChecked }) {
 
-    const [displayChecked, setdisplayChecked] = useState(param.checked);
-    const [plotChecked, setplotChecked] = useState(param.checked);
+    const [plotChecked, setplotChecked] = useState(param.plotChecked);
+    const [displayChecked, setdisplayChecked] = useState(param.displayChecked);
 
     const handleChangeDisplay = () => {
         let new_checked_value = !displayChecked;
         setdisplayChecked(new_checked_value);
-        onCheckChange(param, new_checked_value);
+        onDisplayChecked(param, new_checked_value);
     };
 
     const handleChangePlot = () => {
         let new_checked_value = !plotChecked;
         setplotChecked(new_checked_value);
-        onCheckChange(param, new_checked_value);
+        onPlotChecked(param, new_checked_value);
     };
 
     return (
@@ -28,14 +39,14 @@ function SideBarParam({ param, onCheckChange }) {
                 { param.type }
             </div>
             <div className="col-2">
-                <input class="form-check-input"
+                <input className="form-check-input"
                        type="checkbox"
                        checked={displayChecked}
                        onChange={handleChangeDisplay}
                 />
             </div>
             <div className="col-2">
-                <input class="form-check-input"
+                <input className="form-check-input"
                        type="checkbox"
                        checked={plotChecked}
                        onChange={handleChangePlot}
@@ -45,59 +56,91 @@ function SideBarParam({ param, onCheckChange }) {
     )
 }
 
-function Tab({ config }) {
+function Tab({ config, params, setParams, displayParams, plotParams }) {
 
-    const [params, setParams] = useState([]);
-
-    const onCheckChange = (param, checked) => {
-        for (let p of params) {
-            if (p.name == param.name) {
-                p.checked = checked;
+    const getParamByName = param_name => {
+        for (let param of params) {
+            if (param.name == param_name) {
+                return param;
             }
         }
-        setParams(params);
-        //params[param.name].checked = checked;
-        console.log(params);
     }
 
+    const onDisplayChecked = (param, checked) => {
+        setParams({
+            ...params,
+            [param.name]: {
+                ...params[param.name],
+                displayChecked: checked
+            }
+        });
+    }
 
-    useEffect(() => {
-        let new_params = AVAILABLE_LOG_TYPES.copyWithin(0, AVAILABLE_LOG_TYPES.length);
-        for (let param of new_params) {
-            param.checked = false;
-        }
-        setParams(new_params);
-    }, []);
+    const onPlotChecked = (param, checked) => {
+
+    }
 
     return (
         <div className="mt-3">
             <h2>{ config.name }</h2>
 
             <div className="row">
+
+                {/* -- Sidebar -- */}
                 <div className="col-3">
 
-                {/* Header */}
-                <div className="row mb-1">
-                    <div className="col-6">
-                        <span>Name</span>
+                    {/* Param Header */}
+                    <div className="row mb-1">
+                        <div className="col-6">
+                            <span>Name</span>
+                        </div>
+                        <div className="col-2">
+                            <span>Type</span>
+                        </div>
+                        <div className="col-2">
+                            <span>Display</span>
+                        </div>
+                        <div className="col-2">
+                            <span>Plot</span>
+                        </div>
+                        <hr />
                     </div>
-                    <div className="col-2">
-                        <span>Type</span>
-                    </div>
-                    <div className="col-2">
-                        <span>Display</span>
-                    </div>
-                    <div className="col-2">
-                        <span>Plot</span>
-                    </div>
-                    <hr />
+
+                    {/* Parameters */}
+                    {
+                        Object.keys(params).map(param_name =>
+                            <SideBarParam param={params[param_name]}
+                                          key={param_name}
+                                          onDisplayChecked={onDisplayChecked}
+                                          onPlotChecked={onPlotChecked}
+                            />)
+                    }
                 </div>
 
-                    {params.map(param => <SideBarParam param={param} onCheckChange={onCheckChange}/>)}
-                </div>
+                {/* Main tab content */}
+                <div className="col-9">
 
-                <div className="col-7">
+                    <div className="row">
 
+                        {/* Display */}
+                        <div className="col-3">
+                            <h2 className="text-center">Display</h2>
+                            <hr />
+                            {
+                                Object.keys(displayParams).map(param_name =>
+                                        <DisplayParam param={params[param_name]}
+                                                      key={param_name}
+                                        />)
+                            }
+                        </div>
+
+                        {/* Plot */}
+                        <div className="col-9">
+                            <h2 className="text-center">Plot</h2>
+                            <hr />
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
