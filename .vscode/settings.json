@@ -28,7 +28,22 @@
       "memory": "c",
       "inttypes.h": "c",
       "pid_controller.h": "c",
-      "stdlib.h": "c"
+      "stdlib.h": "c",
+      "receiver.h": "c",
+      "state.h": "c",
+      "array": "c",
+      "chrono": "c",
+      "compare": "c",
+      "istream": "c",
+      "ostream": "c",
+      "ranges": "c",
+      "ratio": "c",
+      "tuple": "c",
+      "type_traits": "c",
+      "utility": "c",
+      "machine.h": "c",
+      "uart_tx.pio.h": "c"
     },
     "esbonio.sphinx.confDir": "",
+    "cortex-debug.variableUseNaturalFormat": false,
 }

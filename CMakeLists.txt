@@ -27,9 +27,7 @@ add_executable(asac-fc
   src/main.c
   src/battery_adc.c
   src/settings.c
-  src/pid_controller.c
   src/pid.c
-  src/pid_controller.c
   src/ibus.c
   src/imu.c
   src/receiver.c
@@ -41,7 +39,17 @@ add_executable(asac-fc
   src/controller.c
   src/vsrtos.c
   src/state.c
+  src/vstp.c
+  src/asac_fc.c
+  src/telemetry.c
+  # PIO programs
+  include/drivers/uart_tx.pio
+  include/drivers/uart_rx.pio
 )
+
+pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/uart_tx.pio)
+pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/uart_rx.pio)
+
 
 add_compile_definitions(
   RP2040
@@ -66,11 +74,13 @@ target_include_directories(asac-fc PRIVATE
 
 # Add any user requested libraries
 target_link_libraries(asac-fc
-        hardware_i2c
-        hardware_adc
-        hardware_flash
-        hardware_sync
-        hardware_pwm
+  hardware_i2c
+  hardware_adc
+  hardware_flash
+  hardware_sync
+  hardware_pwm
+  hardware_pio
+  pico_multicore
 )
 
 pico_add_extra_outputs(asac-fc)

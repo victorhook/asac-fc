@@ -66,7 +66,7 @@ pid_state_t           pid_pitch;
 pid_state_t           pid_yaw;
 
 
-static log_block_control_loop_t log_block;
+static log_block_data_control_loop_t log_block;
 
 static void remove_bias_from_imu_reading(imu_reading_t* imu_no_bias, const imu_reading_t* imu_raw, const imu_reading_t* imu_bias);
 
@@ -113,6 +113,9 @@ int controller_init() {
 
 void controller_update() {
     notify_control_loop_started();
+
+    //notify_control_loop_ended();
+    //return;
 
     uint32_t ctrl_loop_started = time_us_32();
     float ctrl_loop_dt_s = (float) (ctrl_loop_started - last_ctrl_update) / 1000000.0;
@@ -328,16 +331,15 @@ void pid_controller_reset() {
 }
 
 
-
 static void notify_control_loop_started() {
 
 }
 
 static void notify_control_loop_ended() {
-    if (TELEMETRY_LOGGING) {
-        log_block.raw_gyro_x;
-        log_block.raw_gyro_y;
-        log_block.raw_gyro_z;
+    #ifdef TELEMETRY_LOGGING
+        log_block.raw_gyro_x = imu_raw.gyro_x;
+        log_block.raw_gyro_y = imu_raw.gyro_y;
+        log_block.raw_gyro_z = imu_raw.gyro_z;
         log_block.filtered_gyro_x;
         log_block.filtered_gyro_y;
         log_block.filtered_gyro_z;
@@ -389,6 +391,6 @@ static void notify_control_loop_ended() {
 
         log_block.battery;
 
-        telemetry_send_state((log_block_t*) &log_block, LOG_TYPE_PID);
-    }
+        telemetry_send_state((log_block_data_t*) &log_block, LOG_TYPE_PID);
+    #endif
 }

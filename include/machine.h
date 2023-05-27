@@ -56,6 +56,8 @@ Pin definitions for custom PCB
 
 #define I2C_BUS_IMU i2c1
 
+#define PIN_TELEMETRY_TX 16
+
 #define VBAT_ADC_INPUT_NUMBER 2
 #define PIN_VBAT_ADC          28
 

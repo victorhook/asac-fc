@@ -60,11 +60,18 @@ typedef void (*response_callback)(const uint8_t* data, const uint8_t len);
 #define MSP_RX_BUF_LEN 128
 #define MSP_TX_BUF_LEN 128
 
+typedef void(*msp_callback_t)();
+
 typedef struct {
     response_callback callback;
     msp_packet_t rx_pkt;
     uint8_t tx_buf[256];
     uint8_t tx_len;
+
+    // Callback functions: TODO better solution?
+    msp_callback_t cb_telem_activation_confirm;
+    msp_callback_t cb_telem_activation_decline;
+    msp_callback_t cb_telem_session_abort;
 } msp_state_t;
 
 

@@ -4,12 +4,20 @@
 #include "stdint.h"
 #include "stdbool.h"
 
-
 typedef enum
 {
-    LOG_TYPE_PID,
-    LOG_TYPE_BATTERY
+    LOG_TYPE_PID     = 0,
+    LOG_TYPE_BATTERY = 1
 } log_type_t;
+
+
+typedef struct
+{
+    log_type_t type;
+    uint32_t   timestamp;
+    uint32_t   id;
+}__attribute__((packed)) log_block_header_t;
+
 
 typedef struct {
     float raw_gyro_x;
@@ -65,26 +73,18 @@ typedef struct {
     float m4_restricted;
 
     float battery;
-} log_block_control_loop_t;
+}__attribute__((packed)) log_block_data_control_loop_t;
 
 
 typedef struct {
     float voltage;
-} log_block_battery_t;
+}__attribute__((packed)) log_block_data_battery_t;
 
 
 typedef union {
-    log_block_control_loop_t pid;
-    log_block_battery_t bat;
-} log_block_t;
-
-typedef struct
-{
-    log_type_t type;
-    uint32_t   timestamp;
-    uint64_t   id;
-}__attribute__((packed)) log_block_header_t;
-
+    log_block_data_control_loop_t pid;
+    log_block_data_battery_t bat;
+} log_block_data_t;
 
 
 #endif /* LOG_H */

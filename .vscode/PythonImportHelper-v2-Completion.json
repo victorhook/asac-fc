@@ -57,69 +57,11 @@
         "documentation": {}
     },
     {
-        "label": "ArgumentParser",
-        "importPath": "argparse",
-        "description": "argparse",
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
         "isExtraImport": true,
-        "detail": "argparse",
-        "documentation": {}
-    },
-    {
-        "label": "Namespace",
-        "importPath": "argparse",
-        "description": "argparse",
-        "isExtraImport": true,
-        "detail": "argparse",
-        "documentation": {}
-    },
-    {
-        "label": "ArgumentParser",
-        "importPath": "argparse",
-        "description": "argparse",
-        "isExtraImport": true,
-        "detail": "argparse",
-        "documentation": {}
-    },
-    {
-        "label": "os",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "os",
-        "description": "os",
-        "detail": "os",
-        "documentation": {}
-    },
-    {
-        "label": "Path",
-        "importPath": "pathlib",
-        "description": "pathlib",
-        "isExtraImport": true,
-        "detail": "pathlib",
-        "documentation": {}
-    },
-    {
-        "label": "List",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Tuple",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "re",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "re",
-        "description": "re",
-        "detail": "re",
+        "detail": "dataclasses",
         "documentation": {}
     },
     {
@@ -152,6 +94,104 @@
         "description": "dataclasses",
         "isExtraImport": true,
         "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "ArgumentParser",
+        "importPath": "argparse",
+        "description": "argparse",
+        "isExtraImport": true,
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "Namespace",
+        "importPath": "argparse",
+        "description": "argparse",
+        "isExtraImport": true,
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "ArgumentParser",
+        "importPath": "argparse",
+        "description": "argparse",
+        "isExtraImport": true,
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
         "documentation": {}
     },
     {
@@ -285,6 +325,195 @@
         "description": "tools.cal_server",
         "peekOfCode": "class CalServer:\n    def __init__(self, listen_port: int) -> None:\n        self.listen_port = listen_port\n        self.listen_socket: socket.socket = None\n        self.telemtry_socket: socket.socket = None\n        self.listen_request_queue = Queue()\n        self._listen_thread_flag = Event()\n    def is_connected(self) -> bool:\n        return self.listen_socket is not None\n    def route_traffic(self) -> None:",
         "detail": "tools.cal_server",
+        "documentation": {}
+    },
+    {
+        "label": "Param",
+        "kind": 6,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "class Param:\n    name: str\n@dataclass\nclass StructParam(Param):\n    type: str\n@dataclass\nclass EnumParam(Param):\n    value: str\n@dataclass\nclass Typedef:",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "StructParam",
+        "kind": 6,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "class StructParam(Param):\n    type: str\n@dataclass\nclass EnumParam(Param):\n    value: str\n@dataclass\nclass Typedef:\n    type: str\n    name: str\n    params: List[Param]",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "EnumParam",
+        "kind": 6,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "class EnumParam(Param):\n    value: str\n@dataclass\nclass Typedef:\n    type: str\n    name: str\n    params: List[Param]\ndef find_all_typedefs(c_code: str) -> None:\n    typedefs = []\n    current_typedef = None",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "Typedef",
+        "kind": 6,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "class Typedef:\n    type: str\n    name: str\n    params: List[Param]\ndef find_all_typedefs(c_code: str) -> None:\n    typedefs = []\n    current_typedef = None\n    current_params = []\n    prev_line = ''\n    for i, line in enumerate(c_code.splitlines()):",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "find_all_typedefs",
+        "kind": 2,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "def find_all_typedefs(c_code: str) -> None:\n    typedefs = []\n    current_typedef = None\n    current_params = []\n    prev_line = ''\n    for i, line in enumerate(c_code.splitlines()):\n        line = line.strip()\n        line = re.sub('\\s+', ' ', line)\n        if not line or line.startswith('//') or line.startswith('{'):\n            continue",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "now",
+        "kind": 2,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "def now() -> str:\n    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')\ndef write_js_output(typedefs: List[Typedef], output_path: Path) -> None:\n    header = AUTO_GENERATED_FILE_COMMENT.format(now())\n    output = f'/*\\n{header}*/\\n\\n'\n    for typedef in typedefs:\n        if typedef.name == 'log_block_data_control_loop_t':\n            name = 'AVAILABLE_LOG_TYPES'\n            output += f'const {name} = [\\n'\n            for param in typedef.params:",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "write_js_output",
+        "kind": 2,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "def write_js_output(typedefs: List[Typedef], output_path: Path) -> None:\n    header = AUTO_GENERATED_FILE_COMMENT.format(now())\n    output = f'/*\\n{header}*/\\n\\n'\n    for typedef in typedefs:\n        if typedef.name == 'log_block_data_control_loop_t':\n            name = 'AVAILABLE_LOG_TYPES'\n            output += f'const {name} = [\\n'\n            for param in typedef.params:\n                output += '    {name: \"%s\", type: \"%s\"},\\n' % (param.name, param.type)\n            output = output[:-2] # Remove last comma",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "write_python_output",
+        "kind": 2,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "def write_python_output(typedefs: List[Typedef], output_path: Path) -> None:\n    header = AUTO_GENERATED_FILE_COMMENT.format(now())\n    output = f'\"\"\"\\n{header}\"\"\"\\n\\n'\n    output = 'from dataclasses import dataclass, fields\\n'\n    output += 'import struct\\n'\n    output += 'from enum import IntEnum\\n\\n'\n    output += '@dataclass\\n'\n    output += 'class log_block_t:\\n'\n    output += '    pass\\n\\n'\n    def format_struct(typedef: Typedef, parent: str = None) -> str:",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "PROJECT_BASE_DIR",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "PROJECT_BASE_DIR = Path(__file__).absolute().parent.parent\nINCLUDE_DIR = PROJECT_BASE_DIR.joinpath('include')\nJS_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'grapher-frontend', 'src')\nPYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "INCLUDE_DIR",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "INCLUDE_DIR = PROJECT_BASE_DIR.joinpath('include')\nJS_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'grapher-frontend', 'src')\nPYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "JS_TARGET_DIR",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "JS_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'grapher-frontend', 'src')\nPYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "PYTHON_TARGET_DIR",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "PYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\\nAuto-generated file. Please don\\'t modify directly!",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "JS_TARGET_FILE",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "JS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\\nAuto-generated file. Please don\\'t modify directly!\nGenerated: {}",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "PYTHON_TARGET_FILE",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "PYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\\nAuto-generated file. Please don\\'t modify directly!\nGenerated: {}\n'''",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "JS_TARGET_FILEPATH",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "JS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\\nAuto-generated file. Please don\\'t modify directly!\nGenerated: {}\n'''\nC_TYPE_FORMATS = {",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "PYTHON_TARGET_FILEPATH",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "PYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\\nAuto-generated file. Please don\\'t modify directly!\nGenerated: {}\n'''\nC_TYPE_FORMATS = {\n    'log_type_t': 'B',",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "LOG_HEADER_FILE",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "LOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\\nAuto-generated file. Please don\\'t modify directly!\nGenerated: {}\n'''\nC_TYPE_FORMATS = {\n    'log_type_t': 'B',\n    'uint8_t': 'B',",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "LOG_HEADER_PATH",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "LOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\\nAuto-generated file. Please don\\'t modify directly!\nGenerated: {}\n'''\nC_TYPE_FORMATS = {\n    'log_type_t': 'B',\n    'uint8_t': 'B',\n    'bool': '?',",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "LOG_TYPEDEF_NAME",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "LOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\\nAuto-generated file. Please don\\'t modify directly!\nGenerated: {}\n'''\nC_TYPE_FORMATS = {\n    'log_type_t': 'B',\n    'uint8_t': 'B',\n    'bool': '?',\n    'uint16_t': 'H',",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "AUTO_GENERATED_FILE_COMMENT",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "AUTO_GENERATED_FILE_COMMENT = '''\\\nAuto-generated file. Please don\\'t modify directly!\nGenerated: {}\n'''\nC_TYPE_FORMATS = {\n    'log_type_t': 'B',\n    'uint8_t': 'B',\n    'bool': '?',\n    'uint16_t': 'H',\n    'uint32_t': 'I',",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "C_TYPE_FORMATS",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "C_TYPE_FORMATS = {\n    'log_type_t': 'B',\n    'uint8_t': 'B',\n    'bool': '?',\n    'uint16_t': 'H',\n    'uint32_t': 'I',\n    'uint64_t': 'Q',\n    'int': 'i',\n    'float': 'f',\n}",
+        "detail": "tools.gen_log_params",
         "documentation": {}
     },
     {

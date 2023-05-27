@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import re
 from typing import List, Union
+from datetime import datetime
 
 PROJECT_BASE_DIR = Path(__file__).absolute().parent.parent
 INCLUDE_DIR = PROJECT_BASE_DIR.joinpath('include')
@@ -18,11 +19,18 @@ LOG_HEADER_FILE = 'log.h'
 LOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)
 LOG_TYPEDEF_NAME = 'log_block_control_loop_t'
 
+AUTO_GENERATED_FILE_COMMENT = '''\
+Auto-generated file. Please don\'t modify directly!
+Generated: {}
+'''
+
 C_TYPE_FORMATS = {
+    'log_type_t': 'B',
     'uint8_t': 'B',
     'bool': '?',
     'uint16_t': 'H',
     'uint32_t': 'I',
+    'uint64_t': 'Q',
     'int': 'i',
     'float': 'f',
 }
@@ -40,65 +48,168 @@ class EnumParam(Param):
     value: str
 
 
-def find_params_for(c_code: str, decl_type: str, decl_name: str) -> List[Param]:
-    '''
-    Finds all "parameters" in the given c code of declaration type "decl_type"
-    decl_type can be any of "struct", "union", "enum" etc.
+@dataclass
+class Typedef:
+    type: str
+    name: str
+    params: List[Param]
 
-    Example: find_params_for(c_code, 'struct', 'my_struct_t')
-        Expected format of c code:
-            typedef struct
-            {
-                int x;
-                int y;
-            } my_struct_t;
 
-        This will results in: [
-            Param(name=x, type=int),
-            Param(name=y, type=int)
-        ]
-    '''
+def find_all_typedefs(c_code: str) -> None:
+    typedefs = []
+    current_typedef = None
+    current_params = []
+    prev_line = ''
 
-    regex = 'typedef %s\s*\{(.*?)\} %s;' % (decl_type, decl_name)
-    res = re.search(regex, c_code, flags=re.DOTALL)
-    print(f'{decl_type} {decl_name} -> Using regex: {regex}')
-    _params = res.group(1)
-
-    params = []
-
-    for p in filter(len, _params.splitlines()):
-        p = p.strip()
-        if p.startswith('//'):
+    for i, line in enumerate(c_code.splitlines()):
+        line = line.strip()
+        line = re.sub('\s+', ' ', line)
+        if not line or line.startswith('//') or line.startswith('{'):
             continue
 
-        p = re.sub('\s+', ' ', p)
-        split = p.split(' ')
+        split = line.split(' ')
 
-        if decl_type.lower() == 'enum':
-            # ENUM
-            enum_name = split[0]
-            if len(split) == 3:
-                enum_value = split[2]
-                if enum_value.endswith(','):
-                    enum_value = enum_value[:-1]
-            else:
-                # No specific enum value gives, we'll deduce it
-                enum_value = len(params)
-            param = EnumParam(enum_name, enum_value)
+        #print(f'LINE: {line}, TYPEDEF IS: {current_typedef}')
 
-        elif decl_type.lower() == 'struct':
-            # STRUCT
-            param_type, param_name = split
-            if param_name.endswith(';'):
-                param_name = param_name[:-1]
-
-            param = StructParam(param_name, param_type)
+        if current_typedef is None:
+            if 'typedef' in line:
+                typedef_type = split[1]
+                #print('NEW TYPEDEF', typedef_type)
+                current_typedef = typedef_type.strip()
         else:
-            raise RuntimeError(f'Dont have support for type {decl_type} yet!')
+            res = re.search('\s*\}.*?\s(.*?);', line)
+            if res:
+                # Check if we've reached end of typedef
+                typedef_name = res.group(1)
+                typedefs.append(Typedef(
+                    current_typedef,
+                    typedef_name,
+                    current_params
+                ))
+                current_typedef = None
+                current_params = []
+            else:
+                # Parse params
+                if current_typedef == 'enum':
+                    # ENUM
+                    enum_name = split[0]
+                    if len(split) == 3:
+                        enum_value = split[2]
+                        if enum_value.endswith(','):
+                            enum_value = enum_value[:-1]
+                    else:
+                        # No specific enum value gives, we'll deduce it
+                        enum_value = len(current_params)
+                    param = EnumParam(enum_name, enum_value)
+                elif current_typedef == 'struct':
+                    # STRUCT
+                    #print(prev_line, '|', line, '> ', split)
+                    param_type, param_name = split
+                    if param_name.endswith(';'):
+                        param_name = param_name[:-1]
 
-        params.append(param)
+                    param = StructParam(param_name, param_type)
+                else:
+                    print(f'Dont have support for type {current_typedef} yet!')
+                    continue
 
-    return params
+                current_params.append(param)
+
+
+    return typedefs
+
+def now() -> str:
+    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def write_js_output(typedefs: List[Typedef], output_path: Path) -> None:
+    header = AUTO_GENERATED_FILE_COMMENT.format(now())
+    output = f'/*\n{header}*/\n\n'
+
+    for typedef in typedefs:
+        if typedef.name == 'log_block_data_control_loop_t':
+            name = 'AVAILABLE_LOG_TYPES'
+            output += f'const {name} = [\n'
+            for param in typedef.params:
+                output += '    {name: "%s", type: "%s"},\n' % (param.name, param.type)
+            output = output[:-2] # Remove last comma
+            output += '\n]\n'
+            output += f'\nexport default {name};\n'
+
+    with open(output_path, 'w') as f:
+        f.write(output)
+
+    print(f'Written log typedef to {output_path}')
+
+
+def write_python_output(typedefs: List[Typedef], output_path: Path) -> None:
+    header = AUTO_GENERATED_FILE_COMMENT.format(now())
+    output = f'"""\n{header}"""\n\n'
+
+    output = 'from dataclasses import dataclass, fields\n'
+    output += 'import struct\n'
+    output += 'from enum import IntEnum\n\n'
+
+    output += '@dataclass\n'
+    output += 'class log_block_t:\n'
+    output += '    pass\n\n'
+
+    def format_struct(typedef: Typedef, parent: str = None) -> str:
+        struct_fmt = '<'
+        output = ''
+        output += '@dataclass\n'
+        if parent is not None:
+            output += f'class {typedef.name}({parent}):\n'
+        else:
+            output += f'class {typedef.name}:\n'
+
+        for param in typedef.params:
+            fmt = C_TYPE_FORMATS.get(param.type)
+            if fmt is None:
+                raise RuntimeError('Failed to find struct type format for '
+                                  f'{param.name}, type: {param.type}')
+
+            output += f'    {param.name}: float = 0 # {param.type}\n'
+            struct_fmt += fmt
+
+        output += '\n    fmt = \'' + struct_fmt + '\'\n'
+        output += f'    size = struct.calcsize(fmt)\n\n'
+
+        # Add to_bytes() function
+        output += '    def to_bytes(self) -> bytes:\n'
+        output += f'        """ Returns a {typedef.name} in bytes. """\n'
+        output += f'        fmt = self.fmt\n'
+        if typedef.name != 'log_block_header_t':
+            output += '        fmt = super().fmt + fmt.replace("<", "")\n'
+        output += '        raw = struct.pack(fmt, *[getattr(self, f.name) for f in fields(self)])\n'
+        output += '        return raw\n\n'
+
+        return output
+
+    def format_enum(typedef: Typedef) -> str:
+        output = ''
+        output += f'class {typedef.name}(IntEnum):\n'
+        for enum_type in typedef.params:
+            output += f'    {enum_type.name} = {enum_type.value}\n'
+        output += '\n'
+        return output
+
+    for typedef in typedefs:
+        if typedef.type == 'struct':
+            # All log blocks that are not header should inherit header.
+            if typedef.name.startswith('log_block_data'):
+                output += format_struct(typedef, parent='log_block_header_t')
+            elif typedef.name.startswith('log_block_header'):
+                output += format_struct(typedef, parent='log_block_t')
+            else:
+                output += format_struct(typedef)
+        elif typedef.type == 'enum':
+            output += format_enum(typedef)
+
+    with open(PYTHON_TARGET_FILEPATH, 'w') as f:
+        f.write(output)
+
+    print(f'Written log typedef to {PYTHON_TARGET_FILEPATH}')
 
 
 
@@ -108,54 +219,8 @@ if __name__ == '__main__':
     with open(LOG_HEADER_PATH) as f:
         c_code = f.read()
 
-    log_ctrl_loop_params = find_params_for(c_code, 'struct', 'log_block_control_loop_t')
-    log_block_types = find_params_for(c_code, 'enum', 'log_type_t')
+    typedefs = find_all_typedefs(c_code)
+    print(f'Found {len(typedefs)} typedefs!')
 
-    # Write JS output
-    name = 'AVAILABLE_LOG_TYPES'
-    output = f'const {name} = [\n'
-    for param in log_ctrl_loop_params:
-        output += '    {name: "%s", type: "%s"},\n' % (param.name, param.type)
-    output = output[:-2] # Remove last comma
-    output += '\n]\n'
-    output += f'\nexport default {name};\n'
-
-    with open(JS_TARGET_FILEPATH, 'w') as f:
-        f.write(output)
-
-    print(f'Written log typedef to {JS_TARGET_FILEPATH}')
-
-
-    # Create log_block_control_loop_t python dataclass
-    struct_fmt = '<'
-
-    output = 'from dataclasses import dataclass\n'
-    output += 'import struct\n'
-    output += 'from enum import IntEnum\n\n'
-    output += '@dataclass\n'
-    output += 'class log_block_control_loop_t:\n'
-
-    for param in log_ctrl_loop_params:
-        fmt = C_TYPE_FORMATS.get(param.type)
-        if fmt is None:
-            raise RuntimeError('Failed to find struct type format for '
-                               f'{param.name}, type: {param.type}')
-
-        output += f'    {param.name}: float = 0 # {param.type}\n'
-        struct_fmt += fmt
-
-    output += '\n    fmt = \'' + struct_fmt + '\'\n'
-    output += f'    size = struct.calcsize(fmt)\n\n'
-
-    # Add log_type_t python IntEnum
-    output += 'class log_type_t(IntEnum):\n'
-    for enum_type in log_block_types:
-        output += f'    {enum_type.name} = {enum_type.value}\n'
-    output += '\n'
-
-    with open(PYTHON_TARGET_FILEPATH, 'w') as f:
-        f.write(output)
-
-    print(f'Written log typedef to {PYTHON_TARGET_FILEPATH}')
-
-    # Write python output
+    write_js_output(typedefs, JS_TARGET_FILEPATH)
+    write_python_output(typedefs, PYTHON_TARGET_FILEPATH)
