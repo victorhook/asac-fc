@@ -1,0 +1,3 @@
+#!/bin/bash
+
+make && make flash_serial && tools/monitor.py /dev/ttyACM0
