@@ -1,7 +1,12 @@
 #include "asac_fc.h"
 
 
-uint64_t us_since_boot()
+uint32_t us_since_boot()
 {
-    return to_us_since_boot(make_timeout_time_us(time_us_64()));
+    return (uint32_t) to_us_since_boot(get_absolute_time());
+}
+
+uint32_t ms_since_boot()
+{
+    to_ms_since_boot(get_absolute_time());
 }

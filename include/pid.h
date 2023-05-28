@@ -4,7 +4,6 @@
 #include "stdint.h"
 #include "pico/stdlib.h"
 
-#define getCurrentTime() 0
 
 typedef struct {
     float Kp;

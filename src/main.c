@@ -53,13 +53,13 @@ int main() {
 
     if (init_result != 0) {
         state.mode = MODE_ERROR;
-        //go_to_error_during_startup();
+        go_to_error_during_startup();
     }
 
     // Create tasks
     //vsrtos_create_task(uart_test_update, "UART", 5, 1);
     //vsrtos_create_task(controller_debug, "Controller debug", 50, 1);
-    vsrtos_create_task(controller_update, "Controller", 100, 1);
+    vsrtos_create_task(controller_update, "Controller", 500, 1);
     vsrtos_create_task(controller_set_motors, "Motor Controller", 50, 1);
 
     state.mode = MODE_IDLE;

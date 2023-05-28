@@ -12,7 +12,6 @@ typedef struct {
 
 int receiver_init();
 
-
 void receiver_get_last_packet(rc_input_t* packet);
 
 

@@ -11,7 +11,7 @@
 
 
 static vstp_client_t vstp_client;
-static control_update_flag;
+static uint8_t control_update_flag;
 
 static uint8_t tx[256];
 static uint8_t tx_len;
@@ -41,7 +41,7 @@ const uint BAUDRATE = 921600;
 
 static int uart_pio_init();
 
-static void uart_write(const char* data, const uint16_t len) {
+static void uart_write(const uint8_t* data, const uint8_t len) {
     uart_tx_program_write(pio_inst, pio_sm_tx, data, len);
 }
 
@@ -63,7 +63,7 @@ void telemetry_update() {
         return;
     }
 
-    vstp_transmit(&vstp_client, VSTP_CMD_LOG_DATA, &tx, tx_len);
+    vstp_transmit(&vstp_client, VSTP_CMD_LOG_DATA, (uint8_t*) &tx, tx_len);
 
     control_update_flag = 0;
 }

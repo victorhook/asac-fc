@@ -11,6 +11,8 @@ static float gyro_filter_params[GYRO_FILTER_ORDER];// = {0.5, 0.25, 0.125, 0.125
 static vector_3d_t gyro_filter_mem[GYRO_FILTER_ORDER];
 static int gyro_filter_index;
 
+// #define CALIBRATE_ON_INIT
+
 #define CALIBRATION_SAMPLES                  1000
 #define CALIBRATION_DELAY_BETWEEN_SAMPLES_MS 1
 imu_reading_t last_reading;
@@ -44,6 +46,7 @@ int imu_init() {
         return res;
     }
 
+    #ifdef CALIBRATE_ON_INIT
     res = imu_calibrate();
     if (res != 0) {
         return res;
@@ -58,6 +61,15 @@ int imu_init() {
         imu_bias.acc_y,
         imu_bias.acc_z
     );
+    #else
+        // Pre-calibrated gyro bias. TODO: Place this in flash.
+        imu_bias.gyro_x = -2.688686;
+        imu_bias.gyro_y = -1.922470;
+        imu_bias.gyro_z = 1.760995;
+        imu_bias.acc_x  = -0.033133;
+        imu_bias.acc_y  = -0.005135;
+        imu_bias.acc_z  = 1.018919;
+    #endif
 
     memset(gyro_filter_mem, 0, sizeof(gyro_filter_mem) / sizeof(vector_3d_t));
     gyro_filter_index = 0;

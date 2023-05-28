@@ -7,6 +7,8 @@
 #include "telemetry.h"
 #include "log.h"
 
+#include "ibus.h"
+
 #include "string.h"
 #include "pico/multicore.h"
 
@@ -60,10 +62,12 @@ motor_command_t       ctrl_motor_command_non_restricted;
 motor_command_t       ctrl_motor_command;
 uint32_t              last_ctrl_update;
 uint32_t              last_pid_update;
-bool                  can_run_motors;
 pid_state_t           pid_roll;
 pid_state_t           pid_pitch;
 pid_state_t           pid_yaw;
+
+// TODO: Move to receiver?
+ibus_statistics_t     radio_stats;
 
 
 static log_block_data_control_loop_t log_block;
@@ -96,6 +100,9 @@ static void pid_controller_update(const rates_t* measured, const rates_t* desire
 
 static void pid_controller_reset();
 
+// Print debug
+static void print_rc_input();
+
 
 // If no packed received within this timeout, we consider ourself NOT connected.
 #define CONNECTED_TIMEOUT_MS 500
@@ -104,7 +111,7 @@ static bool debug_print = false;
 
 
 int controller_init() {
-    last_ctrl_update = time_us_32();
+    last_ctrl_update = us_since_boot();
 
     int result = pid_controller_init();
 
@@ -114,10 +121,7 @@ int controller_init() {
 void controller_update() {
     notify_control_loop_started();
 
-    //notify_control_loop_ended();
-    //return;
-
-    uint32_t ctrl_loop_started = time_us_32();
+    uint32_t ctrl_loop_started = us_since_boot();
     float ctrl_loop_dt_s = (float) (ctrl_loop_started - last_ctrl_update) / 1000000.0;
 
     // Step X. Read data from IMU
@@ -129,6 +133,7 @@ void controller_update() {
     remove_bias_from_imu_reading(&imu_no_bias, &imu_raw, imu_bias_);
 
     // Step X. Filter IMU data?
+    //memcpy(&imu_filtered, &imu_no_bias, sizeof(imu_reading_t));
     imu_filter_gyro((vector_3d_t*) &imu_filtered.gyro_x, (vector_3d_t*) &imu_no_bias.gyro_x);
 
     // Step X. IMU reading to attitude rates
@@ -167,12 +172,15 @@ void controller_update() {
     }
 
     if (state.is_armed && state.is_connected) {
-        can_run_motors = true;
+        state.can_run_motors = true;
     } else {
-        can_run_motors = false;
+        state.can_run_motors = false;
     }
 
-    if (!can_run_motors) {
+    // TODO: REMOVE THIS
+    //state.can_run_motors = false;
+
+    if (!state.can_run_motors) {
         setpoint.rates.roll  = 0;
         setpoint.rates.pitch = 0;
         setpoint.rates.yaw   = 0;
@@ -192,7 +200,7 @@ void controller_update() {
     ctrl_motor_command_non_restricted.m3 = (constrain(ctrl_motor_mixer_command.m3, THROTTLE_MIN, THROTTLE_MAX) - 1000) / 1000.0;
     ctrl_motor_command_non_restricted.m4 = (constrain(ctrl_motor_mixer_command.m4, THROTTLE_MIN, THROTTLE_MAX) - 1000) / 1000.0;
 
-    if (can_run_motors) {
+    if (state.can_run_motors) {
         ctrl_motor_command.m1 = ctrl_motor_command_non_restricted.m1;
         ctrl_motor_command.m2 = ctrl_motor_command_non_restricted.m2;
         ctrl_motor_command.m3 = ctrl_motor_command_non_restricted.m3;
@@ -203,6 +211,9 @@ void controller_update() {
         ctrl_motor_command.m3 = 0;
         ctrl_motor_command.m4 = 0;
     }
+
+    ibus_get_statistics(&radio_stats);
+    //print_rc_input();
 
     notify_control_loop_ended();
 }
@@ -223,6 +234,14 @@ void controller_debug() {
     pid_roll.i,
     pid_roll.d
    );
+}
+
+static void print_rc_input() {
+    printf("RC INPUT: ");
+    for (int i = 0; i < 14; i++) {
+        printf("%d ", ctrl_rc_input_raw.channels[i]);
+    }
+    printf("\n");
 }
 
 void controller_set_motors() {
@@ -262,7 +281,7 @@ static void remove_bias_from_imu_reading(imu_reading_t* imu_no_bias, const imu_r
 }
 
 static bool is_connected(const rc_input_t* rc_input_raw) {
-    return ((time_us_32() - rc_input_raw->timestamp) < (CONNECTED_TIMEOUT_MS * 1000));
+    return ((ms_since_boot() - rc_input_raw->timestamp) < (CONNECTED_TIMEOUT_MS));
 }
 
 static bool is_armed(const rc_input_t* rc_input_constrained) {
@@ -293,23 +312,23 @@ static void convert_rc_input_to_setpoint(const rc_input_t* rc_input, setpoint_t*
 }
 
 int pid_controller_init() {
-    last_pid_update = time_us_32();
+    last_pid_update = us_since_boot();
 
     memset(&pid_roll, 0, sizeof(pid_state_t));
-    pid_roll.Kp = 2.5;
-    pid_roll.Ki = 0.25;
+    pid_roll.Kp = 0.5;
+    pid_roll.Ki = 0;
     pid_roll.Kd = 0;
     pid_roll.integral_limit_threshold = 100;
 
     memset(&pid_pitch, 0, sizeof(pid_state_t));
-    pid_pitch.Kp = 2.5;
-    pid_pitch.Ki = 0.25;
+    pid_pitch.Kp =0.51;
+    pid_pitch.Ki = 0;
     pid_pitch.Kd = 0;
     pid_pitch.integral_limit_threshold = 100;
 
     memset(&pid_yaw, 0, sizeof(pid_state_t));
     pid_yaw.Kp = 0.25;
-    pid_yaw.Ki = 0.5;
+    pid_yaw.Ki = 0;
     pid_yaw.Kd = 0;
     pid_yaw.integral_limit_threshold = 100;
 
@@ -318,11 +337,11 @@ int pid_controller_init() {
 
 
 void pid_controller_update(const rates_t* measured, const rates_t* desired, pid_adjust_t* adjust) {
-    float dt_s = (float) (time_us_32() - last_pid_update) / 1000000.0;
+    float dt_s = (float) (us_since_boot() - last_pid_update) / 1000000.0;
     adjust->roll  = pid_update(&pid_roll,  measured->roll,  desired->roll,  dt_s);
     adjust->pitch = pid_update(&pid_pitch, measured->pitch, desired->pitch, dt_s);
     adjust->yaw   = pid_update(&pid_yaw,   measured->yaw,   desired->yaw,   dt_s);
-    last_pid_update = time_us_32();
+    last_pid_update = us_since_boot();
 }
 
 void pid_controller_reset() {
@@ -340,56 +359,60 @@ static void notify_control_loop_ended() {
         log_block.raw_gyro_x = imu_raw.gyro_x;
         log_block.raw_gyro_y = imu_raw.gyro_y;
         log_block.raw_gyro_z = imu_raw.gyro_z;
-        log_block.filtered_gyro_x;
-        log_block.filtered_gyro_y;
-        log_block.filtered_gyro_z;
-        log_block.rc_in_roll;
-        log_block.rc_in_pitch;
-        log_block.rc_in_yaw;
-        log_block.rc_in_throttle;
-        log_block.setpoint_roll;
-        log_block.setpoint_pitch;
-        log_block.setpoint_yaw;
-        log_block.setpoint_throttle;
-        log_block.is_connected;
-        log_block.is_armed;
-        log_block.can_run_motors;
-        // Goes for Roll, Pitch & Yaw:
-        log_block.roll_error;
-        log_block.roll_error_integral;
-        log_block.roll_p;
-        log_block.roll_i;
-        log_block.roll_d;
-        log_block.roll_pid;
-        log_block.roll_adjust;
+        log_block.filtered_gyro_x = imu_filtered.gyro_x;
+        log_block.filtered_gyro_y = imu_filtered.gyro_y;
+        log_block.filtered_gyro_z = imu_filtered.gyro_z;
+        log_block.rc_in_roll = ctrl_rc_input_raw.channels[RC_CHANNEL_ROLL];
+        log_block.rc_in_pitch = ctrl_rc_input_raw.channels[RC_CHANNEL_PITCH];
+        log_block.rc_in_yaw = ctrl_rc_input_raw.channels[RC_CHANNEL_YAW];
+        log_block.rc_in_throttle = ctrl_rc_input_raw.channels[RC_CHANNEL_THROTTLE];
+        log_block.setpoint_roll = setpoint.rates.roll;
+        log_block.setpoint_pitch = setpoint.rates.pitch;
+        log_block.setpoint_yaw = setpoint.rates.yaw;
+        log_block.setpoint_throttle = setpoint.throttle;
+        log_block.is_connected = state.is_connected;
+        log_block.is_armed = state.is_armed;
+        log_block.can_run_motors = state.can_run_motors;
 
-        log_block.pitch_error;
-        log_block.pitch_error_integral;
-        log_block.pitch_p;
-        log_block.pitch_i;
-        log_block.pitch_d;
-        log_block.pitch_pid;
-        log_block.pitch_adjust;
+        // PID params for Roll, Pitch & Yaw:
+        log_block.roll_error = pid_roll.err;
+        log_block.roll_error_integral = pid_roll.err_integral;
+        log_block.roll_p = pid_roll.p;
+        log_block.roll_i = pid_roll.i;
+        log_block.roll_d = pid_roll.d;
+        log_block.roll_pid = pid_roll.pid;
 
-        log_block.yaw_error;
-        log_block.yaw_error_integral;
-        log_block.yaw_p;
-        log_block.yaw_i;
-        log_block.yaw_d;
-        log_block.yaw_pid;
-        log_block.yaw_adjust;
+        log_block.pitch_error = pid_pitch.err;
+        log_block.pitch_error_integral = pid_pitch.err_integral;
+        log_block.pitch_p = pid_pitch.p;
+        log_block.pitch_i = pid_pitch.i;
+        log_block.pitch_d = pid_pitch.d;
+        log_block.pitch_pid = pid_pitch.pid;
 
-        log_block.m1_non_restricted;
-        log_block.m2_non_restricted;
-        log_block.m3_non_restricted;
-        log_block.m4_non_restricted;
+        log_block.yaw_error = pid_yaw.err;
+        log_block.yaw_error_integral = pid_yaw.err_integral;
+        log_block.yaw_p = pid_yaw.p;
+        log_block.yaw_i = pid_yaw.i;
+        log_block.yaw_d = pid_yaw.d;
+        log_block.yaw_pid = pid_yaw.pid;
 
-        log_block.m1_restricted;
-        log_block.m2_restricted;
-        log_block.m3_restricted;
-        log_block.m4_restricted;
+        log_block.m1_non_restricted = ctrl_motor_command_non_restricted.m1;
+        log_block.m2_non_restricted = ctrl_motor_command_non_restricted.m2;
+        log_block.m3_non_restricted = ctrl_motor_command_non_restricted.m3;
+        log_block.m4_non_restricted = ctrl_motor_command_non_restricted.m4;
 
-        log_block.battery;
+        log_block.m1_restricted = ctrl_motor_command.m1;
+        log_block.m2_restricted = ctrl_motor_command.m2;
+        log_block.m3_restricted = ctrl_motor_command.m3;
+        log_block.m4_restricted = ctrl_motor_command.m4;
+
+        log_block.battery = 0;
+
+        // Radio
+        log_block.successful_packets   = radio_stats.successful_packets;
+        log_block.parse_errors         = radio_stats.parse_errors;
+        log_block.last_received_packet = radio_stats.last_received_packet;
+        log_block.packet_rate          = radio_stats.packet_rate;
 
         telemetry_send_state((log_block_data_t*) &log_block, LOG_TYPE_PID);
     #endif

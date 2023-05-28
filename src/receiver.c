@@ -27,6 +27,8 @@ static void init_ibus_uart()
     irq_set_exclusive_handler(UART1_IRQ, on_ibus_uart_rx);
     irq_set_enabled(UART1_IRQ, true);
 
+    uart_set_fifo_enabled(uart1, true);
+
     uart_set_irq_enables(uart1, true, false);
 }
 

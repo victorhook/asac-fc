@@ -17,7 +17,10 @@
 
 //#define RP2040
 
-uint64_t us_since_boot();
+
+uint32_t us_since_boot();
+
+uint32_t ms_since_boot();
 
 
 #endif /* ASAC_FC_H */

@@ -44,7 +44,6 @@ typedef struct {
     float roll_i;
     float roll_d;
     float roll_pid;
-    float roll_adjust;
 
     float pitch_error;
     float pitch_error_integral;
@@ -52,7 +51,6 @@ typedef struct {
     float pitch_i;
     float pitch_d;
     float pitch_pid;
-    float pitch_adjust;
 
     float yaw_error;
     float yaw_error_integral;
@@ -60,7 +58,6 @@ typedef struct {
     float yaw_i;
     float yaw_d;
     float yaw_pid;
-    float yaw_adjust;
 
     float m1_non_restricted;
     float m2_non_restricted;
@@ -73,6 +70,11 @@ typedef struct {
     float m4_restricted;
 
     float battery;
+    uint32_t successful_packets;
+    uint32_t parse_errors;
+    uint32_t last_received_packet;
+    uint32_t packet_rate;
+
 }__attribute__((packed)) log_block_data_control_loop_t;
 
 

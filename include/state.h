@@ -15,6 +15,7 @@ typedef enum {
 typedef struct {
     bool         is_armed;
     bool         is_connected;
+    bool         can_run_motors;
     drone_mode_t mode;
 } state_t;
 
