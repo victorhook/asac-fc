@@ -2,9 +2,9 @@
 #define CONTROLLER_H
 
 #include "imu.h"
-#include "motor_mixer.h"
 #include "motor.h"
 #include "receiver.h"
+#include "pid.h"
 
 #include "pico/stdlib.h"
 
@@ -36,7 +36,7 @@ extern rc_input_t            ctrl_rc_input_raw;
 extern rc_input_t            ctrl_rc_input_constrained;
 extern setpoint_t            setpoint;
 extern pid_adjust_t          ctrl_attitude_rates_adjust; // @cal;
-extern motor_mixer_command_t ctrl_motor_mixer_command;
+extern motor_command_t       ctrl_motor_mixer_command;
 extern motor_command_t       ctrl_motor_command_non_restricted;
 extern motor_command_t       ctrl_motor_command;
 extern uint32_t              last_ctrl_update;

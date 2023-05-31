@@ -32,7 +32,6 @@ const imu_reading_t* imu_get_bias();
 
 void imu_filter_gyro(vector_3d_t* filtered, const vector_3d_t* raw);
 
-
 void imu_read(imu_reading_t* reading);
 
 

@@ -41,7 +41,7 @@ typedef struct {
 } pid_adjust_t;
 
 
-float pid_update(pid_state_t* pid, const float measured, const float desired, float dt_s);
+float pid_update(pid_state_t* pid, const float measured, const float desired, const uint16_t throttle, const float dt_s);
 
 
 #endif /* PID_H */

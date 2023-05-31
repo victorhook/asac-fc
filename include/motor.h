@@ -17,7 +17,6 @@ typedef struct {
 }__attribute__((packed)) motor_command_t;
 
 
-
 /* Initializes all motors and sets output to 0. */
 int motors_init();
 

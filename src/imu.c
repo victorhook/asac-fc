@@ -6,8 +6,8 @@
 #include "string.h"
 
 // How much we trust each sample?
-#define GYRO_FILTER_ORDER 10
-static float gyro_filter_params[GYRO_FILTER_ORDER];// = {0.5, 0.25, 0.125, 0.125};
+#define GYRO_FILTER_ORDER 2
+static float gyro_filter_params[GYRO_FILTER_ORDER] = {0.9, 0.1};
 static vector_3d_t gyro_filter_mem[GYRO_FILTER_ORDER];
 static int gyro_filter_index;
 
@@ -22,10 +22,6 @@ static imu_reading_t imu_bias;
 
 
 int imu_init() {
-    for (int i = 0; i < GYRO_FILTER_ORDER; i++) {
-        gyro_filter_params[i] = 1.0 / GYRO_FILTER_ORDER;
-    }
-
     imu_bias.gyro_x = 0;
     imu_bias.gyro_y = 0;
     imu_bias.gyro_z = 0;
@@ -119,6 +115,7 @@ void imu_read(imu_reading_t* reading) {
     // printf("ACC %f, %f, %f\n", reading->acc_x, reading->acc_y, reading->acc_z);
     // printf("GYRO %f, %f, %f\n", reading->gyro_x, reading->gyro_y, reading->gyro_z);
 }
+
 
 void imu_filter_gyro(vector_3d_t* filtered, const vector_3d_t* raw) {
     // Shift all samples to the left

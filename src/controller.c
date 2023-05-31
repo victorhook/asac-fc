@@ -27,6 +27,7 @@ typedef struct {
     uint16_t max;
 } rc_channel_range_t;
 
+
 // If between range, we'll arm
 rc_channel_range_t arm_range = {
     .min = 1500,
@@ -36,12 +37,9 @@ rc_channel_range_t arm_range = {
 #define THROTTLE_MAX 2000
 #define THROTTLE_MIN 1175
 
-#define RATES_ROLL_MIN  0
-#define RATES_ROLL_MAX  100
-#define RATES_PITCH_MIN 0
-#define RATES_PITCH_MAX 100
-#define RATES_YAW_MIN   0
-#define RATES_ROLL_MAX  100
+#define RATES_ROLL_MAX  400
+#define RATES_PITCH_MAX 400
+#define RATES_YAW_MAX   400
 
 
 // Intermediate variables used to calculate correct commands for motors
@@ -52,12 +50,13 @@ imu_reading_t         imu_raw;
 imu_reading_t         imu_bias;
 imu_reading_t         imu_no_bias;
 imu_reading_t         imu_filtered;
+imu_reading_t         imu_filtered_dterm;
 rates_t               ctrl_attitude_rates_measured;
 rc_input_t            ctrl_rc_input_raw;
 rc_input_t            ctrl_rc_input_constrained;
 setpoint_t            setpoint;
 pid_adjust_t          ctrl_attitude_rates_adjust; // @cal;
-motor_mixer_command_t ctrl_motor_mixer_command;
+motor_command_t       ctrl_motor_mixer_command;
 motor_command_t       ctrl_motor_command_non_restricted;
 motor_command_t       ctrl_motor_command;
 uint32_t              last_ctrl_update;
@@ -65,6 +64,7 @@ uint32_t              last_pid_update;
 pid_state_t           pid_roll;
 pid_state_t           pid_pitch;
 pid_state_t           pid_yaw;
+
 
 // TODO: Move to receiver?
 ibus_statistics_t     radio_stats;
@@ -94,9 +94,11 @@ static void notify_control_loop_started();
 
 static void notify_control_loop_ended();
 
+static void motor_mixer_update(uint16_t throttle, const pid_adjust_t* adjust, motor_command_t* motor_command);
+
 static int pid_controller_init();
 
-static void pid_controller_update(const rates_t* measured, const rates_t* desired, pid_adjust_t* pid_adjust);
+static void pid_controller_update(const rates_t* measured, const setpoint_t* desired, pid_adjust_t* pid_adjust);
 
 static void pid_controller_reset();
 
@@ -127,14 +129,20 @@ void controller_update() {
     // Step X. Read data from IMU
     imu_read(&imu_raw);
 
+    // Change orientation for IMU!
+    imu_raw.gyro_x *= IMU_ORIENTATION_X;
+    imu_raw.gyro_y *= IMU_ORIENTATION_Y;
+    imu_raw.gyro_z *= IMU_ORIENTATION_Z;
+
     // Step X. Remove bias from imu readings
     const imu_reading_t* imu_bias_ = imu_get_bias();
     memcpy(&imu_bias, imu_bias_, sizeof(imu_reading_t));
     remove_bias_from_imu_reading(&imu_no_bias, &imu_raw, imu_bias_);
 
-    // Step X. Filter IMU data?
-    //memcpy(&imu_filtered, &imu_no_bias, sizeof(imu_reading_t));
+    // Filter gyro
     imu_filter_gyro((vector_3d_t*) &imu_filtered.gyro_x, (vector_3d_t*) &imu_no_bias.gyro_x);
+
+    // TODO: Filter D term
 
     // Step X. IMU reading to attitude rates
     ctrl_attitude_rates_measured.roll  = imu_filtered.gyro_x;
@@ -177,9 +185,6 @@ void controller_update() {
         state.can_run_motors = false;
     }
 
-    // TODO: REMOVE THIS
-    //state.can_run_motors = false;
-
     if (!state.can_run_motors) {
         setpoint.rates.roll  = 0;
         setpoint.rates.pitch = 0;
@@ -188,7 +193,7 @@ void controller_update() {
     }
 
     // Step X. Update PID values with IMU reading and desired rotation rates.
-    pid_controller_update(&ctrl_attitude_rates_measured, &setpoint.rates, &ctrl_attitude_rates_adjust);
+    pid_controller_update(&ctrl_attitude_rates_measured, &setpoint, &ctrl_attitude_rates_adjust);
 
     // Step X. Pass pid values to motor mixer to get commands for motors.
     motor_mixer_update(setpoint.throttle, &ctrl_attitude_rates_adjust, &ctrl_motor_mixer_command);
@@ -219,8 +224,31 @@ void controller_update() {
 }
 
 void controller_debug() {
-   printf("bR: %.4f, x: %.4f, y: %.4f, z: %.4f\n", imu_bias.gyro_x, imu_raw.gyro_x, imu_raw.gyro_y, imu_raw.gyro_z);
+    printf("%d, %f, %f, %f  |  %.3f, %.3f, %.3f, %.3f\n", 
+        setpoint.throttle, setpoint.rates.roll, setpoint.rates.pitch, setpoint.rates.yaw,
+        ctrl_motor_mixer_command.m1, ctrl_motor_mixer_command.m2, ctrl_motor_mixer_command.m3, ctrl_motor_mixer_command.m4
+        );
+    return;
+    printf("%d, %.4f, %.4f, %.4f\n",
+        setpoint.throttle,
+        ctrl_attitude_rates_adjust.roll,
+        ctrl_attitude_rates_adjust.pitch,
+        ctrl_attitude_rates_adjust.yaw
+    );
+    return;
+    printf("Thro: %d, d: %d, Roll p: %.4f, i: %.4f, d: %.4f, pid: %.4f, err_int: %.4f\n",
+        setpoint.throttle,
+        pid_roll.integral_disabled,
+        pid_roll.p,
+        pid_roll.i,
+        pid_roll.d,
+        pid_roll.pid,
+        pid_roll.err_integral
+    );
 
+    return;
+    printf("bR: %.4f, x: %.4f, y: %.4f, z: %.4f\n", imu_bias.gyro_x, imu_raw.gyro_x, imu_raw.gyro_y, imu_raw.gyro_z);
+    return;
    printf(
     "rX: %.3f, nBX: %.3f, gX: %.3f, setpoint: %.3f, pid: %.3f, err: %.3f, err_integral: %.3f, p: %.3f, i: %.3f, d: %.3f\n",
     imu_raw.gyro_x,
@@ -307,40 +335,62 @@ static void convert_rc_input_to_setpoint(const rc_input_t* rc_input, setpoint_t*
     // Eg, MAX = 250 deg/s -> Range: -250 to 250
     setpoint->rates.roll  = -RATES_ROLL_MAX  + ( ( (roll  - 1000) / 1000.0 ) * 2*RATES_ROLL_MAX );
     setpoint->rates.pitch = -RATES_PITCH_MAX + ( ( (pitch - 1000) / 1000.0 ) * 2*RATES_PITCH_MAX );
-    setpoint->rates.yaw   = -RATES_ROLL_MAX  + ( ( (yaw   - 1000) / 1000.0 ) * 2*RATES_ROLL_MAX );
+    setpoint->rates.yaw   = -RATES_YAW_MAX  +  ( ( (yaw   - 1000) / 1000.0 ) * 2*RATES_YAW_MAX );
     setpoint->throttle = throttle;
 }
+
+void motor_mixer_update(uint16_t throttle, const pid_adjust_t* adjust, motor_command_t* motor_command) {
+    /*
+        M4   M2
+          \ /
+          / \
+        M3   M1
+
+        M1 1, -1,  1, -1  <- Rear right
+        M2 1, -1, -1,  1  <- Front right
+        M3 1,  1,  1,  1  <- Rear left
+        M4 1,  1, -1, -1  <- Front left
+    */
+
+    if (throttle < THROTTLE_MIN) {
+        throttle = THROTTLE_MIN;
+    }
+    motor_command->m1 = throttle - adjust->roll + adjust->pitch - adjust->yaw;
+    motor_command->m2 = throttle - adjust->roll - adjust->pitch + adjust->yaw;
+    motor_command->m3 = throttle + adjust->roll + adjust->pitch + adjust->yaw;
+    motor_command->m4 = throttle + adjust->roll - adjust->pitch - adjust->yaw;
+}
+
 
 int pid_controller_init() {
     last_pid_update = us_since_boot();
 
     memset(&pid_roll, 0, sizeof(pid_state_t));
-    pid_roll.Kp = 0.5;
-    pid_roll.Ki = 0;
-    pid_roll.Kd = 0;
-    pid_roll.integral_limit_threshold = 100;
+    pid_roll.Kp = 0.2;
+    pid_roll.Ki = 0.35;
+    pid_roll.Kd = 0.0001;
+    pid_roll.integral_limit_threshold = 1000;
 
     memset(&pid_pitch, 0, sizeof(pid_state_t));
-    pid_pitch.Kp =0.51;
-    pid_pitch.Ki = 0;
-    pid_pitch.Kd = 0;
-    pid_pitch.integral_limit_threshold = 100;
+    pid_pitch.Kp = 0.2;
+    pid_pitch.Ki = 0.35;
+    pid_pitch.Kd = 0.0001;
+    pid_pitch.integral_limit_threshold = 1000;
 
     memset(&pid_yaw, 0, sizeof(pid_state_t));
-    pid_yaw.Kp = 0.25;
-    pid_yaw.Ki = 0;
-    pid_yaw.Kd = 0;
-    pid_yaw.integral_limit_threshold = 100;
+    pid_yaw.Kp = 0.2;
+    pid_yaw.Ki = 0.35;
+    pid_yaw.Kd = 0.0000;
+    pid_yaw.integral_limit_threshold = 1000;
 
     return 0;
 }
 
-
-void pid_controller_update(const rates_t* measured, const rates_t* desired, pid_adjust_t* adjust) {
+void pid_controller_update(const rates_t* measured, const setpoint_t* desired, pid_adjust_t* adjust) {
     float dt_s = (float) (us_since_boot() - last_pid_update) / 1000000.0;
-    adjust->roll  = pid_update(&pid_roll,  measured->roll,  desired->roll,  dt_s);
-    adjust->pitch = pid_update(&pid_pitch, measured->pitch, desired->pitch, dt_s);
-    adjust->yaw   = pid_update(&pid_yaw,   measured->yaw,   desired->yaw,   dt_s);
+    adjust->roll  = pid_update(&pid_roll,  measured->roll,  desired->rates.roll,  desired->throttle, dt_s);
+    adjust->pitch = pid_update(&pid_pitch, measured->pitch, desired->rates.pitch, desired->throttle, dt_s);
+    adjust->yaw   = pid_update(&pid_yaw,   measured->yaw,   desired->rates.yaw,   desired->throttle, dt_s);
     last_pid_update = us_since_boot();
 }
 
@@ -348,7 +398,6 @@ void pid_controller_reset() {
     // TODO: Better way of this?
     pid_controller_init();
 }
-
 
 static void notify_control_loop_started() {
 

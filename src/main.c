@@ -57,9 +57,8 @@ int main() {
     }
 
     // Create tasks
-    //vsrtos_create_task(uart_test_update, "UART", 5, 1);
-    //vsrtos_create_task(controller_debug, "Controller debug", 50, 1);
-    vsrtos_create_task(controller_update, "Controller", 500, 1);
+    //vsrtos_create_task(controller_debug, "Controller debug", 10, 1);
+    vsrtos_create_task(controller_update, "Controller", 1000, 1);
     vsrtos_create_task(controller_set_motors, "Motor Controller", 50, 1);
 
     state.mode = MODE_IDLE;

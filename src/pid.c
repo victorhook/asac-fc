@@ -4,39 +4,42 @@
 #include "asac_fc.h"
 
 
-#define INTERGRAL_LIMIT_BOTTOM
-#define INTERGRAL_LIMIT_TOP
 
-
-float pid_update(pid_state_t* pid, const float measured, const float desired, float dt_s) {
+float pid_update(pid_state_t* pid, const float measured, const float desired, const uint16_t throttle, const float dt_s) {
     // Calculate error
     pid->err = desired - measured;
 
     // Calculate difference with error
     pid->d_err = (pid->err - pid->last_err) / dt_s;
 
-    // Update integral sum
-    pid->err_integral += pid->err * dt_s;
-
-    if (pid->integral_disabled) {
-        if ((pid->err_integral > -pid->integral_limit_threshold) &&
-            (pid->err_integral < pid->integral_limit_threshold)) {
-            // Anti-windup STOP
-            pid->integral_disabled = false;
-        }
+    if (throttle < 1175) {
+        // Throttle protection
+        // TODO: CLEAN
+        pid->integral_disabled = true;
     } else {
-        // Check if we need to disable I-term, anti-windup
-        if ((pid->err_integral > pid->integral_limit_threshold) ||
-            (pid->err_integral < -pid->integral_limit_threshold)) {
-            // Anti-windup START
-            pid->integral_disabled = true;
-            pid->integral_disabled_timestamp = time_us_32();
+
+        // Update integral sum
+        pid->err_integral += pid->err * dt_s;
+
+        if (pid->integral_disabled) {
+            if ((pid->err_integral > -pid->integral_limit_threshold) &&
+                (pid->err_integral < pid->integral_limit_threshold)) {
+                // Anti-windup STOP
+                pid->integral_disabled = false;
+            }
+        } else {
+            // Check if we need to disable I-term, anti-windup
+            if ((pid->err_integral > pid->integral_limit_threshold) ||
+                (pid->err_integral < -pid->integral_limit_threshold)) {
+                // Anti-windup START
+                pid->integral_disabled = true;
+                pid->integral_disabled_timestamp = time_us_32();
+            }
         }
     }
 
     // Cap error integral sum to windup limit
     pid->err_integral = constrain(pid->err_integral, -pid->integral_limit_threshold, pid->integral_limit_threshold);
-
 
     pid->p = pid->Kp * pid->err;
 

@@ -17,6 +17,17 @@
 
 //#define RP2040
 
+/*
+    The PID controller expects the following orientation of the IMU:
+        - X: Forward
+        - Y: Right
+        - Z: Down
+    If the IMU is NOT mounted in this direction, please adjust the signs below.
+*/
+#define IMU_ORIENTATION_X  1
+#define IMU_ORIENTATION_Y  1
+#define IMU_ORIENTATION_Z -1
+
 
 uint32_t us_since_boot();
 
