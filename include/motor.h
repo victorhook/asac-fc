@@ -1,13 +1,13 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
+#include "stdint.h"
+
 #define MOTOR_DEBUG 0
 #define MOTOR_1     1
 #define MOTOR_2     2
 #define MOTOR_3     3
 #define MOTOR_4     4
-
-#include "stdint.h"
 
 typedef struct {
     float m1;

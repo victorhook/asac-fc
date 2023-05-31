@@ -1,7 +1,4 @@
 #include "controller.h"
-
-#include "asac_fc.h"
-#include "pid.h"
 #include "state.h"
 #include "led.h"
 #include "telemetry.h"
@@ -9,8 +6,7 @@
 
 #include "ibus.h"
 
-#include "string.h"
-#include "pico/multicore.h"
+#include <pico/multicore.h>
 
 
 #define RC_NBR_OF_CHANNELS 14
@@ -273,7 +269,8 @@ static void print_rc_input() {
 }
 
 void controller_set_motors() {
-    set_motor_pwm(MOTOR_DEBUG, ctrl_motor_command.m1);
+    //set_motor_pwm(MOTOR_DEBUG, ctrl_motor_command.m1);
+    //ctrl_motor_command.m1 = 1;
     set_all_motors_pwm(&ctrl_motor_command);
 }
 
@@ -366,7 +363,7 @@ int pid_controller_init() {
     last_pid_update = us_since_boot();
 
     memset(&pid_roll, 0, sizeof(pid_state_t));
-    pid_roll.Kp = 0.2;
+    pid_roll.Kp = 0.4;
     pid_roll.Ki = 0.35;
     pid_roll.Kd = 0.0001;
     pid_roll.integral_limit_threshold = 1000;

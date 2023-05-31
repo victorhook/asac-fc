@@ -1,11 +1,9 @@
 #include "settings.h"
 #include "machine.h"
+#include "asac_fc.h"
 
 #include <hardware/sync.h>
-#include "hardware/flash.h"
-#include "pico/stdlib.h"
-#include "string.h"
-#include "stdio.h"
+#include <hardware/flash.h>
 
 // Inspired by: https://www.makermatrix.com/blog/read-and-write-data-with-the-pi-pico-onboard-flash/
 

@@ -1,7 +1,14 @@
 #ifndef ASAC_FC_H
 #define ASAC_FC_H
 
-#include "pico/stdlib.h"
+#include "stdint.h"
+#include "stdbool.h"
+#include "string.h"
+#include "stdio.h"
+#include <pico/stdlib.h>
+#include <pico/stdio.h>
+#include <pico/time.h>
+
 
 #define DEBUG_MODE
 

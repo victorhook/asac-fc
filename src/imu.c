@@ -1,11 +1,11 @@
 #include "imu.h"
 #include "machine.h"
-#include "pico/stdlib.h"
-#include "hardware/i2c.h"
+#include "asac_fc.h"
 #include "drivers/mpu6050.h"
-#include "string.h"
 
-// How much we trust each sample?
+#include <hardware/i2c.h>
+
+
 #define GYRO_FILTER_ORDER 2
 static float gyro_filter_params[GYRO_FILTER_ORDER] = {0.9, 0.1};
 static vector_3d_t gyro_filter_mem[GYRO_FILTER_ORDER];

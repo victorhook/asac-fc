@@ -1,6 +1,4 @@
 #include "asac_fc.h"
-#include "msp.h"
-#include "machine.h"
 #include "motor.h"
 #include "receiver.h"
 #include "imu.h"
@@ -12,8 +10,8 @@
 #include "state.h"
 #include "telemetry.h"
 
-#include "pico/stdio.h"
-#include "pico/multicore.h"
+#include <pico/stdio.h>
+#include <pico/multicore.h>
 
 
 static void init_driver(int (*init_function)(), const char* name);
@@ -59,7 +57,7 @@ int main() {
     // Create tasks
     //vsrtos_create_task(controller_debug, "Controller debug", 10, 1);
     vsrtos_create_task(controller_update, "Controller", 1000, 1);
-    vsrtos_create_task(controller_set_motors, "Motor Controller", 50, 1);
+    vsrtos_create_task(controller_set_motors, "Motor Controller", 490, 1);
 
     state.mode = MODE_IDLE;
 

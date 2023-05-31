@@ -13,6 +13,9 @@ typedef enum {
     ESC_PROTOCOL_MULTISHOT,   // (5us - 25us)      Freq: ? kHz
 } esc_protocol_t;
 
+#define PWM_PULSE_WIDTH          ((float) 0.5)
+#define ONESHOT_125_PULSE_WIDTH  ((float) 0.125)
+
 typedef struct {
     uint     gpio;
     uint16_t wrap;
@@ -20,10 +23,10 @@ typedef struct {
     uint     channel;
 } pwm_t;
 
-// TODO: Make this a setting!
-static esc_protocol_t esc_protocol = ESC_PROTOCOL_PWM;
-static float pwm_perc_low;
-static float pwm_perc_high;
+// TODO: Clean up logic here and make this a setting!
+static esc_protocol_t esc_protocol = ESC_PROTOCOL_ONESHOT_125;
+static float pulse_width = ONESHOT_125_PULSE_WIDTH;
+
 
 #define MOTOR_PWM_LEVEL_SCALER ((uint16_t) 10000)
 
@@ -61,14 +64,12 @@ int motors_init() {
 
     switch (esc_protocol) {
         case ESC_PROTOCOL_PWM:
-            clk_div = 250;//255.10204081632654;
-            pwm_perc_low  = 0.05;
-            pwm_perc_high = 0.1;
+            // PWM 50 Hz:
+            clk_div = 250.0;
             break;
         case ESC_PROTOCOL_ONESHOT_125:
-            clk_div = 31.25;
-            pwm_perc_low  = 0.05;
-            pwm_perc_high = 0.1;
+            // PWM 1000 HZ:
+            clk_div = 12.5;
             break;
         case ESC_PROTOCOL_ONESHOT_42:
             clk_div = 10.499790004199916;
@@ -98,8 +99,7 @@ int motors_init() {
 
 void set_motor_pwm(const uint8_t motor, const float pwm) {
     // pwm: Value between 0-1.
-    float pulse = 0.05 + (pwm * 0.05);
-
+    float pulse = pulse_width + (pwm * pulse_width);
     uint16_t pwm_value = pulse * MOTOR_PWM_LEVEL_SCALER;
     //printf("M: %d, Org: %f, pulse: %f, pwm_value: %d\n", motor, pwm, pulse, pwm_value);
     pwm_set_level(pwm_motors[motor], pwm_value);

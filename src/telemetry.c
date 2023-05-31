@@ -4,10 +4,9 @@
 #include "asac_fc.h"
 #include "machine.h"
 
-#include "string.h"
-#include "pico/multicore.h"
-#include "pico/stdlib.h"
-#include "hardware/pio.h"
+#include <pico/multicore.h>
+#include <pico/stdlib.h>
+#include <hardware/pio.h>
 
 
 static vstp_client_t vstp_client;
@@ -80,6 +79,9 @@ void telemetry_send_state(const log_block_data_t* log_block, const log_type_t ty
     switch (type) {
         case LOG_TYPE_PID:
             memcpy(&tx[LOG_DATA_OFFSET], log_block, sizeof(log_block_data_control_loop_t));
+            break;
+        default:
+            // TODO: Handle
             break;
     }
 

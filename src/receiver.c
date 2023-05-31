@@ -2,8 +2,6 @@
 #include "machine.h"
 #include "ibus.h"
 
-#include "pico/stdlib.h"
-
 
 // RX interrupt handler
 static void on_ibus_uart_rx() {
@@ -13,11 +11,9 @@ static void on_ibus_uart_rx() {
     }
 }
 
-static void init_ibus_uart()
-{
+static void init_ibus_uart() {
     uart_init(uart1, 115200);
     gpio_set_function(PIN_RX1, GPIO_FUNC_UART);
-    //gpio_set_function(5, GPIO_FUNC_UART);
 
     uart_set_hw_flow(uart1, false, false);
     uart_set_format(uart1, 8, 1, UART_PARITY_EVEN);
@@ -31,7 +27,6 @@ static void init_ibus_uart()
 
     uart_set_irq_enables(uart1, true, false);
 }
-
 
 int receiver_init() {
     init_ibus_uart();

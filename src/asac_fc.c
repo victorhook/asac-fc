@@ -8,5 +8,5 @@ uint32_t us_since_boot()
 
 uint32_t ms_since_boot()
 {
-    to_ms_since_boot(get_absolute_time());
+    return to_ms_since_boot(get_absolute_time());
 }

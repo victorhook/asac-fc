@@ -1,10 +1,6 @@
 #include "ibus.h"
 #include "asac_fc.h"
 
-#include <string.h>
-#include "pico/stdlib.h"
-#include "pico/time.h"
-
 
 #define IBUS_HEADER_FIRST_BYTE  0x20
 #define IBUS_HEADER_SECOND_BYTE 0x40

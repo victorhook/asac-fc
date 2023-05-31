@@ -1,5 +1,4 @@
 #include "battery_adc.h"
-
 #include "machine.h"
 
 #define ADC_VREF 3.3

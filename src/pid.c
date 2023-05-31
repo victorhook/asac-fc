@@ -1,8 +1,4 @@
 #include "pid.h"
-#include "stdio.h"
-
-#include "asac_fc.h"
-
 
 
 float pid_update(pid_state_t* pid, const float measured, const float desired, const uint16_t throttle, const float dt_s) {
@@ -12,12 +8,14 @@ float pid_update(pid_state_t* pid, const float measured, const float desired, co
     // Calculate difference with error
     pid->d_err = (pid->err - pid->last_err) / dt_s;
 
+    // If the throttle is very low, we probably don't want the integrator
+    // to run. Image holding the drone and making full pitch, which would
+    // cause the integral to increase.
+    //
+    // Input throttle is 1000-2000, so the limit of ~1100-1200 seems ok
     if (throttle < 1175) {
-        // Throttle protection
-        // TODO: CLEAN
         pid->integral_disabled = true;
     } else {
-
         // Update integral sum
         pid->err_integral += pid->err * dt_s;
 

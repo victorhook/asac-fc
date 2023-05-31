@@ -70,7 +70,7 @@ static vsrtos_result_t create_task(task_block_t* new_task_block, task_function u
 void printTasks() {
     task_block_t* t = tasks_head;
     while (t != NULL) {
-        DEBUG_PRINTF("[%d] %s - %d Hz, delay_us: %d\n", t->task.priority, t->task.name, t->task.frequency, t->task.delay_us);
+        DEBUG_PRINTF("[%u] %s - %d Hz, delay_us: %ld\n", t->task.priority, t->task.name, t->task.frequency, t->task.delay_us);
         t = t->next;
     }
 }

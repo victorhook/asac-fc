@@ -1,7 +1,7 @@
 #ifndef RECEIVER_H
 #define RECEIVER_H
 
-#include "stdint.h"
+#include "asac_fc.h"
 
 
 typedef struct {

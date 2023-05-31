@@ -1,7 +1,6 @@
 #include "vstp.h"
 
 
-
 void vstp_init(vstp_client_t* client, uart_write_bytes uart_write)
 {
     client->write = uart_write;
