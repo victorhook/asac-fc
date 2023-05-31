@@ -3,7 +3,11 @@
 
 **A** **S**imple **A**nd **C**ool **F**light **C**ontroller (ASAC FC) is an flight controller based on the rp2040 microcontroller, that is completely open-source.
 
-![ASAC FC](docs/blog/images/asac-fc-rev-a-breakout.jpg)
+![ASAC Takeoff](docs/asac_takeoff.gif)
+
+![ASAC FC](docs/drone.jpg)
+
+![ASAC FC development](docs/blog/images/asac-fc-rev-a-breakout.jpg)
 
 
 ## From receiver input to motor outputs
