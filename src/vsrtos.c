@@ -3,7 +3,6 @@
 #include "string.h"
 #include "stdbool.h"
 
-
 // -- Platform specific definitions //
 #ifdef ARDUINO
     #include <Arduino.h>
@@ -119,7 +118,8 @@ void vsrtos_scheduler_start() {
                 t0 = now;
                 task_block_t* t = tasks_head;
                 while (t != NULL) {
-                    printf("%s: %d\n", t->task.name, t->task.times_executed);
+                    printf("%s: %d (%d)\n", t->task.name, t->task.times_executed_per_sec, t->task.times_executed);
+                    t->task.times_executed_per_sec = 0;
                     t = t->next;
                 }
                 printf("\n");
@@ -130,6 +130,7 @@ void vsrtos_scheduler_start() {
         next_task->update();
         next_task->last_finished = current_time_us();
         next_task->times_executed++;
+        next_task->times_executed_per_sec++;
 
         /*
         static int i = 0;
@@ -163,10 +164,11 @@ static vsrtos_result_t create_task(task_block_t* new_task_block, task_function u
     new_task_block->task.update         = update;
     new_task_block->task.priority       = priority;
     new_task_block->task.frequency      = frequency;
-    new_task_block->task.delay_us       = 1000000.0 / frequency;
+    new_task_block->task.delay_us       = 1000000 / frequency;
     new_task_block->task.last_called    = 0;
     new_task_block->task.last_finished  = 0;
     new_task_block->task.times_executed = 0;
+    new_task_block->task.times_executed_per_sec = 0;
     new_task_block->task.id             = nbr_of_tasks;
 
     if (tasks_head == NULL) {
@@ -204,7 +206,7 @@ static task_t* get_next_task() {
     while (curr != NULL && !found_task_to_run) {
         uint32_t dt = now - curr->task.last_called;
 
-        if (dt > curr->task.delay_us) {
+        if (dt >= curr->task.delay_us) {
             // Enough time has passed since this task executed, so it's time to execute this task.
             found_task_to_run = true;
         } else if (curr->task.times_executed == 0) {

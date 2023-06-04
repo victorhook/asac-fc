@@ -27,6 +27,7 @@ typedef struct {
     uint32_t      last_called;
     uint32_t      last_finished;
     uint16_t      times_executed;
+    uint16_t      times_executed_per_sec;
     uint8_t       id;
 } task_t;
 

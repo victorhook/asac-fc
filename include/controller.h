@@ -18,6 +18,8 @@ int controller_init();
 
 void controller_set_motors();
 
+void controller_telemetry();
+
 void controller_debug();
 
 void controller_update();
@@ -43,7 +45,6 @@ extern bool                  can_run_motors;
 extern pid_state_t           pid_roll;
 extern pid_state_t           pid_pitch;
 extern pid_state_t           pid_yaw;
-
 
 
 #endif /* CONTROLLER_H */

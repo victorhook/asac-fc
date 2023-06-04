@@ -32,7 +32,6 @@ static PIO pio_inst = pio0;
 static uint pio_sm_tx = 0;
 const uint PIN_TX = PIN_TELEMETRY_TX;
 const uint BAUDRATE = 921600;
-//const uint BAUDRATE = 115200;
 
 // Public methods from pio file:
 // void uart_tx_program_init(PIO pio, uint sm, uint offset, uint pin_tx, uint baud)

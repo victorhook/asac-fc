@@ -44,7 +44,9 @@ int main() {
     init_driver(imu_init,         "IMU");
     init_driver(controller_init,  "Controller");
     init_driver(motors_init,      "Motors");
-    init_driver(telemetry_init,   "Telemetry");
+    #ifdef TELEMETRY_LOGGING
+        init_driver(telemetry_init,   "Telemetry");
+    #endif
 
     // Done booting
     led_set(LED_RED, 0);
@@ -57,11 +59,13 @@ int main() {
     // Create tasks
     //vsrtos_create_task(controller_debug, "Controller debug", 10, 1);
     vsrtos_create_task(controller_update, "Controller", 1000, 1);
-    vsrtos_create_task(controller_set_motors, "Motor Controller", 490, 1);
+
+    #ifdef TELEMETRY_LOGGING
+        vsrtos_create_task(controller_telemetry, "Telemetry log", 100, 2);
+        multicore_launch_core1(core1_entry);
+    #endif
 
     state.mode = MODE_IDLE;
-
-    multicore_launch_core1(core1_entry);
 
     // Start scheduler
     vsrtos_scheduler_start();

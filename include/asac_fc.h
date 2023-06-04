@@ -18,7 +18,7 @@
     #define DEBUG_PRINTF(...)
 #endif
 
-#define TELEMETRY_LOGGING
+// #define TELEMETRY_LOGGING
 
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 

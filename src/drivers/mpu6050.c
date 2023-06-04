@@ -93,7 +93,8 @@ int mpu6050_init(mpu6050_t* mpu, i2c_inst_t* i2c_bus) {
 
 int mpu6050_read(mpu6050_t* mpu, float acc[3], float gyro[3]) {
     uint8_t acc_raw[6];
-    mpu6050_read_bytes(mpu, REG_ACCEL_START, (uint8_t*) acc_raw, 6);
+    // TODO: READ THIS!!!!
+    //mpu6050_read_bytes(mpu, REG_ACCEL_START, (uint8_t*) acc_raw, 6);
 
     uint8_t gyro_raw[6];
     mpu6050_read_bytes(mpu, REG_GYRO_START, (uint8_t*) gyro_raw, 6);

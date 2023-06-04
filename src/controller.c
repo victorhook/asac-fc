@@ -37,6 +37,9 @@ rc_channel_range_t arm_range = {
 #define RATES_PITCH_MAX 400
 #define RATES_YAW_MAX   400
 
+// If no packed received within this timeout, we consider ourself NOT connected.
+#define CONNECTED_TIMEOUT_MS 500
+
 
 // Intermediate variables used to calculate correct commands for motors
 //   from the RC input.
@@ -47,13 +50,13 @@ imu_reading_t         imu_bias;
 imu_reading_t         imu_no_bias;
 imu_reading_t         imu_filtered;
 imu_reading_t         imu_filtered_dterm;
-rates_t               ctrl_attitude_rates_measured;
+rates_t               attitude_rates_measured;
 rc_input_t            ctrl_rc_input_raw;
 rc_input_t            ctrl_rc_input_constrained;
 setpoint_t            setpoint;
-pid_adjust_t          ctrl_attitude_rates_adjust; // @cal;
-motor_command_t       ctrl_motor_mixer_command;
-motor_command_t       ctrl_motor_command_non_restricted;
+pid_adjust_t          attitude_rates_adjust; // @cal;
+motor_command_t       motor_mixer_command;
+motor_command_t       motor_command_non_restricted;
 motor_command_t       ctrl_motor_command;
 uint32_t              last_ctrl_update;
 uint32_t              last_pid_update;
@@ -65,8 +68,10 @@ pid_state_t           pid_yaw;
 // TODO: Move to receiver?
 ibus_statistics_t     radio_stats;
 
-
-static log_block_data_control_loop_t log_block;
+#ifdef TELEMETRY_LOGGING
+    static log_block_data_control_loop_t log_block;
+    static void telemetry_log();
+#endif
 
 static void remove_bias_from_imu_reading(imu_reading_t* imu_no_bias, const imu_reading_t* imu_raw, const imu_reading_t* imu_bias);
 
@@ -86,10 +91,6 @@ static void arm();
 
 static void disarm();
 
-static void notify_control_loop_started();
-
-static void notify_control_loop_ended();
-
 static void motor_mixer_update(uint16_t throttle, const pid_adjust_t* adjust, motor_command_t* motor_command);
 
 static int pid_controller_init();
@@ -102,14 +103,13 @@ static void pid_controller_reset();
 static void print_rc_input();
 
 
-// If no packed received within this timeout, we consider ourself NOT connected.
-#define CONNECTED_TIMEOUT_MS 500
-
-static bool debug_print = false;
-
-
 int controller_init() {
     last_ctrl_update = us_since_boot();
+
+    // Note that the controller is expected to be initialized AFTER IMU.
+    // This is so that we can retrieve the correct IMU offsets/bias.
+    const imu_reading_t* imu_bias_ = imu_get_bias();
+    memcpy(&imu_bias, imu_bias_, sizeof(imu_reading_t));
 
     int result = pid_controller_init();
 
@@ -117,37 +117,33 @@ int controller_init() {
 }
 
 void controller_update() {
-    notify_control_loop_started();
-
     uint32_t ctrl_loop_started = us_since_boot();
     float ctrl_loop_dt_s = (float) (ctrl_loop_started - last_ctrl_update) / 1000000.0;
 
-    // Step X. Read data from IMU
+    // Read data from IMU
     imu_read(&imu_raw);
 
-    // Change orientation for IMU!
+    // Ensure the orientation of the coordinate is correct
     imu_raw.gyro_x *= IMU_ORIENTATION_X;
     imu_raw.gyro_y *= IMU_ORIENTATION_Y;
     imu_raw.gyro_z *= IMU_ORIENTATION_Z;
 
-    // Step X. Remove bias from imu readings
-    const imu_reading_t* imu_bias_ = imu_get_bias();
-    memcpy(&imu_bias, imu_bias_, sizeof(imu_reading_t));
-    remove_bias_from_imu_reading(&imu_no_bias, &imu_raw, imu_bias_);
+    // Remove bias from imu readings
+    remove_bias_from_imu_reading(&imu_no_bias, &imu_raw, &imu_bias);
 
-    // Filter gyro
+    // Filter gyro readings
+    // TODO: Filter D term?
     imu_filter_gyro((vector_3d_t*) &imu_filtered.gyro_x, (vector_3d_t*) &imu_no_bias.gyro_x);
 
-    // TODO: Filter D term
+    // IMU reading to attitude rates
+    attitude_rates_measured.roll  = imu_filtered.gyro_x;
+    attitude_rates_measured.pitch = imu_filtered.gyro_y;
+    attitude_rates_measured.yaw   = imu_filtered.gyro_z;
 
-    // Step X. IMU reading to attitude rates
-    ctrl_attitude_rates_measured.roll  = imu_filtered.gyro_x;
-    ctrl_attitude_rates_measured.pitch = imu_filtered.gyro_y;
-    ctrl_attitude_rates_measured.yaw   = imu_filtered.gyro_z;
-
-    // Step X. Get latest data from receiver
+    // Get latest data from receiver
     receiver_get_last_packet(&ctrl_rc_input_raw);
 
+    // Check if we're connected (gotten radio packet within ~X ms)
     bool connected = is_connected(&ctrl_rc_input_raw);
     if (connected != state.is_connected) {
         if (connected) {
@@ -161,11 +157,11 @@ void controller_update() {
         // Constrain/crop RC input in case they're out of expected range.
         constrain_rc_input(&ctrl_rc_input_raw, &ctrl_rc_input_constrained);
 
-        // Step X. Map receiver data to desired rotation rates.
+        // Map receiver data to desired rotation rates.
         convert_rc_input_to_setpoint(&ctrl_rc_input_constrained, &setpoint);
     }
 
-    // Handle states
+    // Check if we're armed
     bool armed = is_armed(&ctrl_rc_input_constrained);
     if (armed != state.is_armed) {
         if (armed) {
@@ -175,12 +171,15 @@ void controller_update() {
         }
     }
 
+    // Safety mechanism for running motors.
+    // TODO: Different handling of this with flags, eg connected to USB.
     if (state.is_armed && state.is_connected) {
         state.can_run_motors = true;
     } else {
         state.can_run_motors = false;
     }
 
+    // If we cannot run the motors, we set setpoint to 0 for all
     if (!state.can_run_motors) {
         setpoint.rates.roll  = 0;
         setpoint.rates.pitch = 0;
@@ -188,24 +187,25 @@ void controller_update() {
         setpoint.throttle    = 0;
     }
 
-    // Step X. Update PID values with IMU reading and desired rotation rates.
-    pid_controller_update(&ctrl_attitude_rates_measured, &setpoint, &ctrl_attitude_rates_adjust);
+    // Update PID values with IMU reading and desired rotation rates.
+    pid_controller_update(&attitude_rates_measured, &setpoint, &attitude_rates_adjust);
 
-    // Step X. Pass pid values to motor mixer to get commands for motors.
-    motor_mixer_update(setpoint.throttle, &ctrl_attitude_rates_adjust, &ctrl_motor_mixer_command);
+    // Pass PID values to motor mixer to get commands for motors.
+    motor_mixer_update(setpoint.throttle, &attitude_rates_adjust, &motor_mixer_command);
 
-    // Step X. Map motor output values to appropriate values
-    // Map to values between 1000-2000, then convert to float between 0-1
-    ctrl_motor_command_non_restricted.m1 = (constrain(ctrl_motor_mixer_command.m1, THROTTLE_MIN, THROTTLE_MAX) - 1000) / 1000.0;
-    ctrl_motor_command_non_restricted.m2 = (constrain(ctrl_motor_mixer_command.m2, THROTTLE_MIN, THROTTLE_MAX) - 1000) / 1000.0;
-    ctrl_motor_command_non_restricted.m3 = (constrain(ctrl_motor_mixer_command.m3, THROTTLE_MIN, THROTTLE_MAX) - 1000) / 1000.0;
-    ctrl_motor_command_non_restricted.m4 = (constrain(ctrl_motor_mixer_command.m4, THROTTLE_MIN, THROTTLE_MAX) - 1000) / 1000.0;
+    // Map motor commands to values between THROTTLE_MIN and THROTTLE_MAX,
+    // then convert to float between 0-1.
+    // This is because the motor controller wants a value between 0-1.
+    motor_command_non_restricted.m1 = (constrain(motor_mixer_command.m1, THROTTLE_MIN, THROTTLE_MAX) - 1000) / 1000.0;
+    motor_command_non_restricted.m2 = (constrain(motor_mixer_command.m2, THROTTLE_MIN, THROTTLE_MAX) - 1000) / 1000.0;
+    motor_command_non_restricted.m3 = (constrain(motor_mixer_command.m3, THROTTLE_MIN, THROTTLE_MAX) - 1000) / 1000.0;
+    motor_command_non_restricted.m4 = (constrain(motor_mixer_command.m4, THROTTLE_MIN, THROTTLE_MAX) - 1000) / 1000.0;
 
     if (state.can_run_motors) {
-        ctrl_motor_command.m1 = ctrl_motor_command_non_restricted.m1;
-        ctrl_motor_command.m2 = ctrl_motor_command_non_restricted.m2;
-        ctrl_motor_command.m3 = ctrl_motor_command_non_restricted.m3;
-        ctrl_motor_command.m4 = ctrl_motor_command_non_restricted.m4;
+        ctrl_motor_command.m1 = motor_command_non_restricted.m1;
+        ctrl_motor_command.m2 = motor_command_non_restricted.m2;
+        ctrl_motor_command.m3 = motor_command_non_restricted.m3;
+        ctrl_motor_command.m4 = motor_command_non_restricted.m4;
     } else {
         ctrl_motor_command.m1 = 0;
         ctrl_motor_command.m2 = 0;
@@ -213,51 +213,23 @@ void controller_update() {
         ctrl_motor_command.m4 = 0;
     }
 
+    // Retrieve some radio statistics
+    // TODO: Move to receiver instead of ibus
     ibus_get_statistics(&radio_stats);
-    //print_rc_input();
 
-    notify_control_loop_ended();
+    // Set motor output
+    set_all_motors_pwm(&ctrl_motor_command);
 }
 
+
+
+// -- Helper functions -- //
 void controller_debug() {
-    printf("%d, %f, %f, %f  |  %.3f, %.3f, %.3f, %.3f\n", 
+    printf("%d, %f, %f, %f  |  %.3f, %.3f, %.3f, %.3f\n",
         setpoint.throttle, setpoint.rates.roll, setpoint.rates.pitch, setpoint.rates.yaw,
-        ctrl_motor_mixer_command.m1, ctrl_motor_mixer_command.m2, ctrl_motor_mixer_command.m3, ctrl_motor_mixer_command.m4
+        motor_mixer_command.m1, motor_mixer_command.m2, motor_mixer_command.m3, motor_mixer_command.m4
         );
     return;
-    printf("%d, %.4f, %.4f, %.4f\n",
-        setpoint.throttle,
-        ctrl_attitude_rates_adjust.roll,
-        ctrl_attitude_rates_adjust.pitch,
-        ctrl_attitude_rates_adjust.yaw
-    );
-    return;
-    printf("Thro: %d, d: %d, Roll p: %.4f, i: %.4f, d: %.4f, pid: %.4f, err_int: %.4f\n",
-        setpoint.throttle,
-        pid_roll.integral_disabled,
-        pid_roll.p,
-        pid_roll.i,
-        pid_roll.d,
-        pid_roll.pid,
-        pid_roll.err_integral
-    );
-
-    return;
-    printf("bR: %.4f, x: %.4f, y: %.4f, z: %.4f\n", imu_bias.gyro_x, imu_raw.gyro_x, imu_raw.gyro_y, imu_raw.gyro_z);
-    return;
-   printf(
-    "rX: %.3f, nBX: %.3f, gX: %.3f, setpoint: %.3f, pid: %.3f, err: %.3f, err_integral: %.3f, p: %.3f, i: %.3f, d: %.3f\n",
-    imu_raw.gyro_x,
-    imu_no_bias.gyro_x,
-    imu_filtered.gyro_x,
-    setpoint.rates.roll,
-    pid_roll.pid,
-    pid_roll.err,
-    pid_roll.err_integral,
-    pid_roll.p,
-    pid_roll.i,
-    pid_roll.d
-   );
 }
 
 static void print_rc_input() {
@@ -268,13 +240,7 @@ static void print_rc_input() {
     printf("\n");
 }
 
-void controller_set_motors() {
-    //set_motor_pwm(MOTOR_DEBUG, ctrl_motor_command.m1);
-    //ctrl_motor_command.m1 = 1;
-    set_all_motors_pwm(&ctrl_motor_command);
-}
 
-// -- Helper functions -- //
 static void disconnect() {
     led_set(LED_GREEN, 0);
     state.is_connected = false;
@@ -363,19 +329,19 @@ int pid_controller_init() {
     last_pid_update = us_since_boot();
 
     memset(&pid_roll, 0, sizeof(pid_state_t));
-    pid_roll.Kp = 0.4;
-    pid_roll.Ki = 0.35;
+    pid_roll.Kp = 1;
+    pid_roll.Ki = 0.75;
     pid_roll.Kd = 0.0001;
     pid_roll.integral_limit_threshold = 1000;
 
     memset(&pid_pitch, 0, sizeof(pid_state_t));
-    pid_pitch.Kp = 0.2;
-    pid_pitch.Ki = 0.35;
+    pid_pitch.Kp = 1;
+    pid_pitch.Ki = 0.75;
     pid_pitch.Kd = 0.0001;
     pid_pitch.integral_limit_threshold = 1000;
 
     memset(&pid_yaw, 0, sizeof(pid_state_t));
-    pid_yaw.Kp = 0.2;
+    pid_yaw.Kp = 0.5;
     pid_yaw.Ki = 0.35;
     pid_yaw.Kd = 0.0000;
     pid_yaw.integral_limit_threshold = 1000;
@@ -396,12 +362,9 @@ void pid_controller_reset() {
     pid_controller_init();
 }
 
-static void notify_control_loop_started() {
 
-}
-
-static void notify_control_loop_ended() {
-    #ifdef TELEMETRY_LOGGING
+#ifdef TELEMETRY_LOGGING
+    static void telemetry_log() {
         log_block.raw_gyro_x = imu_raw.gyro_x;
         log_block.raw_gyro_y = imu_raw.gyro_y;
         log_block.raw_gyro_z = imu_raw.gyro_z;
@@ -442,10 +405,10 @@ static void notify_control_loop_ended() {
         log_block.yaw_d = pid_yaw.d;
         log_block.yaw_pid = pid_yaw.pid;
 
-        log_block.m1_non_restricted = ctrl_motor_command_non_restricted.m1;
-        log_block.m2_non_restricted = ctrl_motor_command_non_restricted.m2;
-        log_block.m3_non_restricted = ctrl_motor_command_non_restricted.m3;
-        log_block.m4_non_restricted = ctrl_motor_command_non_restricted.m4;
+        log_block.m1_non_restricted = motor_command_non_restricted.m1;
+        log_block.m2_non_restricted = motor_command_non_restricted.m2;
+        log_block.m3_non_restricted = motor_command_non_restricted.m3;
+        log_block.m4_non_restricted = motor_command_non_restricted.m4;
 
         log_block.m1_restricted = ctrl_motor_command.m1;
         log_block.m2_restricted = ctrl_motor_command.m2;
@@ -461,5 +424,5 @@ static void notify_control_loop_ended() {
         log_block.packet_rate          = radio_stats.packet_rate;
 
         telemetry_send_state((log_block_data_t*) &log_block, LOG_TYPE_PID);
-    #endif
-}
+    }
+#endif
