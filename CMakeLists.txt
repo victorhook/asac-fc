@@ -33,22 +33,25 @@ add_executable(asac-fc
   src/receiver.c
   src/controller.c
   src/motor.c
-  src/motor_mixer.c
   src/led.c
-  src/drivers/mpu6050.c
   src/controller.c
   src/vsrtos.c
   src/state.c
   src/vstp.c
   src/asac_fc.c
   src/telemetry.c
+  # Drivers
+  src/drivers/mpu6050.c
+  src/drivers/oneshot.c
   # PIO programs
   include/drivers/uart_tx.pio
   include/drivers/uart_rx.pio
+  include/drivers/oneshot.pio
 )
 
 pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/uart_tx.pio)
 pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/uart_rx.pio)
+pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/oneshot.pio)
 
 
 add_compile_definitions(
@@ -58,8 +61,8 @@ add_compile_definitions(
 pico_set_program_name(asac-fc "asac-fc")
 pico_set_program_version(asac-fc "0.1")
 
-#pico_enable_stdio_uart(asac-fc 0)
-#pico_enable_stdio_usb(asac-fc 1)
+pico_enable_stdio_uart(asac-fc 0)
+pico_enable_stdio_usb(asac-fc 1)
 
 # Add the standard library to the build
 target_link_libraries(asac-fc

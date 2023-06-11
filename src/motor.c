@@ -1,5 +1,6 @@
 #include "motor.h"
 #include "machine.h"
+#include "drivers/oneshot.h"
 
 #include "pico/stdlib.h"
 #include "stdio.h"
@@ -7,10 +8,10 @@
 
 
 typedef enum {
-    ESC_PROTOCOL_PWM,         // (1000us - 2000us) Freq: 490 Hz
-    ESC_PROTOCOL_ONESHOT_125, // (125us - 250us)   Freq: ? kHz
-    ESC_PROTOCOL_ONESHOT_42,  // (42us - 84us)     Freq: ? kHz
-    ESC_PROTOCOL_MULTISHOT,   // (5us - 25us)      Freq: ? kHz
+    ESC_PROTOCOL_PWM,         // Pulse duration: 1000us - 2000us, Freq: 50 Hz
+    ESC_PROTOCOL_ONESHOT_125, // Pulse duration: 125us - 250us,   Freq: Up to 4 kHz
+    ESC_PROTOCOL_ONESHOT_42,  // Pulse duration: 42us - 84us,     Freq: Up to 11.9 kHz
+    ESC_PROTOCOL_MULTISHOT,   // Pulse duration: (5us - 25us)      Freq: ? kHz
 } esc_protocol_t;
 
 #define PWM_PULSE_WIDTH          ((float) 0.5)
@@ -24,9 +25,9 @@ typedef struct {
 } pwm_t;
 
 // TODO: Clean up logic here and make this a setting!
+// TODO: Make this ifdef instead perhaps?
 static esc_protocol_t esc_protocol = ESC_PROTOCOL_ONESHOT_125;
 static float pulse_width = ONESHOT_125_PULSE_WIDTH;
-
 
 #define MOTOR_PWM_LEVEL_SCALER ((uint16_t) 10000)
 
@@ -56,37 +57,35 @@ static void init_pwm(pwm_t* pwm, uint gpio, float clk_divider, uint16_t wrap);
 // -- Public API -- //
 
 int motors_init() {
-    uint16_t wrap = MOTOR_PWM_LEVEL_SCALER;
-    float clk_div;
 
-    // Clock divider is given by:
-    // clk_div = sysclk / (freq * wrap)
+    uint16_t wrap;
+    float clk_div;
 
     switch (esc_protocol) {
         case ESC_PROTOCOL_PWM:
+            // Clock divider is given by:
+            // clk_div = sysclk / (freq * wrap)
             // PWM 50 Hz:
+            wrap = MOTOR_PWM_LEVEL_SCALER;
             clk_div = 250.0;
+            init_pwm(&pwm_m_debug, PIN_M_DEBUG, clk_div, wrap);
+            init_pwm(&pwm_m1, PIN_M1, clk_div, wrap);
+            init_pwm(&pwm_m2, PIN_M2, clk_div, wrap);
+            init_pwm(&pwm_m3, PIN_M3, clk_div, wrap);
+            init_pwm(&pwm_m4, PIN_M4, clk_div, wrap);
             break;
         case ESC_PROTOCOL_ONESHOT_125:
-            // PWM 1000 HZ:
-            clk_div = 12.5;
+            oneshot_init(ONESHOT_TYPE_125);
             break;
         case ESC_PROTOCOL_ONESHOT_42:
-            clk_div = 10.499790004199916;
+            oneshot_init(ONESHOT_TYPE_42);
             break;
         case ESC_PROTOCOL_MULTISHOT:
-            clk_div = 3.125;
             break;
         default:
             // Should never happen
             return -1;
     }
-
-    init_pwm(&pwm_m_debug, PIN_M_DEBUG, clk_div, wrap);
-    init_pwm(&pwm_m1, PIN_M1, clk_div, wrap);
-    init_pwm(&pwm_m2, PIN_M2, clk_div, wrap);
-    init_pwm(&pwm_m3, PIN_M3, clk_div, wrap);
-    init_pwm(&pwm_m4, PIN_M4, clk_div, wrap);
 
     set_motor_pwm(MOTOR_DEBUG, 0.0);
     set_motor_pwm(MOTOR_1, 0.0);
@@ -98,11 +97,26 @@ int motors_init() {
 }
 
 void set_motor_pwm(const uint8_t motor, const float pwm) {
-    // pwm: Value between 0-1.
-    float pulse = pulse_width + (pwm * pulse_width);
-    uint16_t pwm_value = pulse * MOTOR_PWM_LEVEL_SCALER;
-    //printf("M: %d, Org: %f, pulse: %f, pwm_value: %d\n", motor, pwm, pulse, pwm_value);
-    pwm_set_level(pwm_motors[motor], pwm_value);
+    float pulse;
+    uint16_t pwm_value;
+
+    switch (esc_protocol) {
+        case ESC_PROTOCOL_PWM:
+            // pwm: Value between 0-1.
+            pulse = pulse_width + (pwm * pulse_width);
+            pwm_value = pulse * MOTOR_PWM_LEVEL_SCALER;
+            //printf("M: %d, Org: %f, pulse: %f, pwm_value: %d\n", motor, pwm, pulse, pwm_value);
+            pwm_set_level(pwm_motors[motor], pwm_value);
+            break;
+        case ESC_PROTOCOL_ONESHOT_125:
+        case ESC_PROTOCOL_ONESHOT_42:
+            // Motor values are 1,2,3,4 ut oneshot expects 0,1,2,3
+            oneshot_set(motor-1, pwm);
+            break;
+        case ESC_PROTOCOL_MULTISHOT:
+            break;
+    }
+
 }
 
 void set_all_motors_pwm(const motor_command_t* motor_command) {
@@ -110,6 +124,15 @@ void set_all_motors_pwm(const motor_command_t* motor_command) {
     set_motor_pwm(MOTOR_2, motor_command->m2);
     set_motor_pwm(MOTOR_3, motor_command->m3);
     set_motor_pwm(MOTOR_4, motor_command->m4);
+
+    if ((esc_protocol == ESC_PROTOCOL_ONESHOT_125) ||
+        (esc_protocol == ESC_PROTOCOL_ONESHOT_42))
+        {
+            // Oneshot doesn't apply the values directly but writes them to
+            // buffer, so we need to apply the values here.
+            // This way, they are all synced.
+            oneshot_apply();
+        }
 }
 
 // -- Private -- //

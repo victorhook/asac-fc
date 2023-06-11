@@ -1,0 +1,65 @@
+; PIO Oneshot implementation
+; This program implements oneshot125 or oneshot42 ESC protocol.
+; The idea is that one PIO state machine is assigned for each motor, thus
+; for a normal quad, an entire PIO block will be needed for this.
+;
+; The PIO program works by the main processor setting delay values
+; corresponding to how long each pulse should be, and then the
+; PIO program simply pulls the GPIO pin high, and wait for the amount
+; of cycles that was given by the main processor.
+; Before the PIO program takes data from its FIFO, it waits for an
+; interrupt to be cleared from the main processor, which is used to
+; synchronize all PIO programs, so that the motor pulses are in sync.
+;
+; All that is necessary to use it is:
+;   // Initialize the program
+;   uint program_offset = pio_add_program(pio1, &oneshot_program);
+;   oneshot_program_init(pio1, 0, program_offset, MOTOR_PIN_1);
+;   oneshot_program_init(pio1, 1, program_offset, MOTOR_PIN_2);
+;   oneshot_program_init(pio1, 2, program_offset, MOTOR_PIN_3);
+;   oneshot_program_init(pio1, 3, program_offset, MOTOR_PIN_4);
+;
+;   // Enable interrupts
+;   // IRQ number is any of: PIO0_IRQ_0,PIO0_IRQ_1,PIO1_IRQ_0,PIO1_IRQ_1
+;   irq_set_enabled(PIO1_IRQ_0, true);
+;   // pio_interrupt_source is not same as Interrupt number interrupt_nums!
+;   pio_set_irq0_source_enabled(pio1, 0, true);
+;
+; Once everything is initialized, you set motor throttles with:
+;   oneshot_set(motor, throttle);
+;
+; And apply the values with
+;   oneshot_apply();
+;
+; Please look in "oneshot.c" for more details
+;
+
+.program oneshot
+
+set pindirs, 1  ; Set pin as output
+irq set 1       ; Set IRQ before we start main loop
+
+loop:
+    wait 0 irq 0       ; Wait for main processor to clear interrupt (active low style)
+    pull               ; Pull in data from FIFO to OSR register
+    mov x osr          ; Move data to scratch register X
+    set pins, 1        ; Set output pin HIGH, aka start the pulse
+delay:
+    jmp x-- delay [1]  ; Wait long enough for pulse...
+    set pins, 0        ; Wait is over, set output to LOW
+    irq set 0          ; Set IRQ so that we're ready to wait for next pulse
+    jmp loop           ; Jump back to start
+
+
+% c-sdk {
+/*  Initializes the PIO oneshot program. */
+void oneshot_program_init(PIO pio, uint sm, uint offset, uint pin) {
+    pio_gpio_init(pio, pin);
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+    pio_sm_config c = oneshot_program_get_default_config(offset);
+    sm_config_set_set_pins(&c, pin, 1);
+    sm_config_set_clkdiv(&c, 1);
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}

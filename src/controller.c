@@ -6,9 +6,6 @@
 
 #include "ibus.h"
 
-#include <pico/multicore.h>
-
-
 #define RC_NBR_OF_CHANNELS 14
 
 // RC Input mappings, should they be here?
@@ -331,13 +328,13 @@ int pid_controller_init() {
     memset(&pid_roll, 0, sizeof(pid_state_t));
     pid_roll.Kp = 1;
     pid_roll.Ki = 0.75;
-    pid_roll.Kd = 0.0001;
+    pid_roll.Kd = 0.001;
     pid_roll.integral_limit_threshold = 1000;
 
     memset(&pid_pitch, 0, sizeof(pid_state_t));
     pid_pitch.Kp = 1;
     pid_pitch.Ki = 0.75;
-    pid_pitch.Kd = 0.0001;
+    pid_pitch.Kd = 0.001;
     pid_pitch.integral_limit_threshold = 1000;
 
     memset(&pid_yaw, 0, sizeof(pid_state_t));
