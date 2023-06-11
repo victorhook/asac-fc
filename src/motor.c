@@ -26,7 +26,7 @@ typedef struct {
 
 // TODO: Clean up logic here and make this a setting!
 // TODO: Make this ifdef instead perhaps?
-static esc_protocol_t esc_protocol = ESC_PROTOCOL_ONESHOT_125;
+static esc_protocol_t esc_protocol = ESC_PROTOCOL_ONESHOT_42;
 static float pulse_width = ONESHOT_125_PULSE_WIDTH;
 
 #define MOTOR_PWM_LEVEL_SCALER ((uint16_t) 10000)
