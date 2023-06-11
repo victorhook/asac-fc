@@ -22,6 +22,38 @@ After some manual (headless) flights, I decided to add an analog camera together
 
 ![ASAC FC](docs/asac_camera.jpg)
 
+## Features
+
+### Sensors
+- [X] IMU
+- [ ] GPS
+- [ ] Barometer (altitude estimation)
+- [ ] Lidar or other distance sensor
+
+### Receiver protocols
+- [X] IBUS
+- [ ] SBUS
+- [ ] Frsky
+- [ ] CSRF
+
+### Telemetry
+- [ ] Any
+
+### Flight modes
+- [X] Acro (attitude rate, aka free-style)
+- [ ] Any other stabilizing mode
+
+### ESC Protocols
+
+- [X] PWM (50 hz)
+- [X] Oneshot125, utilizing rp2040s PIO block
+- [X] Oneshot42, utilizing rp2040s PIO block
+- [ ] Multishot
+- [ ] Dshot150
+- [ ] Dshot300
+- [ ] Dshot600
+- [ ] Dshot1200
+- [ ] ProShot
 
 ## From receiver input to motor outputs
 

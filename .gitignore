@@ -4,3 +4,4 @@ build/
 env/
 docs/resources/
 docs/movies/
+tools/grapher-frontend/src/LogTypes.js
