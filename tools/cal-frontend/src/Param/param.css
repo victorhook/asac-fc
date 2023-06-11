@@ -1,0 +1,24 @@
+.param p {
+    font-size: 1.3em;
+}
+
+.param-item, .param-header-item {
+    padding: 0.1em .5em;
+    margin: 0 .5em;
+}
+
+.param-header-item {
+    font-weight: bold;
+}
+
+input[type=text] {
+    font-size: 1.3em;
+}
+
+.param-Measurement {
+    background-color: rgb(237, 247, 255);
+}
+
+.param-Calibration {
+    background-color: antiquewhite;
+}

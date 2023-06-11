@@ -9,7 +9,8 @@ from datetime import datetime
 PROJECT_BASE_DIR = Path(__file__).absolute().parent.parent
 INCLUDE_DIR = PROJECT_BASE_DIR.joinpath('include')
 JS_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'grapher-frontend', 'src')
-PYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')
+#PYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')
+PYTHON_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'gui')
 JS_TARGET_FILE = 'LogTypes.js'
 PYTHON_TARGET_FILE = 'log_types.py'
 
@@ -224,3 +225,4 @@ if __name__ == '__main__':
 
     write_js_output(typedefs, JS_TARGET_FILEPATH)
     write_python_output(typedefs, PYTHON_TARGET_FILEPATH)
+

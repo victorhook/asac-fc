@@ -1,3 +1,8 @@
+/*
+Auto-generated file. Please don't modify directly!
+Generated: 2023-06-11 15:15:29
+*/
+
 const AVAILABLE_LOG_TYPES = [
     {name: "raw_gyro_x", type: "float"},
     {name: "raw_gyro_y", type: "float"},
@@ -22,21 +27,18 @@ const AVAILABLE_LOG_TYPES = [
     {name: "roll_i", type: "float"},
     {name: "roll_d", type: "float"},
     {name: "roll_pid", type: "float"},
-    {name: "roll_adjust", type: "float"},
     {name: "pitch_error", type: "float"},
     {name: "pitch_error_integral", type: "float"},
     {name: "pitch_p", type: "float"},
     {name: "pitch_i", type: "float"},
     {name: "pitch_d", type: "float"},
     {name: "pitch_pid", type: "float"},
-    {name: "pitch_adjust", type: "float"},
     {name: "yaw_error", type: "float"},
     {name: "yaw_error_integral", type: "float"},
     {name: "yaw_p", type: "float"},
     {name: "yaw_i", type: "float"},
     {name: "yaw_d", type: "float"},
     {name: "yaw_pid", type: "float"},
-    {name: "yaw_adjust", type: "float"},
     {name: "m1_non_restricted", type: "float"},
     {name: "m2_non_restricted", type: "float"},
     {name: "m3_non_restricted", type: "float"},
@@ -45,7 +47,11 @@ const AVAILABLE_LOG_TYPES = [
     {name: "m2_restricted", type: "float"},
     {name: "m3_restricted", type: "float"},
     {name: "m4_restricted", type: "float"},
-    {name: "battery", type: "float"}
+    {name: "battery", type: "float"},
+    {name: "successful_packets", type: "uint32_t"},
+    {name: "parse_errors", type: "uint32_t"},
+    {name: "last_received_packet", type: "uint32_t"},
+    {name: "packet_rate", type: "uint32_t"}
 ]
 
 export default AVAILABLE_LOG_TYPES;

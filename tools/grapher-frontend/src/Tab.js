@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import History from "./History";
+
 
 function DisplayParam({ param }) {
     return (
@@ -56,7 +58,7 @@ function SideBarParam({ param, onPlotChecked, onDisplayChecked }) {
     )
 }
 
-function Tab({ config, params, setParams, displayParams, plotParams }) {
+function Tab({ config, params, setParams, displayParams, plotParams, displayHistory, plotHistory }) {
 
     const getParamByName = param_name => {
         for (let param of params) {
@@ -139,7 +141,11 @@ function Tab({ config, params, setParams, displayParams, plotParams }) {
                             <h2 className="text-center">Plot</h2>
                             <hr />
                         </div>
+                    </div>
 
+                    {/* History */}
+                    <div>
+                        <History params={params} displayHistory={displayHistory} />
                     </div>
                 </div>
             </div>

@@ -1,3 +1,6 @@
 *-backups/
 build/
 *.pyc
+env/
+docs/resources/
+docs/movies/

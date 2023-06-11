@@ -30,15 +30,21 @@ class Backend {
     }
 
     static async fetchLogBlocks() {
-        let blocks;
+        let result;
         try {
-            let result = await Backend._fetch('get_log_blocks');
-            blocks = await result.json();
+            let res = await Backend._fetch('get_log_blocks');
+            result = {
+                status: 'OK',
+                data: await res.json()
+            };
         } catch(error) {
-            blocks = [];
+            result = {
+                status: 'ERROR',
+                data: []
+            };
             console.log('Error fetching log blocks!');
         }
-        return blocks;
+        return result;
     }
 
 }

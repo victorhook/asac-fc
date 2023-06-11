@@ -9,14 +9,17 @@ import Backend from './Backend';
 function App() {
 
   const [connected, setConnected] = useState(false);
+  const [apiFetchInterval, setApiFetchInterval] = useState(null);
   const [lastLogBlockTimeStamp, setLastLogBlockTimeStamp] = useState('');
   const [params, setParams] = useState({}); // Name: {param}
+  const [lastLogBlock, setLastLogBlock] = useState({}); // Name: {param}
+  const [displayHistory, setDisplayHistory] = useState([]);
+  const [plotHistory, setPlotHistory] = useState([]);
   const [displayParams, setDisplayParams] = useState({}); // Name: {param}
   const [plotParams, setPlotParams] = useState({}); // Name: {param}
 
   const connect = () => {
     setConnected(true);
-    fetchLogBlocks();
   };
 
   const disconnect = () => {
@@ -37,13 +40,8 @@ function App() {
   }, [params]);
 
   useEffect(() => {
-    console.log(displayParams);
+    //console.log(displayParams);
   }, [displayParams]);
-
-  useEffect(() => {
-    fetchLogBlocks();
-  }, [connected]);
-
 
   useEffect(() => {
     let new_params = {};
@@ -57,34 +55,42 @@ function App() {
     setParams(new_params);
   }, []);
 
-  const fetchLogBlocks = async () => {
-    if (connected) {
-      let log_blocks = await Backend.fetchLogBlocks();
-
-      if (log_blocks.length > 0) {
-        let last_block = log_blocks[log_blocks.length-1];
-        setLastLogBlockTimeStamp(last_block.header.timestamp);
-
-        for (const [param_name, param_val] of Object.entries(last_block.data)) {
-          params[param_name].value = param_val;
-        }
+  const fetchLogBlocks = () => {
+    Backend.fetchLogBlocks()
+    .then(res => {
+      if (res.status == 'OK') {
+        // We only add the data we're plotting/displaying
+        console.log(res.data, displayParams);
+        //console.log(res.data.filter(p => p.name in displayParams));
+        setDisplayHistory(curr => curr.concat(res.data.filter(p => p.name in Object.keys(displayParams))));
+      } else {
+        setConnected(false);
       }
-
-      //for (let block of log_blocks) {
-      //  console.log(block);
-      //}
-
-      if (connected) {
-        setTimeout(() => fetchLogBlocks(), 1000);
-      }
-    }
+    })
   };
 
+  useEffect(() => {
+    //console.log('HISTORY: ', displayHistory);
+  }, [displayHistory]);
 
-  const updateParamValues = log_blocks => {
-    for (let block of log_blocks) {
+  useEffect(() => {
+    if (connected) {
+      console.log('WE ARE CONNECTED!');
+      //setInterval(fetchLogBlocks, 1000);
+      fetchLogBlocks();
+      if (apiFetchInterval == null) {
+        setApiFetchInterval(setInterval(fetchLogBlocks, 1000));
+      }
+    } else {
+      if (apiFetchInterval != null) {
+        clearInterval(apiFetchInterval);
+        setApiFetchInterval(null);
+      }
+      console.log('WE ARE DISCONNECTED!');
     }
-  }
+  }, [connected]);
+
+
 
   return (
     <div className="container-fluid">
@@ -111,6 +117,8 @@ function App() {
                 setParams={setParams}
                 displayParams={displayParams}
                 plotParams={plotParams}
+                displayHistory={displayHistory}
+                plotHistory={plotHistory}
           />
         </div>
       </div>

@@ -1,6 +1,6 @@
 import Tab from "./Tab";
 
-function Tabs({ config, params, setParams, displayParams, plotParams }) {
+function Tabs({ config, params, setParams, displayParams, plotParams, displayHistory, plotHistory }) {
     let configs = [
         {name: "Gyro"},
         {name: "Pid"},
@@ -28,6 +28,8 @@ function Tabs({ config, params, setParams, displayParams, plotParams }) {
                              setParams={setParams}
                              displayParams={displayParams}
                              plotParams={plotParams}
+                             displayHistory={displayHistory}
+                             plotHistory={plotHistory}
                         />
                     </div>
                 )}
