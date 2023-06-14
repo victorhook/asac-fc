@@ -1,43 +1,19 @@
 [
     {
-        "label": "socket",
+        "label": "queue",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "socket",
-        "description": "socket",
-        "detail": "socket",
+        "importPath": "queue",
+        "description": "queue",
+        "detail": "queue",
         "documentation": {}
     },
     {
-        "label": "Thread",
-        "importPath": "threading",
-        "description": "threading",
+        "label": "Queue",
+        "importPath": "queue",
+        "description": "queue",
         "isExtraImport": true,
-        "detail": "threading",
-        "documentation": {}
-    },
-    {
-        "label": "Event",
-        "importPath": "threading",
-        "description": "threading",
-        "isExtraImport": true,
-        "detail": "threading",
-        "documentation": {}
-    },
-    {
-        "label": "Thread",
-        "importPath": "threading",
-        "description": "threading",
-        "isExtraImport": true,
-        "detail": "threading",
-        "documentation": {}
-    },
-    {
-        "label": "Event",
-        "importPath": "threading",
-        "description": "threading",
-        "isExtraImport": true,
-        "detail": "threading",
+        "detail": "queue",
         "documentation": {}
     },
     {
@@ -54,6 +30,96 @@
         "description": "queue",
         "isExtraImport": true,
         "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "Queue",
+        "importPath": "queue",
+        "description": "queue",
+        "isExtraImport": true,
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "Queue",
+        "importPath": "queue",
+        "description": "queue",
+        "isExtraImport": true,
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "Queue",
+        "importPath": "queue",
+        "description": "queue",
+        "isExtraImport": true,
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "fields",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "fields",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "fields",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "fields",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
         "documentation": {}
     },
     {
@@ -97,28 +163,637 @@
         "documentation": {}
     },
     {
-        "label": "Path",
-        "importPath": "pathlib",
-        "description": "pathlib",
+        "label": "fields",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
         "isExtraImport": true,
-        "detail": "pathlib",
+        "detail": "dataclasses",
         "documentation": {}
     },
     {
-        "label": "Path",
-        "importPath": "pathlib",
-        "description": "pathlib",
+        "label": "fields",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
         "isExtraImport": true,
-        "detail": "pathlib",
+        "detail": "dataclasses",
         "documentation": {}
     },
     {
-        "label": "re",
+        "label": "QApplication",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWidget",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMainWindow",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QFrame",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QPushButton",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QVBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QHBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QScrollArea",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QSizePolicy",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QGridLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLineEdit",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QApplication",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWidget",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMainWindow",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QFrame",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QPushButton",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QVBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QHBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QScrollArea",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QSizePolicy",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QGridLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLineEdit",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QApplication",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWidget",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMainWindow",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QFrame",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QPushButton",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QVBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QHBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QScrollArea",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QSizePolicy",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QGridLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLineEdit",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QApplication",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWidget",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMainWindow",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QFrame",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QPushButton",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QVBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QHBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QScrollArea",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QSizePolicy",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QGridLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLineEdit",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QTimer",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QThread",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QTimer",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QThread",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QTimer",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QThread",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QTimer",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "Qt",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QThread",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "pyqtgraph",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "re",
-        "description": "re",
-        "detail": "re",
+        "importPath": "pyqtgraph",
+        "description": "pyqtgraph",
+        "detail": "pyqtgraph",
+        "documentation": {}
+    },
+    {
+        "label": "PlotWidget",
+        "importPath": "pyqtgraph",
+        "description": "pyqtgraph",
+        "isExtraImport": true,
+        "detail": "pyqtgraph",
+        "documentation": {}
+    },
+    {
+        "label": "plot",
+        "importPath": "pyqtgraph",
+        "description": "pyqtgraph",
+        "isExtraImport": true,
+        "detail": "pyqtgraph",
+        "documentation": {}
+    },
+    {
+        "label": "PlotWidget",
+        "importPath": "pyqtgraph",
+        "description": "pyqtgraph",
+        "isExtraImport": true,
+        "detail": "pyqtgraph",
+        "documentation": {}
+    },
+    {
+        "label": "plot",
+        "importPath": "pyqtgraph",
+        "description": "pyqtgraph",
+        "isExtraImport": true,
+        "detail": "pyqtgraph",
+        "documentation": {}
+    },
+    {
+        "label": "PlotWidget",
+        "importPath": "pyqtgraph",
+        "description": "pyqtgraph",
+        "isExtraImport": true,
+        "detail": "pyqtgraph",
+        "documentation": {}
+    },
+    {
+        "label": "plot",
+        "importPath": "pyqtgraph",
+        "description": "pyqtgraph",
+        "isExtraImport": true,
+        "detail": "pyqtgraph",
+        "documentation": {}
+    },
+    {
+        "label": "PlotWidget",
+        "importPath": "pyqtgraph",
+        "description": "pyqtgraph",
+        "isExtraImport": true,
+        "detail": "pyqtgraph",
+        "documentation": {}
+    },
+    {
+        "label": "plot",
+        "importPath": "pyqtgraph",
+        "description": "pyqtgraph",
+        "isExtraImport": true,
+        "detail": "pyqtgraph",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
         "documentation": {}
     },
     {
@@ -154,6 +829,227 @@
         "documentation": {}
     },
     {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "TelemetryClient",
+        "importPath": "telemetry_client",
+        "description": "telemetry_client",
+        "isExtraImport": true,
+        "detail": "telemetry_client",
+        "documentation": {}
+    },
+    {
+        "label": "TelemetryClient",
+        "importPath": "telemetry_client",
+        "description": "telemetry_client",
+        "isExtraImport": true,
+        "detail": "telemetry_client",
+        "documentation": {}
+    },
+    {
+        "label": "log_types",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "log_types",
+        "description": "log_types",
+        "detail": "log_types",
+        "documentation": {}
+    },
+    {
+        "label": "log_block_t",
+        "importPath": "log_types",
+        "description": "log_types",
+        "isExtraImport": true,
+        "detail": "log_types",
+        "documentation": {}
+    },
+    {
+        "label": "log_block_t",
+        "importPath": "log_types",
+        "description": "log_types",
+        "isExtraImport": true,
+        "detail": "log_types",
+        "documentation": {}
+    },
+    {
+        "label": "log_block_data_control_loop_t",
+        "importPath": "log_types",
+        "description": "log_types",
+        "isExtraImport": true,
+        "detail": "log_types",
+        "documentation": {}
+    },
+    {
+        "label": "log_block_header_t",
+        "importPath": "log_types",
+        "description": "log_types",
+        "isExtraImport": true,
+        "detail": "log_types",
+        "documentation": {}
+    },
+    {
+        "label": "log_type_t",
+        "importPath": "log_types",
+        "description": "log_types",
+        "isExtraImport": true,
+        "detail": "log_types",
+        "documentation": {}
+    },
+    {
+        "label": "log_block_data_control_loop_t",
+        "importPath": "log_types",
+        "description": "log_types",
+        "isExtraImport": true,
+        "detail": "log_types",
+        "documentation": {}
+    },
+    {
+        "label": "log_block_header_t",
+        "importPath": "log_types",
+        "description": "log_types",
+        "isExtraImport": true,
+        "detail": "log_types",
+        "documentation": {}
+    },
+    {
+        "label": "log_type_t",
+        "importPath": "log_types",
+        "description": "log_types",
+        "isExtraImport": true,
+        "detail": "log_types",
+        "documentation": {}
+    },
+    {
+        "label": "struct",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "struct",
+        "description": "struct",
+        "detail": "struct",
+        "documentation": {}
+    },
+    {
+        "label": "IntEnum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
+        "label": "IntEnum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
+        "label": "IntEnum",
+        "importPath": "enum",
+        "description": "enum",
+        "isExtraImport": true,
+        "detail": "enum",
+        "documentation": {}
+    },
+    {
+        "label": "socket",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "socket",
+        "description": "socket",
+        "detail": "socket",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "Thread",
+        "importPath": "threading",
+        "description": "threading",
+        "isExtraImport": true,
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "Event",
+        "importPath": "threading",
+        "description": "threading",
+        "isExtraImport": true,
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "Thread",
+        "importPath": "threading",
+        "description": "threading",
+        "isExtraImport": true,
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "Event",
+        "importPath": "threading",
+        "description": "threading",
+        "isExtraImport": true,
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "TelemetryClientLogger",
+        "importPath": "telemetry_client_logger",
+        "description": "telemetry_client_logger",
+        "isExtraImport": true,
+        "detail": "telemetry_client_logger",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
         "label": "datetime",
         "importPath": "datetime",
         "description": "datetime",
@@ -186,15 +1082,6 @@
         "documentation": {}
     },
     {
-        "label": "os",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "os",
-        "description": "os",
-        "detail": "os",
-        "documentation": {}
-    },
-    {
         "label": "logging",
         "kind": 6,
         "isExtraImport": true,
@@ -213,19 +1100,11 @@
         "documentation": {}
     },
     {
-        "label": "abstractmethod",
-        "importPath": "abc",
-        "description": "abc",
+        "label": "Serial",
+        "importPath": "serial",
+        "description": "serial",
         "isExtraImport": true,
-        "detail": "abc",
-        "documentation": {}
-    },
-    {
-        "label": "ABC",
-        "importPath": "abc",
-        "description": "abc",
-        "isExtraImport": true,
-        "detail": "abc",
+        "detail": "serial",
         "documentation": {}
     },
     {
@@ -245,20 +1124,59 @@
         "documentation": {}
     },
     {
-        "label": "struct",
-        "kind": 6,
+        "label": "Serial",
+        "importPath": "serial",
+        "description": "serial",
         "isExtraImport": true,
-        "importPath": "struct",
-        "description": "struct",
-        "detail": "struct",
+        "detail": "serial",
         "documentation": {}
     },
     {
-        "label": "IntEnum",
-        "importPath": "enum",
-        "description": "enum",
+        "label": "Serial",
+        "importPath": "serial",
+        "description": "serial",
         "isExtraImport": true,
-        "detail": "enum",
+        "detail": "serial",
+        "documentation": {}
+    },
+    {
+        "label": "Serial",
+        "importPath": "serial",
+        "description": "serial",
+        "isExtraImport": true,
+        "detail": "serial",
+        "documentation": {}
+    },
+    {
+        "label": "SerialException",
+        "importPath": "serial.serialutil",
+        "description": "serial.serialutil",
+        "isExtraImport": true,
+        "detail": "serial.serialutil",
+        "documentation": {}
+    },
+    {
+        "label": "SerialException",
+        "importPath": "serial.serialutil",
+        "description": "serial.serialutil",
+        "isExtraImport": true,
+        "detail": "serial.serialutil",
+        "documentation": {}
+    },
+    {
+        "label": "abstractmethod",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "ABC",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
         "documentation": {}
     },
     {
@@ -310,21 +1228,210 @@
         "documentation": {}
     },
     {
-        "label": "sys",
+        "label": "ScrollableWidget",
         "kind": 6,
-        "isExtraImport": true,
-        "importPath": "sys",
-        "description": "sys",
-        "detail": "sys",
+        "importPath": "tools.client.gui",
+        "description": "tools.client.gui",
+        "peekOfCode": "class ScrollableWidget(QScrollArea):\n    def __init__(self):\n        super().__init__()\n        self._widget = QWidget()\n        layout = QGridLayout(self._widget)\n        layout.setAlignment(Qt.AlignmentFlag.AlignTop)\n        self.setWidget(self._widget)\n        self.setWidgetResizable(True)\nclass Settings(ScrollableWidget):\n    def __init__(self) -> None:",
+        "detail": "tools.client.gui",
         "documentation": {}
     },
     {
-        "label": "CalServer",
+        "label": "Settings",
         "kind": 6,
-        "importPath": "tools.cal_server",
-        "description": "tools.cal_server",
-        "peekOfCode": "class CalServer:\n    def __init__(self, listen_port: int) -> None:\n        self.listen_port = listen_port\n        self.listen_socket: socket.socket = None\n        self.telemtry_socket: socket.socket = None\n        self.listen_request_queue = Queue()\n        self._listen_thread_flag = Event()\n    def is_connected(self) -> bool:\n        return self.listen_socket is not None\n    def route_traffic(self) -> None:",
-        "detail": "tools.cal_server",
+        "importPath": "tools.client.gui",
+        "description": "tools.client.gui",
+        "peekOfCode": "class Settings(ScrollableWidget):\n    def __init__(self) -> None:\n        super().__init__()\nclass Gui(QMainWindow):\n    def __init__(self) -> None:\n        super().__init__()\n        # Attributes\n        self._params: Dict[str, QLabel] = {}\n        self._log_blocks = Queue()\n        self._telem_client = TelemetryClient(DEFAULT_IP, DEFAULT_PORT,",
+        "detail": "tools.client.gui",
+        "documentation": {}
+    },
+    {
+        "label": "Gui",
+        "kind": 6,
+        "importPath": "tools.client.gui",
+        "description": "tools.client.gui",
+        "peekOfCode": "class Gui(QMainWindow):\n    def __init__(self) -> None:\n        super().__init__()\n        # Attributes\n        self._params: Dict[str, QLabel] = {}\n        self._log_blocks = Queue()\n        self._telem_client = TelemetryClient(DEFAULT_IP, DEFAULT_PORT,\n                                             self._log_blocks.put)\n        self._wanted_params = [\n            'raw_gyro_x',",
+        "detail": "tools.client.gui",
+        "documentation": {}
+    },
+    {
+        "label": "DEFAULT_IP",
+        "kind": 5,
+        "importPath": "tools.client.gui",
+        "description": "tools.client.gui",
+        "peekOfCode": "DEFAULT_IP = '192.168.4.1'\n#DEFAULT_IP = '192.168.10.205'\nDEFAULT_PORT = 80\nclass ScrollableWidget(QScrollArea):\n    def __init__(self):\n        super().__init__()\n        self._widget = QWidget()\n        layout = QGridLayout(self._widget)\n        layout.setAlignment(Qt.AlignmentFlag.AlignTop)\n        self.setWidget(self._widget)",
+        "detail": "tools.client.gui",
+        "documentation": {}
+    },
+    {
+        "label": "#DEFAULT_IP",
+        "kind": 5,
+        "importPath": "tools.client.gui",
+        "description": "tools.client.gui",
+        "peekOfCode": "#DEFAULT_IP = '192.168.10.205'\nDEFAULT_PORT = 80\nclass ScrollableWidget(QScrollArea):\n    def __init__(self):\n        super().__init__()\n        self._widget = QWidget()\n        layout = QGridLayout(self._widget)\n        layout.setAlignment(Qt.AlignmentFlag.AlignTop)\n        self.setWidget(self._widget)\n        self.setWidgetResizable(True)",
+        "detail": "tools.client.gui",
+        "documentation": {}
+    },
+    {
+        "label": "DEFAULT_PORT",
+        "kind": 5,
+        "importPath": "tools.client.gui",
+        "description": "tools.client.gui",
+        "peekOfCode": "DEFAULT_PORT = 80\nclass ScrollableWidget(QScrollArea):\n    def __init__(self):\n        super().__init__()\n        self._widget = QWidget()\n        layout = QGridLayout(self._widget)\n        layout.setAlignment(Qt.AlignmentFlag.AlignTop)\n        self.setWidget(self._widget)\n        self.setWidgetResizable(True)\nclass Settings(ScrollableWidget):",
+        "detail": "tools.client.gui",
+        "documentation": {}
+    },
+    {
+        "label": "ScrollableWidget",
+        "kind": 6,
+        "importPath": "tools.gui.gui",
+        "description": "tools.gui.gui",
+        "peekOfCode": "class ScrollableWidget(QScrollArea):\n    def __init__(self):\n        super().__init__()\n        self._widget = QWidget()\n        layout = QGridLayout(self._widget)\n        layout.setAlignment(Qt.AlignmentFlag.AlignTop)\n        self.setWidget(self._widget)\n        self.setWidgetResizable(True)\nclass Gui(QMainWindow):\n    def __init__(self) -> None:",
+        "detail": "tools.gui.gui",
+        "documentation": {}
+    },
+    {
+        "label": "Gui",
+        "kind": 6,
+        "importPath": "tools.gui.gui",
+        "description": "tools.gui.gui",
+        "peekOfCode": "class Gui(QMainWindow):\n    def __init__(self) -> None:\n        super().__init__()\n        # Attributes\n        self._params: Dict[str, QLabel] = {}\n        self._log_blocks = Queue()\n        self._telem_client = TelemetryClient(DEFAULT_IP, DEFAULT_PORT,\n                                             self._log_blocks.put)\n        self._wanted_params = [\n            'raw_gyro_x',",
+        "detail": "tools.gui.gui",
+        "documentation": {}
+    },
+    {
+        "label": "DEFAULT_IP",
+        "kind": 5,
+        "importPath": "tools.gui.gui",
+        "description": "tools.gui.gui",
+        "peekOfCode": "DEFAULT_IP = '192.168.4.1'\n#DEFAULT_IP = '192.168.10.205'\nDEFAULT_PORT = 80\nclass ScrollableWidget(QScrollArea):\n    def __init__(self):\n        super().__init__()\n        self._widget = QWidget()\n        layout = QGridLayout(self._widget)\n        layout.setAlignment(Qt.AlignmentFlag.AlignTop)\n        self.setWidget(self._widget)",
+        "detail": "tools.gui.gui",
+        "documentation": {}
+    },
+    {
+        "label": "#DEFAULT_IP",
+        "kind": 5,
+        "importPath": "tools.gui.gui",
+        "description": "tools.gui.gui",
+        "peekOfCode": "#DEFAULT_IP = '192.168.10.205'\nDEFAULT_PORT = 80\nclass ScrollableWidget(QScrollArea):\n    def __init__(self):\n        super().__init__()\n        self._widget = QWidget()\n        layout = QGridLayout(self._widget)\n        layout.setAlignment(Qt.AlignmentFlag.AlignTop)\n        self.setWidget(self._widget)\n        self.setWidgetResizable(True)",
+        "detail": "tools.gui.gui",
+        "documentation": {}
+    },
+    {
+        "label": "DEFAULT_PORT",
+        "kind": 5,
+        "importPath": "tools.gui.gui",
+        "description": "tools.gui.gui",
+        "peekOfCode": "DEFAULT_PORT = 80\nclass ScrollableWidget(QScrollArea):\n    def __init__(self):\n        super().__init__()\n        self._widget = QWidget()\n        layout = QGridLayout(self._widget)\n        layout.setAlignment(Qt.AlignmentFlag.AlignTop)\n        self.setWidget(self._widget)\n        self.setWidgetResizable(True)\nclass Gui(QMainWindow):",
+        "detail": "tools.gui.gui",
+        "documentation": {}
+    },
+    {
+        "label": "log_block_t",
+        "kind": 6,
+        "importPath": "tools.gui.log_types",
+        "description": "tools.gui.log_types",
+        "peekOfCode": "class log_block_t:\n    pass\nclass log_type_t(IntEnum):\n    LOG_TYPE_PID = 0\n    LOG_TYPE_BATTERY = 1\n@dataclass\nclass log_block_header_t(log_block_t):\n    type: float = 0 # log_type_t\n    timestamp: float = 0 # uint32_t\n    id: float = 0 # uint32_t",
+        "detail": "tools.gui.log_types",
+        "documentation": {}
+    },
+    {
+        "label": "log_type_t",
+        "kind": 6,
+        "importPath": "tools.gui.log_types",
+        "description": "tools.gui.log_types",
+        "peekOfCode": "class log_type_t(IntEnum):\n    LOG_TYPE_PID = 0\n    LOG_TYPE_BATTERY = 1\n@dataclass\nclass log_block_header_t(log_block_t):\n    type: float = 0 # log_type_t\n    timestamp: float = 0 # uint32_t\n    id: float = 0 # uint32_t\n    fmt = '<BII'\n    size = struct.calcsize(fmt)",
+        "detail": "tools.gui.log_types",
+        "documentation": {}
+    },
+    {
+        "label": "log_block_header_t",
+        "kind": 6,
+        "importPath": "tools.gui.log_types",
+        "description": "tools.gui.log_types",
+        "peekOfCode": "class log_block_header_t(log_block_t):\n    type: float = 0 # log_type_t\n    timestamp: float = 0 # uint32_t\n    id: float = 0 # uint32_t\n    fmt = '<BII'\n    size = struct.calcsize(fmt)\n    def to_bytes(self) -> bytes:\n        \"\"\" Returns a log_block_header_t in bytes. \"\"\"\n        fmt = self.fmt\n        raw = struct.pack(fmt, *[getattr(self, f.name) for f in fields(self)])",
+        "detail": "tools.gui.log_types",
+        "documentation": {}
+    },
+    {
+        "label": "log_block_data_control_loop_t",
+        "kind": 6,
+        "importPath": "tools.gui.log_types",
+        "description": "tools.gui.log_types",
+        "peekOfCode": "class log_block_data_control_loop_t(log_block_header_t):\n    raw_gyro_x: float = 0 # float\n    raw_gyro_y: float = 0 # float\n    raw_gyro_z: float = 0 # float\n    filtered_gyro_x: float = 0 # float\n    filtered_gyro_y: float = 0 # float\n    filtered_gyro_z: float = 0 # float\n    rc_in_roll: float = 0 # uint16_t\n    rc_in_pitch: float = 0 # uint16_t\n    rc_in_yaw: float = 0 # uint16_t",
+        "detail": "tools.gui.log_types",
+        "documentation": {}
+    },
+    {
+        "label": "log_block_data_battery_t",
+        "kind": 6,
+        "importPath": "tools.gui.log_types",
+        "description": "tools.gui.log_types",
+        "peekOfCode": "class log_block_data_battery_t(log_block_header_t):\n    voltage: float = 0 # float\n    fmt = '<f'\n    size = struct.calcsize(fmt)\n    def to_bytes(self) -> bytes:\n        \"\"\" Returns a log_block_data_battery_t in bytes. \"\"\"\n        fmt = self.fmt\n        fmt = super().fmt + fmt.replace(\"<\", \"\")\n        raw = struct.pack(fmt, *[getattr(self, f.name) for f in fields(self)])\n        return raw",
+        "detail": "tools.gui.log_types",
+        "documentation": {}
+    },
+    {
+        "label": "TelemetryClient",
+        "kind": 6,
+        "importPath": "tools.gui.telemetry_client",
+        "description": "tools.gui.telemetry_client",
+        "peekOfCode": "class TelemetryClient:\n    '''\n    Client that connects to the telemetry node and read data from it.\n    Once new data is received, it is parsed and log blocks python objects\n    are assembled. Once these are assembled, they are put in a rx queue, which\n    can be taken from by the HTTP server.\n    '''\n    class ParseState(IntEnum):\n        HEADER = 0\n        DATA = 1",
+        "detail": "tools.gui.telemetry_client",
+        "documentation": {}
+    },
+    {
+        "label": "gen_random_log_block",
+        "kind": 2,
+        "importPath": "tools.gui.telemetry_client",
+        "description": "tools.gui.telemetry_client",
+        "peekOfCode": "def gen_random_log_block() -> List[log_type_t]:\n    return log_block_data_control_loop_t(LOG_TYPE_PID, int(time.time()), log_id)\nclass TelemetryClient:\n    '''\n    Client that connects to the telemetry node and read data from it.\n    Once new data is received, it is parsed and log blocks python objects\n    are assembled. Once these are assembled, they are put in a rx queue, which\n    can be taken from by the HTTP server.\n    '''\n    class ParseState(IntEnum):",
+        "detail": "tools.gui.telemetry_client",
+        "documentation": {}
+    },
+    {
+        "label": "LOG_TYPE_PID",
+        "kind": 5,
+        "importPath": "tools.gui.telemetry_client",
+        "description": "tools.gui.telemetry_client",
+        "peekOfCode": "LOG_TYPE_PID = 0\nlog_id = 0\ndef gen_random_log_block() -> List[log_type_t]:\n    return log_block_data_control_loop_t(LOG_TYPE_PID, int(time.time()), log_id)\nclass TelemetryClient:\n    '''\n    Client that connects to the telemetry node and read data from it.\n    Once new data is received, it is parsed and log blocks python objects\n    are assembled. Once these are assembled, they are put in a rx queue, which\n    can be taken from by the HTTP server.",
+        "detail": "tools.gui.telemetry_client",
+        "documentation": {}
+    },
+    {
+        "label": "log_id",
+        "kind": 5,
+        "importPath": "tools.gui.telemetry_client",
+        "description": "tools.gui.telemetry_client",
+        "peekOfCode": "log_id = 0\ndef gen_random_log_block() -> List[log_type_t]:\n    return log_block_data_control_loop_t(LOG_TYPE_PID, int(time.time()), log_id)\nclass TelemetryClient:\n    '''\n    Client that connects to the telemetry node and read data from it.\n    Once new data is received, it is parsed and log blocks python objects\n    are assembled. Once these are assembled, they are put in a rx queue, which\n    can be taken from by the HTTP server.\n    '''",
+        "detail": "tools.gui.telemetry_client",
+        "documentation": {}
+    },
+    {
+        "label": "TelemetryClientLogger",
+        "kind": 6,
+        "importPath": "tools.gui.telemetry_client_logger",
+        "description": "tools.gui.telemetry_client_logger",
+        "peekOfCode": "class TelemetryClientLogger:\n    def log(self, log_block: log_block_data_control_loop_t) -> None:\n        print(f'[{log_block.id}] ', end='')\n        for param in DESIRED_LOG_PARAMS:\n            value = getattr(log_block, param)\n            value_fmt = '{:+0.3f}'.format(value)\n            print(f'{param}: {value_fmt}', end=' ')\n        print()",
+        "detail": "tools.gui.telemetry_client_logger",
+        "documentation": {}
+    },
+    {
+        "label": "DESIRED_LOG_PARAMS",
+        "kind": 5,
+        "importPath": "tools.gui.telemetry_client_logger",
+        "description": "tools.gui.telemetry_client_logger",
+        "peekOfCode": "DESIRED_LOG_PARAMS = [\n    'roll_error',\n    'roll_error_integral',\n    'roll_p',\n    'roll_i',\n    'roll_d',\n    'roll_pid',\n    #'raw_gyro_x',\n    #'raw_gyro_y',\n    #'raw_gyro_z',",
+        "detail": "tools.gui.telemetry_client_logger",
+        "documentation": {}
+    },
+    {
+        "label": "DESIRED_LOG_PARAMS2",
+        "kind": 5,
+        "importPath": "tools.gui.telemetry_client_logger",
+        "description": "tools.gui.telemetry_client_logger",
+        "peekOfCode": "DESIRED_LOG_PARAMS2 = [\n    'rc_in_roll',\n    'rc_in_pitch',\n    'rc_in_yaw',\n    'rc_in_throttle',\n]\nclass TelemetryClientLogger:\n    def log(self, log_block: log_block_data_control_loop_t) -> None:\n        print(f'[{log_block.id}] ', end='')\n        for param in DESIRED_LOG_PARAMS:",
+        "detail": "tools.gui.telemetry_client_logger",
         "documentation": {}
     },
     {
@@ -404,7 +1511,7 @@
         "kind": 5,
         "importPath": "tools.gen_log_params",
         "description": "tools.gen_log_params",
-        "peekOfCode": "PROJECT_BASE_DIR = Path(__file__).absolute().parent.parent\nINCLUDE_DIR = PROJECT_BASE_DIR.joinpath('include')\nJS_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'grapher-frontend', 'src')\nPYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)",
+        "peekOfCode": "PROJECT_BASE_DIR = Path(__file__).absolute().parent.parent\nINCLUDE_DIR = PROJECT_BASE_DIR.joinpath('include')\nJS_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'grapher-frontend', 'src')\n#PYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')\nPYTHON_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'gui')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'",
         "detail": "tools.gen_log_params",
         "documentation": {}
     },
@@ -413,7 +1520,7 @@
         "kind": 5,
         "importPath": "tools.gen_log_params",
         "description": "tools.gen_log_params",
-        "peekOfCode": "INCLUDE_DIR = PROJECT_BASE_DIR.joinpath('include')\nJS_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'grapher-frontend', 'src')\nPYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'",
+        "peekOfCode": "INCLUDE_DIR = PROJECT_BASE_DIR.joinpath('include')\nJS_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'grapher-frontend', 'src')\n#PYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')\nPYTHON_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'gui')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)",
         "detail": "tools.gen_log_params",
         "documentation": {}
     },
@@ -422,7 +1529,16 @@
         "kind": 5,
         "importPath": "tools.gen_log_params",
         "description": "tools.gen_log_params",
-        "peekOfCode": "JS_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'grapher-frontend', 'src')\nPYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\",
+        "peekOfCode": "JS_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'grapher-frontend', 'src')\n#PYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')\nPYTHON_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'gui')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'",
+        "detail": "tools.gen_log_params",
+        "documentation": {}
+    },
+    {
+        "label": "#PYTHON_TARGET_DIR",
+        "kind": 5,
+        "importPath": "tools.gen_log_params",
+        "description": "tools.gen_log_params",
+        "peekOfCode": "#PYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')\nPYTHON_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'gui')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\",
         "detail": "tools.gen_log_params",
         "documentation": {}
     },
@@ -431,7 +1547,7 @@
         "kind": 5,
         "importPath": "tools.gen_log_params",
         "description": "tools.gen_log_params",
-        "peekOfCode": "PYTHON_TARGET_DIR = PROJECT_BASE_DIR.parent.joinpath('telemetry-node', 'tools', 'client')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\\nAuto-generated file. Please don\\'t modify directly!",
+        "peekOfCode": "PYTHON_TARGET_DIR = PROJECT_BASE_DIR.joinpath('tools', 'gui')\nJS_TARGET_FILE = 'LogTypes.js'\nPYTHON_TARGET_FILE = 'log_types.py'\nJS_TARGET_FILEPATH = JS_TARGET_DIR.joinpath(JS_TARGET_FILE)\nPYTHON_TARGET_FILEPATH = PYTHON_TARGET_DIR.joinpath(PYTHON_TARGET_FILE)\nLOG_HEADER_FILE = 'log.h'\nLOG_HEADER_PATH = INCLUDE_DIR.joinpath(LOG_HEADER_FILE)\nLOG_TYPEDEF_NAME = 'log_block_control_loop_t'\nAUTO_GENERATED_FILE_COMMENT = '''\\\nAuto-generated file. Please don\\'t modify directly!",
         "detail": "tools.gen_log_params",
         "documentation": {}
     },
@@ -748,6 +1864,150 @@
         "description": "tools.msp_client",
         "peekOfCode": "class A(MSP_RX):\n    def receive_packet(self, packet: MSP_Packet) -> None:\n        print(packet)\nif __name__ == '__main__':\n    parser = ArgumentParser()\n    parser.add_argument('-p', '--port', type=str, default=None)\n    parser.add_argument('-b', '--baud', type=int, default=115200)\n    args = parser.parse_args()\n    if args.port is None:\n        available_ports = [port.device for port in list_ports.comports()]",
         "detail": "tools.msp_client",
+        "documentation": {}
+    },
+    {
+        "label": "HEADER_FIRST_BYTE",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "HEADER_FIRST_BYTE = 0\nHEADER_SECOND_BYTE = 1\nPAYLOAD = 2\nCHECKSUM_FIRST_BYTE = 3\nCHECKSUM_SECOND_BYTE = 4\nibus_state = HEADER_FIRST_BYTE\nparse_errors = 0\npayload = [0 for i in range(28)]\nbuf = []\ndata_bytes = 0",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "HEADER_SECOND_BYTE",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "HEADER_SECOND_BYTE = 1\nPAYLOAD = 2\nCHECKSUM_FIRST_BYTE = 3\nCHECKSUM_SECOND_BYTE = 4\nibus_state = HEADER_FIRST_BYTE\nparse_errors = 0\npayload = [0 for i in range(28)]\nbuf = []\ndata_bytes = 0\nrx_checksum: int",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "PAYLOAD",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "PAYLOAD = 2\nCHECKSUM_FIRST_BYTE = 3\nCHECKSUM_SECOND_BYTE = 4\nibus_state = HEADER_FIRST_BYTE\nparse_errors = 0\npayload = [0 for i in range(28)]\nbuf = []\ndata_bytes = 0\nrx_checksum: int\nchecksum: int",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "CHECKSUM_FIRST_BYTE",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "CHECKSUM_FIRST_BYTE = 3\nCHECKSUM_SECOND_BYTE = 4\nibus_state = HEADER_FIRST_BYTE\nparse_errors = 0\npayload = [0 for i in range(28)]\nbuf = []\ndata_bytes = 0\nrx_checksum: int\nchecksum: int\npkt_rate = 0",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "CHECKSUM_SECOND_BYTE",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "CHECKSUM_SECOND_BYTE = 4\nibus_state = HEADER_FIRST_BYTE\nparse_errors = 0\npayload = [0 for i in range(28)]\nbuf = []\ndata_bytes = 0\nrx_checksum: int\nchecksum: int\npkt_rate = 0\npkt_cnt = 0",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "ibus_state",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "ibus_state = HEADER_FIRST_BYTE\nparse_errors = 0\npayload = [0 for i in range(28)]\nbuf = []\ndata_bytes = 0\nrx_checksum: int\nchecksum: int\npkt_rate = 0\npkt_cnt = 0\nt0 = 0",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "parse_errors",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "parse_errors = 0\npayload = [0 for i in range(28)]\nbuf = []\ndata_bytes = 0\nrx_checksum: int\nchecksum: int\npkt_rate = 0\npkt_cnt = 0\nt0 = 0\nj = 0",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "payload",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "payload = [0 for i in range(28)]\nbuf = []\ndata_bytes = 0\nrx_checksum: int\nchecksum: int\npkt_rate = 0\npkt_cnt = 0\nt0 = 0\nj = 0\nif __name__ == '__main__':",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "buf",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "buf = []\ndata_bytes = 0\nrx_checksum: int\nchecksum: int\npkt_rate = 0\npkt_cnt = 0\nt0 = 0\nj = 0\nif __name__ == '__main__':\n    try:",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "data_bytes",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "data_bytes = 0\nrx_checksum: int\nchecksum: int\npkt_rate = 0\npkt_cnt = 0\nt0 = 0\nj = 0\nif __name__ == '__main__':\n    try:\n        port = sys.argv[1]",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "pkt_rate",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "pkt_rate = 0\npkt_cnt = 0\nt0 = 0\nj = 0\nif __name__ == '__main__':\n    try:\n        port = sys.argv[1]\n    except Exception:\n        print('Supply serial port!')\n        sys.exit(0)",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "pkt_cnt",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "pkt_cnt = 0\nt0 = 0\nj = 0\nif __name__ == '__main__':\n    try:\n        port = sys.argv[1]\n    except Exception:\n        print('Supply serial port!')\n        sys.exit(0)\n    connected = False",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "t0",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "t0 = 0\nj = 0\nif __name__ == '__main__':\n    try:\n        port = sys.argv[1]\n    except Exception:\n        print('Supply serial port!')\n        sys.exit(0)\n    connected = False\n    while not connected:",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "j",
+        "kind": 5,
+        "importPath": "tools.parse_ibus",
+        "description": "tools.parse_ibus",
+        "peekOfCode": "j = 0\nif __name__ == '__main__':\n    try:\n        port = sys.argv[1]\n    except Exception:\n        print('Supply serial port!')\n        sys.exit(0)\n    connected = False\n    while not connected:\n        try:",
+        "detail": "tools.parse_ibus",
+        "documentation": {}
+    },
+    {
+        "label": "Gui",
+        "kind": 6,
+        "importPath": "tools.serial_plotter",
+        "description": "tools.serial_plotter",
+        "peekOfCode": "class Gui(QMainWindow):\n    def __init__(self) -> None:\n        super().__init__()\n        # -- Graph content -- #\n        self.graph = pg.PlotWidget()\n        self.setCentralWidget(self.graph)\n        self.graph.setBackground('w')\n        self.x = []\n        self.y = []\n        self.line = self.graph.plot(",
+        "detail": "tools.serial_plotter",
+        "documentation": {}
+    },
+    {
+        "label": "Gui",
+        "kind": 6,
+        "importPath": "tools.test_rx_bw",
+        "description": "tools.test_rx_bw",
+        "peekOfCode": "class Gui(QMainWindow):\n    def __init__(self) -> None:\n        super().__init__()\n        # -- Graph content -- #\n        self.graph = pg.PlotWidget()\n        self.setCentralWidget(self.graph)\n        self.graph.setBackground('w')\n        self.x = []\n        self.y = []\n        self.line = self.graph.plot(",
+        "detail": "tools.test_rx_bw",
         "documentation": {}
     }
 ]

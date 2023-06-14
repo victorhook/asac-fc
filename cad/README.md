@@ -1,0 +1,1 @@
+This directory contains CAD files that that are related to graphics (perhaps used as silkscreen on PCB) or 3D-print files. All 3D modelling is done in FreeCad and most graphics are done in Figma.

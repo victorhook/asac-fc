@@ -1,3 +1,4 @@
 #!/bin/bash
 
-make && make flash_serial && tools/monitor.py /dev/ttyACM0
+# Helper script that builds firmware, flashes and starts serial monitoring
+make && make flash_serial && make monitor

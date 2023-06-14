@@ -42,7 +42,13 @@
       "type_traits": "c",
       "utility": "c",
       "machine.h": "c",
-      "uart_tx.pio.h": "c"
+      "uart_tx.pio.h": "c",
+      "controller.h": "c",
+      "pid.h": "c",
+      "asac_fc.h": "c",
+      "vsrtos.h": "c",
+      "multicore.h": "c",
+      "battery_adc.h": "c"
     },
     "esbonio.sphinx.confDir": "",
     "cortex-debug.variableUseNaturalFormat": false,
