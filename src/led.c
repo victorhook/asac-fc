@@ -11,13 +11,13 @@
 int led_init() {
     gpio_init(PIN_LED_GREEN);
     gpio_init(PIN_LED_RED);
-    gpio_init(PIN_LED_ONBOARD);
+    gpio_init(PIN_LED_BLUE);
     gpio_set_dir(PIN_LED_GREEN, GPIO_OUT);
     gpio_set_dir(PIN_LED_RED, GPIO_OUT);
-    gpio_set_dir(PIN_LED_ONBOARD, GPIO_OUT);
+    gpio_set_dir(PIN_LED_BLUE, GPIO_OUT);
     gpio_put(PIN_LED_GREEN, 0);
     gpio_put(PIN_LED_RED, 0);
-    gpio_put(PIN_LED_ONBOARD, 0);
+    gpio_put(PIN_LED_BLUE, 0);
 
     return 0;
 }

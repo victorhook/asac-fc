@@ -22,6 +22,9 @@
 
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
+#define HIGH 1
+#define LOW  0
+
 //#define RP2040
 
 /*
@@ -34,6 +37,11 @@
 #define IMU_ORIENTATION_X  1
 #define IMU_ORIENTATION_Y  1
 #define IMU_ORIENTATION_Z -1
+
+
+// #define IMU_MPU_6050_I2C
+#define IMU_BMI270_SPI
+
 
 
 uint32_t us_since_boot();

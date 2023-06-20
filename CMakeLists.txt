@@ -42,7 +42,12 @@ add_executable(asac-fc
   src/telemetry.c
   # Drivers
   src/drivers/mpu6050.c
+  src/drivers/bmi270_asac.c
   src/drivers/oneshot.c
+  # Vendor - BMI270
+  vendor/BMI270-Sensor-API/bmi2_ois.c
+  vendor/BMI270-Sensor-API/bmi270.c
+  vendor/BMI270-Sensor-API/bmi2.c
   # PIO programs
   include/drivers/uart_tx.pio
   include/drivers/uart_rx.pio
@@ -72,12 +77,14 @@ target_link_libraries(asac-fc
 target_include_directories(asac-fc PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
   ${CMAKE_CURRENT_LIST_DIR}/include
+  ${CMAKE_CURRENT_LIST_DIR}/vendor/BMI270-Sensor-API/
   ${CMAKE_CURRENT_LIST_DIR}/.. # for our common lwipopts or any other standard includes, if required
 )
 
 # Add any user requested libraries
 target_link_libraries(asac-fc
   hardware_i2c
+  hardware_spi
   hardware_adc
   hardware_flash
   hardware_sync

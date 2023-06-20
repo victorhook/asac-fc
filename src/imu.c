@@ -1,9 +1,12 @@
 #include "imu.h"
 #include "machine.h"
 #include "asac_fc.h"
+#include "drivers/bmi270_asac.h"
 #include "drivers/mpu6050.h"
 
+
 #include <hardware/i2c.h>
+#include <hardware/spi.h>
 
 
 #define GYRO_FILTER_ORDER 2
@@ -17,6 +20,7 @@ static int gyro_filter_index;
 #define CALIBRATION_DELAY_BETWEEN_SAMPLES_MS 1
 imu_reading_t last_reading;
 mpu6050_t mpu;
+bmi270_t bmi;
 
 static imu_reading_t imu_bias;
 
@@ -29,34 +33,53 @@ int imu_init() {
     imu_bias.acc_y = 0;
     imu_bias.acc_z = 0;
 
-    // Initialize i2c bus and gpio
-    i2c_init(I2C_BUS_IMU, 400 * 1000);
-    gpio_set_function(PIN_SDA1, GPIO_FUNC_I2C);
-    gpio_set_function(PIN_SCL1, GPIO_FUNC_I2C);
-    gpio_pull_up(PIN_SDA1);
-    gpio_pull_up(PIN_SCL1);
+    int result;
 
-    // Enable interrupts
-    int res = mpu6050_init(&mpu, I2C_BUS_IMU);
-    if (res != 0) {
-        return res;
-    }
+    #ifdef IMU_MPU_6050_I2C
+        // Initialize i2c bus and gpio
+        i2c_init(I2C_BUS_IMU, 400 * 1000);
+        gpio_set_function(PIN_SDA1, GPIO_FUNC_I2C);
+        gpio_set_function(PIN_SCL1, GPIO_FUNC_I2C);
+        gpio_pull_up(PIN_SDA1);
+        gpio_pull_up(PIN_SCL1);
+
+        // Enable interrupts
+        result = mpu6050_init(&mpu, I2C_BUS_IMU);
+        if (result != 0) {
+            return result;
+        }
+    #endif
+    #ifdef IMU_BMI270_SPI
+        spi_init(IMU_SPI_BUS, 10000000); // 10 MHz
+        spi_set_format(IMU_SPI_BUS, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+        gpio_set_function(PIN_IMU_MOSI, GPIO_FUNC_SPI);
+        gpio_set_function(PIN_IMU_MISO, GPIO_FUNC_SPI);
+        gpio_set_function(PIN_IMU_SCK, GPIO_FUNC_SPI);
+        gpio_init(PIN_IMU_CS);
+        gpio_set_dir(PIN_IMU_CS, GPIO_OUT);
+        gpio_put(PIN_IMU_CS, HIGH);
+
+        result = bmi270_asac_init(&bmi, IMU_SPI_BUS, PIN_IMU_CS);
+        if (result != 0) {
+            return result;
+        }
+    #endif
 
     #ifdef CALIBRATE_ON_INIT
-    res = imu_calibrate();
-    if (res != 0) {
-        return res;
-    }
+        res = imu_calibrate();
+        if (res != 0) {
+            return res;
+        }
 
-    printf("IMU Calibration done, samples: %d, bias: \n", CALIBRATION_SAMPLES);
-    printf("  Gx: %f, Gy: %f, Gz: %f, Ax: %f, Ay: %f, Az: %f\n",
-        imu_bias.gyro_x,
-        imu_bias.gyro_y,
-        imu_bias.gyro_z,
-        imu_bias.acc_x,
-        imu_bias.acc_y,
-        imu_bias.acc_z
-    );
+        printf("IMU Calibration done, samples: %d, bias: \n", CALIBRATION_SAMPLES);
+        printf("  Gx: %f, Gy: %f, Gz: %f, Ax: %f, Ay: %f, Az: %f\n",
+            imu_bias.gyro_x,
+            imu_bias.gyro_y,
+            imu_bias.gyro_z,
+            imu_bias.acc_x,
+            imu_bias.acc_y,
+            imu_bias.acc_z
+        );
     #else
         // Pre-calibrated gyro bias. TODO: Place this in flash.
         imu_bias.gyro_x = -2.688686;
@@ -108,12 +131,19 @@ const imu_reading_t* imu_get_bias() {
     return &imu_bias;
 }
 
+
 void imu_read(imu_reading_t* reading) {
-    mpu6050_read(&mpu, &reading->acc_x, &reading->gyro_x);
+    #ifdef IMU_MPU_6050_I2C
+        mpu6050_read(&mpu, &reading->acc_x, &reading->gyro_x);
+    #endif
+    #ifdef IMU_BMI270_SPI
+        bmi270_asac_read(&bmi, &reading->acc_x, &reading->gyro_x);
+    #endif
+
     reading->timestamp_us = time_us_32();
 
-    // printf("ACC %f, %f, %f\n", reading->acc_x, reading->acc_y, reading->acc_z);
-    // printf("GYRO %f, %f, %f\n", reading->gyro_x, reading->gyro_y, reading->gyro_z);
+    //printf("ACC %f, %f, %f\n", reading->acc_x, reading->acc_y, reading->acc_z);
+    //printf("GYRO %f, %f, %f\n", reading->gyro_x, reading->gyro_y, reading->gyro_z);
 }
 
 
