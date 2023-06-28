@@ -14,7 +14,7 @@ static float gyro_filter_params[GYRO_FILTER_ORDER] = {0.9, 0.1};
 static vector_3d_t gyro_filter_mem[GYRO_FILTER_ORDER];
 static int gyro_filter_index;
 
-// #define CALIBRATE_ON_INIT
+//#define CALIBRATE_ON_INIT
 
 #define CALIBRATION_SAMPLES                  1000
 #define CALIBRATION_DELAY_BETWEEN_SAMPLES_MS 1
@@ -35,7 +35,7 @@ int imu_init() {
 
     int result;
 
-    #ifdef IMU_MPU_6050_I2C
+    #if defined(IMU_MPU_6050_I2C)
         // Initialize i2c bus and gpio
         i2c_init(I2C_BUS_IMU, 400 * 1000);
         gpio_set_function(PIN_SDA1, GPIO_FUNC_I2C);
@@ -48,8 +48,11 @@ int imu_init() {
         if (result != 0) {
             return result;
         }
-    #endif
-    #ifdef IMU_BMI270_SPI
+    #elif defined(IMU_BMI270_SPI)
+        // Initialize SPI bus, BMI270 operates at max 10 MHz, allows
+        // CPOL=0 & CPHA=0, or CPOL=1 & CPHA=1
+        // The CS pin we control manually, thus setting to normal GPIO,
+        // active low
         spi_init(IMU_SPI_BUS, 10000000); // 10 MHz
         spi_set_format(IMU_SPI_BUS, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
         gpio_set_function(PIN_IMU_MOSI, GPIO_FUNC_SPI);
@@ -66,9 +69,9 @@ int imu_init() {
     #endif
 
     #ifdef CALIBRATE_ON_INIT
-        res = imu_calibrate();
-        if (res != 0) {
-            return res;
+        result = imu_calibrate();
+        if (result != 0) {
+            return result;
         }
 
         printf("IMU Calibration done, samples: %d, bias: \n", CALIBRATION_SAMPLES);
@@ -82,12 +85,18 @@ int imu_init() {
         );
     #else
         // Pre-calibrated gyro bias. TODO: Place this in flash.
-        imu_bias.gyro_x = -2.688686;
-        imu_bias.gyro_y = -1.922470;
-        imu_bias.gyro_z = 1.760995;
-        imu_bias.acc_x  = -0.033133;
-        imu_bias.acc_y  = -0.005135;
-        imu_bias.acc_z  = 1.018919;
+        // BMI270
+        imu_bias.gyro_x = -0.050177;
+        imu_bias.gyro_y = 0.225903;
+        imu_bias.gyro_z = -0.710046;
+
+        // MPU-6050
+        //imu_bias.gyro_x = -2.688686;
+        //imu_bias.gyro_y = -1.922470;
+        //imu_bias.gyro_z = 1.760995;
+        //imu_bias.acc_x  = -0.033133;
+        //imu_bias.acc_y  = -0.005135;
+        //imu_bias.acc_z  = 1.018919;
     #endif
 
     memset(gyro_filter_mem, 0, sizeof(gyro_filter_mem) / sizeof(vector_3d_t));
@@ -133,10 +142,9 @@ const imu_reading_t* imu_get_bias() {
 
 
 void imu_read(imu_reading_t* reading) {
-    #ifdef IMU_MPU_6050_I2C
+    #if defined(IMU_MPU_6050_I2C)
         mpu6050_read(&mpu, &reading->acc_x, &reading->gyro_x);
-    #endif
-    #ifdef IMU_BMI270_SPI
+    #elif defined(IMU_BMI270_SPI)
         bmi270_asac_read(&bmi, &reading->acc_x, &reading->gyro_x);
     #endif
 

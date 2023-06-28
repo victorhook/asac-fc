@@ -3,10 +3,15 @@
 
 
 // Pin definitions for custom PCB - Revision B
-#define PIN_M1                 1
-#define PIN_M2                 0
+// TODO: Incorrect motor names!!
+// M1 in schematic and PCB is actually M2 according to motor mixer :)
+// So M1 and M2 are swapped
+//#define PIN_M1                 1
+//#define PIN_M2                 0
 #define PIN_M3                20
 #define PIN_M4                18
+#define PIN_M1                 0
+#define PIN_M2                 1
 
 #define PIN_VBAT_ADC          28
 #define VBAT_ADC_INPUT_NUMBER  2

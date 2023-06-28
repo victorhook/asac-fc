@@ -68,7 +68,6 @@ int motors_init() {
             // PWM 50 Hz:
             wrap = MOTOR_PWM_LEVEL_SCALER;
             clk_div = 250.0;
-            init_pwm(&pwm_m_debug, PIN_M_DEBUG, clk_div, wrap);
             init_pwm(&pwm_m1, PIN_M1, clk_div, wrap);
             init_pwm(&pwm_m2, PIN_M2, clk_div, wrap);
             init_pwm(&pwm_m3, PIN_M3, clk_div, wrap);
@@ -87,7 +86,6 @@ int motors_init() {
             return -1;
     }
 
-    set_motor_pwm(MOTOR_DEBUG, 0.0);
     set_motor_pwm(MOTOR_1, 0.0);
     set_motor_pwm(MOTOR_2, 0.0);
     set_motor_pwm(MOTOR_3, 0.0);

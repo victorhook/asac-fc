@@ -38,7 +38,7 @@ int main() {
     // Turn RED led high to indicate we're booting
     led_set(LED_RED, 1);
 
-    init_driver(settings_init,    "Settings");
+    //init_driver(settings_init,    "Settings");
     init_driver(receiver_init,    "Receiver");
     init_driver(battery_adc_init, "Battery ADC");
     init_driver(imu_init,         "IMU");
@@ -66,6 +66,7 @@ int main() {
     #endif
 
     state.mode = MODE_IDLE;
+    led_set(LED_BLUE, 1);
 
     // Start scheduler
     vsrtos_scheduler_start();
