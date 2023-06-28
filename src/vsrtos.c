@@ -58,6 +58,8 @@ static bool is_init = false;
 
 #define IDLE_TASK NULL
 
+//#define DEBUG_PRINT_EVERY_SEC
+
 // Helper functions
 static task_t* get_next_task();
 static task_block_t* getPrevTaskBlockWithHigherPriority(const uint8_t priority);
@@ -101,7 +103,6 @@ void vsrtos_scheduler_start() {
     DEBUG_PRINT("Scheduler starting\n");
 
     uint32_t t0 = current_time_us();
-    bool debug_print_every_sec = false;
 
     while (1) {
         task_t* next_task = get_next_task();
@@ -112,7 +113,7 @@ void vsrtos_scheduler_start() {
             continue;
         }
 
-        if (debug_print_every_sec) {
+        #ifdef DEBUG_PRINT_EVERY_SEC
             uint32_t now = current_time_us();
             if ((now - t0) > 1000000) {
                 t0 = now;
@@ -123,35 +124,15 @@ void vsrtos_scheduler_start() {
                     t = t->next;
                 }
                 printf("\n");
+                fflush(stdout);
             }
-        }
+        #endif
 
         next_task->last_called = current_time_us();
         next_task->update();
         next_task->last_finished = current_time_us();
         next_task->times_executed++;
         next_task->times_executed_per_sec++;
-
-        /*
-        static int i = 0;
-        static uint32_t t00 = 0;
-
-        i++;
-
-        if (i > 1000) {
-            i = 0;
-            uint32_t dt = next_task->last_finished - t00;
-            t00 = next_task->last_finished;
-        }
-        */
-
-        //DEBUG_PRINTF(
-        //    "[%d] last_called: %lu, last_exe: %lu Name: %s\n",
-        //    next_task->priority,
-        //    next_task->last_called,
-        //    next_task->last_finished,
-        //    next_task->name
-        //);
     }
 
 }
