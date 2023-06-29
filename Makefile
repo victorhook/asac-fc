@@ -26,6 +26,7 @@ flash_usb:
 # This can be useful for automatically generating something from the source code.
 scripts:
 	tools/gen_log_params.py
+	tools/mavlink-client/generate
 
 # Monitor serial port
 monitor:
