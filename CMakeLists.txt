@@ -1,14 +1,8 @@
-# Generated Cmake Pico project file
-
 cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
-
-# Initialise pico_sdk from installed location
-# (note this can come from environment, CMake cache etc)
-set(PICO_SDK_PATH "/home/victor/coding/tools/pico/pico-sdk")
-
+set(PICO_SDK_PATH "${CMAKE_CURRENT_SOURCE_DIR}/vendor/pico-sdk")
 set(PICO_BOARD pico CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
@@ -40,6 +34,7 @@ add_executable(asac-fc
   src/vstp.c
   src/asac_fc.c
   src/telemetry.c
+  src/serial_mavlink.c
   # Drivers
   src/drivers/mpu6050.c
   src/drivers/bmi270_asac.c
@@ -54,35 +49,34 @@ add_executable(asac-fc
   include/drivers/oneshot.pio
 )
 
+# Add PIO programs
 pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/uart_tx.pio)
 pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/uart_rx.pio)
 pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/oneshot.pio)
 
 
 add_compile_definitions(
-  RP2040
+  RP2040 # Used by VSRTOS
 )
 
 pico_set_program_name(asac-fc "asac-fc")
 pico_set_program_version(asac-fc "0.1")
 
+# Enable USB serial port
 pico_enable_stdio_uart(asac-fc 0)
 pico_enable_stdio_usb(asac-fc 1)
-
-# Add the standard library to the build
-target_link_libraries(asac-fc
-        pico_stdlib)
 
 # Add the standard include files to the build
 target_include_directories(asac-fc PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
   ${CMAKE_CURRENT_LIST_DIR}/include
   ${CMAKE_CURRENT_LIST_DIR}/vendor/BMI270-Sensor-API/
-  ${CMAKE_CURRENT_LIST_DIR}/.. # for our common lwipopts or any other standard includes, if required
 )
 
 # Add any user requested libraries
 target_link_libraries(asac-fc
+  pico_stdlib
+  pico_multicore
   hardware_i2c
   hardware_spi
   hardware_adc
@@ -90,7 +84,6 @@ target_link_libraries(asac-fc
   hardware_sync
   hardware_pwm
   hardware_pio
-  pico_multicore
 )
 
 pico_add_extra_outputs(asac-fc)

@@ -1,3 +1,7 @@
 [submodule "vendor/BMI270-Sensor-API"]
 	path = vendor/BMI270-Sensor-API
 	url = git@github.com:boschsensortec/BMI270-Sensor-API.git
+
+[submodule "vendor/pico-sdk"]
+	path = vendor/pico-sdk
+	url = git@github.com:raspberrypi/pico-sdk.git

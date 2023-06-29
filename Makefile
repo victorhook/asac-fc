@@ -1,4 +1,5 @@
 TARGET = build/asac-fc
+# Depends on your system...
 RP2040_USB_PATH = /media/victor/RPI-RP21/
 DEFAULT_SERIAL_PORT = /dev/ttyACM0
 
