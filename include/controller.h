@@ -29,6 +29,7 @@ void controller_update();
 //   from the RC input.
 // These purpose of having variables for each step in the control loop
 //   is to make debugging and logging easier.
+extern imu_reading_t         imu_raw;
 extern imu_reading_t         imu_reading;
 extern imu_reading_t         imu_bias;
 extern imu_reading_t         imu_filtered;

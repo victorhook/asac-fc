@@ -2,8 +2,9 @@
 #define SETTINGS_H
 
 #include "pid.h"
+#include "mavlink_params.h"
 
-
+/*
 typedef struct {
     pid_state_t pid_roll;
     pid_state_t pid_pitch;
@@ -11,6 +12,9 @@ typedef struct {
     char craft_name[20];
     char version[3];
 }__attribute__((packed)) settings_t;
+*/
+
+typedef system_params_t settings_t;
 
 
 int settings_init();
@@ -20,9 +24,6 @@ int settings_read_from_flash(settings_t* settings);
 
 
 int settings_write_to_flash(const settings_t* settings);
-
-
-extern settings_t settings;
 
 
 #endif /* SETTINGS_H */

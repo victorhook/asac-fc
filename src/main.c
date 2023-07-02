@@ -9,6 +9,7 @@
 #include "settings.h"
 #include "state.h"
 #include "telemetry.h"
+#include "serial_mavlink.h"
 
 #include <pico/stdio.h>
 #include <pico/multicore.h>
@@ -24,7 +25,7 @@ static int init_result = 0;
 
 
 int main() {
-    stdio_init_all();
+    stdio_usb_init();
 
     // Initialize all drivers
     state.mode = MODE_BOOTING;
@@ -38,12 +39,13 @@ int main() {
     // Turn RED led high to indicate we're booting
     led_set(LED_RED, 1);
 
-    //init_driver(settings_init,    "Settings");
-    init_driver(receiver_init,    "Receiver");
-    init_driver(battery_adc_init, "Battery ADC");
-    init_driver(imu_init,         "IMU");
-    init_driver(controller_init,  "Controller");
-    init_driver(motors_init,      "Motors");
+    init_driver(settings_init,       "Settings");
+    init_driver(receiver_init,       "Receiver");
+    init_driver(battery_adc_init,    "Battery ADC");
+    init_driver(imu_init,            "IMU");
+    init_driver(controller_init,     "Controller");
+    init_driver(motors_init,         "Motors");
+    init_driver(serial_mavlink_init, "Serial MAVlink");
     #ifdef TELEMETRY_LOGGING
         init_driver(telemetry_init,   "Telemetry");
     #endif
@@ -57,8 +59,19 @@ int main() {
     }
 
     // Create tasks
-    //vsrtos_create_task(controller_debug, "Controller debug", 10, 1);
-    vsrtos_create_task(controller_update, "Controller", 1000, 1);
+    //vsrtos_create_task(controller_debug,    "Controller debug", 10, 1);
+    vsrtos_create_task(controller_update,     "Controller", 1000, 1);
+
+    // MAVlink
+    vsrtos_create_task(serial_mavlink_update,              "Serial MAVlink", 10, 2);
+    //vsrtos_create_task(serial_mavlink_broadcast_heartbeat, "MAVlink HB", 1, 2);
+    //vsrtos_create_task(serial_mavlink_send_raw_imu,        "MAVlink IMU", 10, 2);
+    //vsrtos_create_task(serial_mavlink_send_attitude,       "MAVlink Attitude", 10, 2);
+
+    while (1)
+    {
+        serial_mavlink_update();
+    }
 
     #ifdef TELEMETRY_LOGGING
         vsrtos_create_task(controller_telemetry, "Telemetry log", 100, 2);

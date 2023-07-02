@@ -11,73 +11,49 @@
 #define FLASH_TARGET_OFFSET    (ASAC_FC_FLASH_SIZE - FLASH_SECTOR_SIZE)
 #define FLASH_PAGES_PER_SECTOR (FLASH_SECTOR_SIZE / FLASH_PAGE_SIZE)
 
-static int* page_nbr_ptr = (int*) (XIP_BASE + FLASH_TARGET_OFFSET);
+static int* settings_hash_ptr     = (int*)        (XIP_BASE + FLASH_TARGET_OFFSET);
+static settings_t* flash_settings = (settings_t*) (XIP_BASE + FLASH_TARGET_OFFSET + 4);
+
 static int settings_hash;
-static int page_nbr;
 static uint8_t flash_buf[FLASH_PAGE_SIZE];
 
-// Default setting values
-settings_t settings = {
-    .pid_roll = {
-        .Kp = 1,
-        .Ki = 1,
-        .Kd = 0
-    },
-    .pid_pitch = {
-        .Kp = 1,
-        .Ki = 1,
-        .Kd = 0
-    },
-    .pid_yaw = {
-        .Kp = 1,
-        .Ki = 1,
-        .Kd = 0
-    },
-    .craft_name = {'A', 'S', 'A', 'C', ' ', 'F', 'C'},
-    .version = {'0', '0', '1'}
-};
+settings_t* settings;
 
 
 static int calculate_simple_hash(const settings_t* settings);
 
 
 int settings_init() {
-    page_nbr = *page_nbr_ptr;
-    if (page_nbr > FLASH_PAGES_PER_SECTOR) {
-        printf(
-            "Flash page number invalid read: %d, must be between 0-%d, ",
-            page_nbr,
-            FLASH_PAGES_PER_SECTOR
-        );
-        printf("Setting page number to 0.\n");
-        page_nbr = 0;
+    settings = &system_params;
+    settings_hash = *settings_hash_ptr;
+
+    int hash = calculate_simple_hash(flash_settings);
+
+    if (hash != settings_hash) {
+        printf("Hash calculation for settings failed, using default...!\n");
+        printf("Expected %d, got: %d\n", hash, settings_hash);
+        settings_write_to_flash(settings);
+    } else {
+        memcpy(settings, flash_settings, sizeof(settings_t));
     }
 
     return 0;
 }
 
-
-int settings_read_from_flash(settings_t* settings) {
-    return 0;
-}
-
-int settings_write_to_flash(const settings_t* settings) {
-    // Calculate page number to write to next.
-    page_nbr = (page_nbr + 1) % FLASH_PAGES_PER_SECTOR;
-    settings_hash = calculate_simple_hash(settings);
+int settings_write_to_flash(const settings_t* ASD) {
+    settings_hash = calculate_simple_hash(ASD);
 
     // Prepare settings buffer
-    int offset = 0;
-    memcpy(&flash_buf[offset], &page_nbr, sizeof(int));
-    offset += sizeof(int);
-    memcpy(&flash_buf[offset], &settings_hash, sizeof(int));
-    offset += sizeof(int);
-    memcpy(&flash_buf[offset], &settings, sizeof(settings_t));
+    memcpy(&flash_buf[0], &settings_hash, 4);
+    memcpy(&flash_buf[4], ASD, sizeof(settings_t));
 
-    uint32_t flash_offset = FLASH_TARGET_OFFSET + (page_nbr * FLASH_TARGET_OFFSET);
+    printf("Writing settings to flash at flash offset: %x hash: %d\n",
+            FLASH_TARGET_OFFSET, settings_hash);
 
     int int_status = save_and_disable_interrupts();
-    flash_range_program(flash_offset, flash_buf, FLASH_PAGE_SIZE);
+    // For some reason we need to erase the flash before writing, not sure why.
+    flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
+    flash_range_program(FLASH_TARGET_OFFSET, flash_buf, FLASH_PAGE_SIZE);
     restore_interrupts(int_status);
     return 0;
 }

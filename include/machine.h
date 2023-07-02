@@ -38,35 +38,8 @@
 
 #define PIN_TELEMETRY_TX 0
 
-#define ASAC_FC_FLASH_SIZE        (2 * 1024 * 1024)
+// 16 MB
+#define ASAC_FC_FLASH_SIZE        (16 * 1024 * 1024)
 
-/*
-// Pin definitions for dev-and breakout boards.
-#define PIN_M1          13 // 6B
-#define PIN_M2          19 // 1B
-#define PIN_M3          2  // 1A
-#define PIN_M4          27 // 5B
-#define PIN_M_DEBUG     16 // 0A
-
-#define PIN_VUSB_SENSE  24
-#define PIN_LED_ONBOARD 25
-
-#define PIN_LED_RED     10
-#define PIN_LED_GREEN   5
-
-#define PIN_RX1         9
-#define PIN_SCL1        7
-#define PIN_SDA1        6
-
-#define PIN_IBUS_RX PIN_RX1
-#define IBUS_UART uart1
-
-#define I2C_BUS_IMU i2c1
-
-#define PIN_TELEMETRY_TX 16
-
-#define VBAT_ADC_INPUT_NUMBER 2
-#define PIN_VBAT_ADC          28
-*/
 
 #endif

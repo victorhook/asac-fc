@@ -3,8 +3,8 @@
 #include "led.h"
 #include "telemetry.h"
 #include "log.h"
-
 #include "ibus.h"
+#include "math.h"
 
 #define RC_NBR_OF_CHANNELS 14
 
@@ -76,6 +76,8 @@ static void constrain_rc_input(const rc_input_t* unconstrained, rc_input_t* cons
 
 static void convert_rc_input_to_setpoint(const rc_input_t* state_rc_input, setpoint_t* setpoint);
 
+static void state_estimator(const imu_reading_t* imu_filtered, const float ctrl_loop_dt_s, state_t* state);
+
 static bool is_armed(const rc_input_t* rc_input_constrained);
 
 static bool is_connected(const rc_input_t* rc_input_raw);
@@ -114,6 +116,9 @@ int controller_init() {
 }
 
 void controller_update() {
+    // Average controller update time: ~300us
+    // Measured experimentally
+
     uint32_t ctrl_loop_started = us_since_boot();
     float ctrl_loop_dt_s = (float) (ctrl_loop_started - last_ctrl_update) / 1000000.0;
 
@@ -136,6 +141,9 @@ void controller_update() {
     attitude_rates_measured.roll  = imu_filtered.gyro_x;
     attitude_rates_measured.pitch = imu_filtered.gyro_y;
     attitude_rates_measured.yaw   = imu_filtered.gyro_z;
+
+    // Give measurements to state estimator, that estimates our current state
+    state_estimator(&imu_filtered, ctrl_loop_dt_s, &state);
 
     // Get latest data from receiver
     receiver_get_last_packet(&ctrl_rc_input_raw);
@@ -177,6 +185,8 @@ void controller_update() {
     }
 
     // If we cannot run the motors, we set setpoint to 0 for all
+    // TODO: Is his necessary, since some lines below, we set the motor commands
+    // to 0 if we cannot run the motors anyways.
     if (!state.can_run_motors) {
         setpoint.rates.roll  = 0;
         setpoint.rates.pitch = 0;
@@ -216,16 +226,38 @@ void controller_update() {
 
     // Set motor output
     set_all_motors_pwm(&ctrl_motor_command);
+
+    // Update timestamp with last update
+    last_ctrl_update = us_since_boot();
 }
 
 
 
 // -- Helper functions -- //
 void controller_debug() {
+    printf("gx: %.4f, gy: %.4f, gz: %.4f\n",
+        imu_raw.gyro_x,
+        imu_raw.gyro_y,
+        imu_raw.gyro_z
+    );
+    printf("gx: %.4f, gy: %.4f, gz: %.4f\n",
+        imu_no_bias.gyro_x,
+        imu_no_bias.gyro_y,
+        imu_no_bias.gyro_z
+    );
+    printf("gx: %.4f, gy: %.4f, gz: %.4f\n",
+        imu_filtered.gyro_x,
+        imu_filtered.gyro_y,
+        imu_filtered.gyro_z
+    );
+    printf("\n");
+    fflush(stdout);
+    return;
     printf("%d, %f, %f, %f  |  %.3f, %.3f, %.3f, %.3f\n",
         setpoint.throttle, setpoint.rates.roll, setpoint.rates.pitch, setpoint.rates.yaw,
         motor_mixer_command.m1, motor_mixer_command.m2, motor_mixer_command.m3, motor_mixer_command.m4
         );
+    fflush(stdout);
     return;
 }
 
@@ -237,6 +269,36 @@ static void print_rc_input() {
     printf("\n");
 }
 
+
+static void state_estimator(const imu_reading_t* imu_filtered, const float ctrl_loop_dt_s, state_t* state) {
+    // Resources:
+    // https://www.youtube.com/watch?v=CHSYgLfhwUo&ab_channel=Code%26Supply
+    // https://ahrs.readthedocs.io/en/latest/filters/tilt.html
+
+    // Attitude estimation using complementary filter
+    const float GYRO_PART = 0.995;
+    const float ACCEL_PART = 1 - GYRO_PART;
+
+    float ax = imu_filtered->acc_x;
+    float ay = imu_filtered->acc_y;
+    float az = imu_filtered->acc_z;
+
+    float gx = imu_filtered->gyro_x;
+    float gy = imu_filtered->gyro_y;
+    float gz = imu_filtered->gyro_z;
+
+    float acc_roll = atan2f(ay, az);
+    float acc_pitch = atan2f(-ax, sqrtf(powf(ay, 2) + powf(az, 2)));
+
+    state->roll = GYRO_PART  * (state->roll + (gx * ctrl_loop_dt_s)) +
+                  ACCEL_PART * acc_roll;
+    state->pitch = GYRO_PART  * (state->pitch + (gy * ctrl_loop_dt_s)) +
+                  ACCEL_PART * acc_pitch;
+
+    state->roll_speed = imu_filtered->gyro_x;
+    state->pitch_speed = imu_filtered->gyro_y;
+    state->yaw_speed = imu_filtered->gyro_z;
+}
 
 static void disconnect() {
     led_set(LED_GREEN, 0);
