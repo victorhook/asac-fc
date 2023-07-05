@@ -43,6 +43,7 @@
 #define IMU_BMI270_SPI
 
 
+void system_reboot();
 
 uint32_t us_since_boot();
 

@@ -1,5 +1,11 @@
 #include "asac_fc.h"
+#include "hardware/watchdog.h"
 
+
+void system_reboot()
+{
+    watchdog_reboot(0, 0, 0);
+}
 
 uint32_t us_since_boot()
 {

@@ -47,9 +47,6 @@ int settings_write_to_flash(const settings_t* ASD) {
     memcpy(&flash_buf[0], &settings_hash, 4);
     memcpy(&flash_buf[4], ASD, sizeof(settings_t));
 
-    printf("Writing settings to flash at flash offset: %x hash: %d\n",
-            FLASH_TARGET_OFFSET, settings_hash);
-
     int int_status = save_and_disable_interrupts();
     // For some reason we need to erase the flash before writing, not sure why.
     flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);

@@ -14,6 +14,9 @@ all: scripts
 flash_serial:
 	picotool load -f ${TARGET}.uf2 && picotool reboot -f
 
+reboot:
+	picotool reboot -f
+
 # Flashes rp2040 over SWD using a pico debugger.
 flash:
 	openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 500" -c "program ${TARGET}.elf verify reset exit"

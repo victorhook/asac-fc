@@ -49,6 +49,10 @@ bool broadcast_param_values();
 
 void update_param_values();
 
+bool set_param(const mavlink_param_set_t* msg_param_set);
+
+void broadcast_param_value(const mavlink_param_set_t* msg_param_set);
+
 
 int serial_mavlink_init()
 {
@@ -139,6 +143,7 @@ static inline uint32_t serial_available() {
 void serial_mavlink_update() {
 
     if (param_state == PARAM_STATE_BROADCAST_VALUES) {
+
         bool done_broadcasting = broadcast_param_values();
         if (done_broadcasting) {
             param_state = PARAM_STATE_WAIT_FOR_REQUEST;
@@ -152,6 +157,7 @@ void serial_mavlink_update() {
 
     static mavlink_command_int_t cmd_rx;
     static mavlink_command_ack_t cmd_ack;
+    mavlink_param_set_t msg_param_set;
     uint16_t msg_id;
 
     while (serial_available() & ((time_us_32() - t0) < max_execution_time_us)) {
@@ -163,39 +169,17 @@ void serial_mavlink_update() {
             //printf("MSG RX ID: %d\n", msg_rx.msgid);
             switch (msg_rx.msgid) {
                 case MAVLINK_MSG_ID_COMMAND_INT:
-                    // Command request
-                    mavlink_msg_command_int_decode(&msg_rx, &cmd_rx);
-
-                    switch (cmd_rx.command) {
-
-                        case MAV_CMD_REQUEST_MESSAGE:
-
-                            msg_id = (uint16_t) cmd_rx.param1;
-
-                            switch (msg_id) {
-                                case MAVLINK_MSG_ID_RAW_IMU:
-                                    cmd_ack.command = MAVLINK_MSG_ID_RAW_IMU;
-                                    cmd_ack.result = MAV_RESULT_ACCEPTED;
-                                    mavlink_msg_command_ack_encode(
-                                        MAVLINK_SYSTEM_ID,
-                                        MAV_COMP_ID_IMU,
-                                        &msg_tx,
-                                        &cmd_ack
-                                    );
-
-                                    send_mavlink_msg(&msg_tx);
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
-                        default:
-                            break;
+                    handle_command_int(&msg_rx);
+                    break;
+                case MAVLINK_MSG_ID_PARAM_SET:
+                    mavlink_msg_param_set_decode(&msg_rx, &msg_param_set);
+                    if (set_param(&msg_param_set)) {
+                        broadcast_param_value(&msg_param_set);
                     }
-                    //mavlink_msg_command_int_encode()
                     break;
                 case MAVLINK_MSG_ID_PARAM_REQUEST_LIST:
                     update_param_values();
+                    tud_cdc_write_flush();
                     param_state = PARAM_STATE_BROADCAST_VALUES;
                     break;
             }
@@ -203,6 +187,36 @@ void serial_mavlink_update() {
     }
 }
 
+void handle_command_int(const mavlink_message_t* msg_rx) {
+    const int REBOOT_AUTOPILOT = 1;
+    mavlink_command_int_t mavlink_command;
+    mavlink_msg_command_int_decode(msg_rx, &mavlink_command);
+
+    switch (mavlink_command.command) {
+        case MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN:
+            if (mavlink_command.param1 == REBOOT_AUTOPILOT) {
+                system_reboot();
+            }
+            break;
+        case MAV_CMD_PREFLIGHT_STORAGE:
+            switch ((PREFLIGHT_STORAGE_PARAMETER_ACTION) mavlink_command.param1) {
+                case PARAM_READ_PERSISTENT:
+                    break;
+                case PARAM_WRITE_PERSISTENT:
+                    settings_write_to_flash(&system_params);
+                    break;
+                case PARAM_RESET_CONFIG_DEFAULT:
+                    break;
+                case PARAM_RESET_SENSOR_DEFAULT:
+                    break;
+                case PARAM_RESET_ALL_DEFAULT:
+                    break;
+            }
+            break;
+        default:
+            break;
+    }
+}
 
 bool broadcast_param_values() {
     mavlink_msg_param_value_encode(
@@ -215,6 +229,35 @@ bool broadcast_param_values() {
 
     current_param_index++;
     return current_param_index >= NBR_OF_PARAM_VALUES;
+}
+
+bool set_param(const mavlink_param_set_t* msg_param_set) {
+    for (int i = 0; i < NBR_OF_PARAM_VALUES; i++) {
+        mavlink_param_value_t* param = &((mavlink_param_value_t*) &system_params)[i];
+        if (strncmp(param->param_id, msg_param_set->param_id, 16) == 0) {
+            param->param_value = msg_param_set->param_value;
+            return true;
+        }
+    }
+    return false;
+}
+
+void broadcast_param_value(const mavlink_param_set_t* msg_param_set) {
+    mavlink_param_value_t param = {
+        .param_value = msg_param_set->param_value,
+        .param_count = 0,
+        .param_index = 0,
+        .param_type = msg_param_set->param_type,
+    };
+    memcpy(param.param_id, msg_param_set->param_id, 16);
+
+    mavlink_msg_param_value_encode(
+        MAVLINK_SYSTEM_ID,
+        MAV_COMP_ID_ALL,
+        &msg_tx,
+        &param
+    );
+    send_mavlink_msg(&msg_tx);
 }
 
 void update_param_values() {

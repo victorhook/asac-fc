@@ -35,6 +35,7 @@ add_executable(asac-fc
   src/asac_fc.c
   src/telemetry.c
   src/serial_mavlink.c
+  src/mavlink_params.c
   # Drivers
   src/drivers/mpu6050.c
   src/drivers/bmi270_asac.c
@@ -54,6 +55,14 @@ pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/uart_
 pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/uart_rx.pio)
 pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/oneshot.pio)
 
+
+add_definitions(
+  # 16MB: 16 * 1024 * 1024 = 16777216
+  -DPICO_FLASH_SIZE_BYTES=16777216
+  -DCMAKE_BUILD_TYPE=DEBUG
+  -DCMAKE_C_FLAGS_DEBUG="-g -O0 -Wall"
+  -DCMAKE_CXX_FLAGS_DEBUG="-g -O0"
+)
 
 add_compile_definitions(
   RP2040 # Used by VSRTOS
