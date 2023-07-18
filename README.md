@@ -7,6 +7,23 @@
 ## Why rp2040?
 It's an incredibly cheap microcontroller that is quite powerful (up to 133 MHz), contains two cores, programmable I/O pins (PIO), seems to ignore the global silicon shortage and has an extensive C/C++ SDK.
 
+## Iteration 2
+
+<img src="docs/pcb-rev-a.png" alt="ASAC rev B PCB Kicad" width="450px">
+<img src="docs/pcb-rev-a-front.jpg" alt="ASAC rev B PCB front" width="450px">
+<img src="docs/pcb-rev-a-back.jpg" alt="ASAC rev B PCB back" width="450px">
+
+For the second iteration of the flight controller I designed a PCB in FreeCad, ordered the pcb and components with SMD assembly for the top layer, and soldered the bottom layer myself. All cad files of this can be found in [kicad/asac-fc-rev-b](kicad/asac-fc-rev-b). Schematic can also be found at [documents/asac-fc-rev-b.pdf](documents/asac-fc-rev-b.pdf).
+Some nice features of the flight controller PCB are:
+
+- **rp2040** - Flight controller (where asac runs)
+- **BMI270** - IMU, using SPI, which allows faster readings than the MPU-6050 which was used for iteration 1.
+- **USB-C** - More modern, right? :)
+- **Individual ESC solder pads** - Connection for individual ESCs. While most flight stacks today use an 4-in-1 ESC, I decided to keep it simple and use individual ESCs for now.
+- **Battery solder pads**
+
+## Iteration 1
+
 The first iteration of *asac fc* was done with development boards, before designing a custom PCB. This is to make a proof of concept, and serves as a sanity check to show that it's possible :). The main components are:
 - **Raspberry pi pico** - Flight controller (where asac runs)
 - **MPU6050** - IMU
