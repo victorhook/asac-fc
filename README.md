@@ -120,6 +120,17 @@ You can flash the pico through in three different ways:
     The command above first flashes the target `uf2` file to the pico by forcing it into BOOTSEL mode. We then reset the pico with `picotool reboot -f`. The flag `-f` is crucial here, since it allows us to load and reboot it without being in BOOTSEL mode already. I think it accomplishes this by changing the baud rate of the connection, which forces the pico to BOOTSEL mode, but I am not 100% sure.
 3. SWD using debugger/another pico.
 
+## Available build defines
+
+There are several parameters that can be defined on build-time to configure the firmware. All of the defines can also be found in the `CMakeLists.txt` These includes:
+
+| Define | Description |
+| --- | --- |
+| USE_DEFAULT_SETTINGS | If defined, asac will use default settings and write them to flash. Note that this will erase any previous settings that were stored in flash. This can be useful when using the flight controller for the first time, or updating the data structure of the flash. |
+| LINUX | If defined, the firmware is built to be run on a linux machine and *not* for rp2040. This can be useful if you want to run unit tests on certain parts of code, or simulate fc. |
+| RP2040 | Used by vsrtos. Do not change |
+
+
 ## Resources
 - [Embedded Programming for Quadcopters](https://www.youtube.com/watch?v=CHSYgLfhwUo&ab_channel=Code%26Supply)
 - [Motor mixing](https://oscarliang.com/custom-motor-output-mix-quadcopter/)
