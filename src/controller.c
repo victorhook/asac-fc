@@ -383,26 +383,25 @@ void motor_mixer_update(uint16_t throttle, const pid_adjust_t* adjust, motor_com
     motor_command->m4 = throttle + adjust->roll - adjust->pitch - adjust->yaw;
 }
 
-
 int pid_controller_init() {
     last_pid_update = us_since_boot();
 
     memset(&pid_roll, 0, sizeof(pid_state_t));
-    pid_roll.Kp = 1;
-    pid_roll.Ki = 0.75;
-    pid_roll.Kd = 0.001;
+    pid_roll.Kp = system_params.pid_gyro_roll_p.param_value;
+    pid_roll.Ki = system_params.pid_gyro_roll_i.param_value;
+    pid_roll.Kd = system_params.pid_gyro_roll_d.param_value;
     pid_roll.integral_limit_threshold = 1000;
 
     memset(&pid_pitch, 0, sizeof(pid_state_t));
-    pid_pitch.Kp = 1;
-    pid_pitch.Ki = 0.75;
-    pid_pitch.Kd = 0.001;
+    pid_pitch.Kp = system_params.pid_gyro_pitch_p.param_value;
+    pid_pitch.Ki = system_params.pid_gyro_pitch_i.param_value;
+    pid_pitch.Kd = system_params.pid_gyro_pitch_d.param_value;
     pid_pitch.integral_limit_threshold = 1000;
 
     memset(&pid_yaw, 0, sizeof(pid_state_t));
-    pid_yaw.Kp = 0.5;
-    pid_yaw.Ki = 0.35;
-    pid_yaw.Kd = 0.0000;
+    pid_yaw.Kp = system_params.pid_gyro_yaw_p.param_value;
+    pid_yaw.Ki = system_params.pid_gyro_yaw_i.param_value;
+    pid_yaw.Kd = system_params.pid_gyro_yaw_d.param_value;
     pid_yaw.integral_limit_threshold = 1000;
 
     return 0;
