@@ -66,6 +66,8 @@ add_definitions(
 
 add_compile_definitions(
   RP2040 # Used by VSRTOS
+  # Uncomment desired defines to remove
+  #USE_DEFAULT_SETTINGS
 )
 
 pico_set_program_name(asac-fc "asac-fc")

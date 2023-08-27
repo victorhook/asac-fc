@@ -19,7 +19,6 @@ static uint8_t flash_buf[FLASH_PAGE_SIZE];
 
 settings_t* settings;
 
-
 static int calculate_simple_hash(const settings_t* settings);
 
 
@@ -29,13 +28,19 @@ int settings_init() {
 
     int hash = calculate_simple_hash(flash_settings);
 
-    if (hash != settings_hash) {
-        printf("Hash calculation for settings failed, using default...!\n");
-        printf("Expected %d, got: %d\n", hash, settings_hash);
+
+    #ifdef USE_DEFAULT_SETTINGS
+        printf("Using default settings!\n");
         settings_write_to_flash(settings);
-    } else {
-        memcpy(settings, flash_settings, sizeof(settings_t));
-    }
+    #else
+        if (hash != settings_hash) {
+            printf("Hash calculation for settings failed, using default...!\n");
+            printf("Expected %d, got: %d\n", hash, settings_hash);
+            settings_write_to_flash(settings);
+        } else {
+            memcpy(settings, flash_settings, sizeof(settings_t));
+        }
+    #endif
 
     return 0;
 }
