@@ -5,9 +5,14 @@
 #include "stdbool.h"
 #include "string.h"
 #include "stdio.h"
-#include <pico/stdlib.h>
-#include <pico/stdio.h>
-#include <pico/time.h>
+
+#ifdef LINUX
+    // We run in linux environment if only testing, eg unit tests etc
+#else
+    #include <pico/stdlib.h>
+    #include <pico/stdio.h>
+    #include <pico/time.h>
+#endif
 
 
 #define DEBUG_MODE
@@ -42,6 +47,7 @@
 // #define IMU_MPU_6050_I2C
 #define IMU_BMI270_SPI
 
+void system_init();
 
 void system_reboot();
 

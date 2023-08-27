@@ -26,6 +26,7 @@ static int init_result = 0;
 
 int main() {
     stdio_usb_init();
+    system_init();
 
     // Initialize all drivers
     state.mode = MODE_BOOTING;
