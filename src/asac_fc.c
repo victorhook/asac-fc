@@ -29,12 +29,26 @@
         gettimeofday(&tv,NULL);
         return (uint32_t) (((long long)tv.tv_sec)*1000)+(tv.tv_usec/1000) - system_t0;
     }
+    bool usb_connected()
+    {
+        return false;
+    }
 #else
     #include "hardware/watchdog.h"
+    #include "machine.h"
 
     void system_init()
     {
+        // Initialize misc system stuff that isn't covered by any specific driver
 
+        // Pin to sense if USB is connected or not
+        gpio_init(PIN_VUSB_SENSE);
+        gpio_set_dir(PIN_VUSB_SENSE, GPIO_IN);
+    }
+
+    bool usb_connected()
+    {
+        return gpio_get(PIN_VUSB_SENSE) != 0;
     }
 
     void system_reboot()

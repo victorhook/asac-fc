@@ -55,5 +55,7 @@ uint32_t us_since_boot();
 
 uint32_t ms_since_boot();
 
+bool usb_connected();
+
 
 #endif /* ASAC_FC_H */
