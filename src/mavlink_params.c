@@ -65,6 +65,12 @@ system_params_t system_params = {
         .param_id = "pid_gyro_yaw_d",
         .param_type = MAV_PARAM_TYPE_REAL32
     },
+    .rx_protocol = {
+        .param_value = (uint8_t) RX_PROTOCOL_CRSF,
+        .param_count = 0,
+        .param_index = 0,
+        .param_id = "rx_protocol",
+        .param_type = MAV_PARAM_TYPE_UINT8
     }
 };
 
