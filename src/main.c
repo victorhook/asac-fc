@@ -46,7 +46,7 @@ int main() {
     init_driver(imu_init,            "IMU");
     init_driver(controller_init,     "Controller");
     init_driver(motors_init,         "Motors");
-    init_driver(serial_mavlink_init, "Serial MAVlink");
+    //init_driver(serial_mavlink_init, "Serial MAVlink");
     #ifdef TELEMETRY_LOGGING
         init_driver(telemetry_init,   "Telemetry");
     #endif
@@ -64,20 +64,17 @@ int main() {
     vsrtos_create_task(controller_update,     "Controller", 1000, 1);
 
     // MAVlink
-    vsrtos_create_task(serial_mavlink_update,              "Serial MAVlink", 10, 2);
+    //vsrtos_create_task(serial_mavlink_update,              "Serial MAVlink", 10, 2);
     //vsrtos_create_task(serial_mavlink_broadcast_heartbeat, "MAVlink HB", 1, 2);
     //vsrtos_create_task(serial_mavlink_send_raw_imu,        "MAVlink IMU", 10, 2);
     //vsrtos_create_task(serial_mavlink_send_attitude,       "MAVlink Attitude", 10, 2);
-
-    while (1)
-    {
-        serial_mavlink_update();
-    }
 
     #ifdef TELEMETRY_LOGGING
         vsrtos_create_task(controller_telemetry, "Telemetry log", 100, 2);
         multicore_launch_core1(core1_entry);
     #endif
+
+    //multicore_launch_core1(core1_entry);
 
     state.mode = MODE_IDLE;
     led_set(LED_BLUE, 1);
@@ -108,7 +105,7 @@ static void init_driver(int (*init_function)(), const char* name) {
 
 static void core1_entry() {
     while (1) {
-        telemetry_update();
+        //telemetry_update();
     }
 }
 

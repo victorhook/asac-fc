@@ -3,10 +3,9 @@
 #include "led.h"
 #include "telemetry.h"
 #include "log.h"
-#include "ibus.h"
 #include "math.h"
+#include "mavlink_params.h"
 
-#define RC_NBR_OF_CHANNELS 14
 
 // RC Input mappings, should they be here?
 #define RC_CHANNEL_THROTTLE 2
@@ -48,6 +47,7 @@ imu_reading_t         imu_no_bias;
 imu_reading_t         imu_filtered;
 imu_reading_t         imu_filtered_dterm;
 rates_t               attitude_rates_measured;
+rx_state_t            rx_state;
 rc_input_t            ctrl_rc_input_raw;
 rc_input_t            ctrl_rc_input_constrained;
 setpoint_t            setpoint;
@@ -61,9 +61,6 @@ pid_state_t           pid_roll;
 pid_state_t           pid_pitch;
 pid_state_t           pid_yaw;
 
-
-// TODO: Move to receiver?
-ibus_statistics_t     radio_stats;
 
 #ifdef TELEMETRY_LOGGING
     static log_block_data_control_loop_t log_block;
@@ -145,11 +142,12 @@ void controller_update() {
     // Give measurements to state estimator, that estimates our current state
     state_estimator(&imu_filtered, ctrl_loop_dt_s, &state);
 
-    // Get latest data from receiver
-    receiver_get_last_packet(&ctrl_rc_input_raw);
+    // Get latest state from the receiver
+    receiver_get_state(&rx_state);
+    rc_input_t* ctrl_rc_input_raw = &rx_state.last_packet;
 
     // Check if we're connected (gotten radio packet within ~X ms)
-    bool connected = is_connected(&ctrl_rc_input_raw);
+    bool connected = is_connected(ctrl_rc_input_raw);
     if (connected != state.is_connected) {
         if (connected) {
             connect();
@@ -160,7 +158,7 @@ void controller_update() {
 
     if (state.is_connected) {
         // Constrain/crop RC input in case they're out of expected range.
-        constrain_rc_input(&ctrl_rc_input_raw, &ctrl_rc_input_constrained);
+        constrain_rc_input(ctrl_rc_input_raw, &ctrl_rc_input_constrained);
 
         // Map receiver data to desired rotation rates.
         convert_rc_input_to_setpoint(&ctrl_rc_input_constrained, &setpoint);
@@ -220,10 +218,6 @@ void controller_update() {
         ctrl_motor_command.m4 = 0;
     }
 
-    // Retrieve some radio statistics
-    // TODO: Move to receiver instead of ibus
-    ibus_get_statistics(&radio_stats);
-
     // Set motor output
     set_all_motors_pwm(&ctrl_motor_command);
 
@@ -235,20 +229,12 @@ void controller_update() {
 
 // -- Helper functions -- //
 void controller_debug() {
+    print_rc_input();
+    return;
     printf("gx: %.4f, gy: %.4f, gz: %.4f\n",
-        imu_raw.gyro_x,
-        imu_raw.gyro_y,
-        imu_raw.gyro_z
-    );
-    printf("gx: %.4f, gy: %.4f, gz: %.4f\n",
-        imu_no_bias.gyro_x,
-        imu_no_bias.gyro_y,
-        imu_no_bias.gyro_z
-    );
-    printf("gx: %.4f, gy: %.4f, gz: %.4f\n",
-        imu_filtered.gyro_x,
-        imu_filtered.gyro_y,
-        imu_filtered.gyro_z
+        pid_roll.Kp,
+        pid_roll.Ki,
+        pid_roll.Kd
     );
     printf("\n");
     fflush(stdout);
@@ -262,9 +248,10 @@ void controller_debug() {
 }
 
 static void print_rc_input() {
-    printf("RC INPUT: ");
-    for (int i = 0; i < 14; i++) {
-        printf("%d ", ctrl_rc_input_raw.channels[i]);
+    printf("T: %u, ", rx_state.last_packet.timestamp);
+    printf("Channels: ");
+    for (int i = 0; i < RC_MAX_NBR_OF_CHANNELS; i++) {
+        printf("%d ", rx_state.last_packet.channels[i]);
     }
     printf("\n");
 }
@@ -340,7 +327,7 @@ static bool is_armed(const rc_input_t* rc_input_constrained) {
 }
 
 static void constrain_rc_input(const rc_input_t* unconstrained, rc_input_t* constrained) {
-    for (int i = 0; i < RC_NBR_OF_CHANNELS ; i++) {
+    for (int i = 0; i < RC_MAX_NBR_OF_CHANNELS ; i++) {
         constrained->channels[i] = constrain(unconstrained->channels[i], 1000, 2000);
     }
 }

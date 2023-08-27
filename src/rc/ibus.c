@@ -1,4 +1,5 @@
-#include "ibus.h"
+#include "rc/ibus.h"
+#include "rc/rc.h"
 #include "asac_fc.h"
 
 
@@ -29,7 +30,7 @@ static uint16_t           packet_rate_counter;
 static uint16_t           packet_rate;
 static uint32_t           parse_errors;
 static uint32_t           successful_packets;
-static ibus_packet_t      last_packet;
+static rx_state_t         rx_state;
 
 static void update_statistics();
 
@@ -39,21 +40,20 @@ void ibus_get_statistics(ibus_statistics_t* statistics)
     statistics->successful_packets = successful_packets;
     statistics->parse_errors = parse_errors;
     statistics->packet_rate = packet_rate;
-    statistics->last_received_packet = last_packet.timestamp;
 }
 
-void ibus_init()
+int ibus_init()
 {
     ibus_state             = HEADER_FIRST_BYTE;
     bytes_read             = 0;
     parse_errors           = 0;
-    last_packet.timestamp  = 0;
     successful_packets     = 0;
     packet_rate_counter    = 0;
     packet_rate_counter_t0 = ms_since_boot();
+    return 0;
 }
 
-void ibus_process_byte(uint8_t byte)
+void ibus_parse_byte(uint8_t byte)
 {
     buf[bytes_read] = byte;
     bytes_read++;
@@ -102,21 +102,21 @@ void ibus_process_byte(uint8_t byte)
             rx_checksum |= (byte << 8);
 
             // Validate checksum
-            if ((rx_checksum) != checksum)
+            if ((rx_checksum) == checksum)
+            {
+                rx_state.last_packet.timestamp = ms_since_boot();
+                // Ibus data includes 14 channels
+                memcpy(rx_state.last_packet.channels,
+                       &buf[IBUS_HEADER_SIZE],
+                       IBUS_PAYLOAD_SIZE);
+                successful_packets++;
+                packet_rate_counter++;
+            }
+            else
             {
                 parse_errors++;
                 //printf("ERR: %d - %d -> ||", rx_checksum, checksum);
             }
-            else
-            {
-                memcpy(last_packet.channels,
-                       &buf[IBUS_HEADER_SIZE],
-                       IBUS_PAYLOAD_SIZE);
-                last_packet.timestamp = ms_since_boot();
-                successful_packets++;
-                packet_rate_counter++;
-            }
-
             bytes_read = 0;
             next_state = HEADER_FIRST_BYTE;
             break;
@@ -127,9 +127,9 @@ void ibus_process_byte(uint8_t byte)
     ibus_state = next_state;
 }
 
-void ibus_get_last_packet(ibus_packet_t* packet)
+void ibus_get_last_state(rx_state_t* state)
 {
-    memcpy(packet, &last_packet, sizeof(ibus_packet_t));
+    memcpy(state, &rx_state, sizeof(rx_state_t));
 }
 
 

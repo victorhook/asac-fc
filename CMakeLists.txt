@@ -22,7 +22,6 @@ add_executable(asac-fc
   src/battery_adc.c
   src/settings.c
   src/pid.c
-  src/ibus.c
   src/imu.c
   src/receiver.c
   src/controller.c
@@ -36,6 +35,9 @@ add_executable(asac-fc
   src/telemetry.c
   src/serial_mavlink.c
   src/mavlink_params.c
+  # RX
+  src/rc/ibus.c
+  src/rc/crsf.c
   # Drivers
   src/drivers/mpu6050.c
   src/drivers/bmi270_asac.c
