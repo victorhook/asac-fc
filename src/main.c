@@ -61,13 +61,8 @@ int main() {
 
     // Create tasks
     //vsrtos_create_task(controller_debug,    "Controller debug", 10, 1);
-    vsrtos_create_task(controller_update,     "Controller", 1000, 1);
-
-    // MAVlink
-    //vsrtos_create_task(serial_mavlink_update,              "Serial MAVlink", 10, 2);
-    //vsrtos_create_task(serial_mavlink_broadcast_heartbeat, "MAVlink HB", 1, 2);
-    //vsrtos_create_task(serial_mavlink_send_raw_imu,        "MAVlink IMU", 10, 2);
-    //vsrtos_create_task(serial_mavlink_send_attitude,       "MAVlink Attitude", 10, 2);
+    vsrtos_create_task(controller_update,     "Controller",       1000, 1);
+    vsrtos_create_task(serial_mavlink_update, "Serial MAVlink",   10, 3);
 
     #ifdef TELEMETRY_LOGGING
         vsrtos_create_task(controller_telemetry, "Telemetry log", 100, 2);

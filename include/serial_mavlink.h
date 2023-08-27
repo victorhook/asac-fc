@@ -2,14 +2,13 @@
 #define SERIAL_MAVLINK_H
 
 
+/* Initializes the serial mavlink handler */
 int serial_mavlink_init();
 
-void serial_mavlink_broadcast_heartbeat();
-
-void serial_mavlink_send_raw_imu();
-
-void serial_mavlink_send_attitude();
-
+/*
+ * Checks for any received mavlink messages through USB and
+ * responds to them accordingly.
+ */
 void serial_mavlink_update();
 
 
