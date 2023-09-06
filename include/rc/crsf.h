@@ -114,7 +114,10 @@ bool crsf_parse_byte(const uint8_t byte);
 /*
  * Fills the `state` with the current state of the CRSF receiver.
  */
-void crfs_get_last_state(rx_state_t* state);
+void crsf_get_last_state(rx_state_t* state);
+
+
+void crsf_scale_rc_channels(const rc_input_t* raw, rc_input_t* scaled);
 
 
 #endif /* CRSF_H */

@@ -114,7 +114,7 @@ bool crsf_parse_byte(const uint8_t byte)
     return new_packet;
 }
 
-void crfs_get_last_state(rx_state_t* state)
+void crsf_get_last_state(rx_state_t* state)
 {
     memcpy(state, &rx_state, sizeof(rx_state_t));
 }
@@ -187,16 +187,16 @@ static void handle_new_packet(crsf_packet_t* packet)
         case CRSF_FRAMETYPE_RC_CHANNELS_PACKED:
             // Fill rx state with channel data
             channels = (crsf_channels_t*) packet->payload;
-            rx_state.last_packet.channels[0] = channels->ch0;
-            rx_state.last_packet.channels[1] = channels->ch1;
-            rx_state.last_packet.channels[2] = channels->ch2;
-            rx_state.last_packet.channels[3] = channels->ch3;
-            rx_state.last_packet.channels[4] = channels->ch4;
-            rx_state.last_packet.channels[5] = channels->ch5;
-            rx_state.last_packet.channels[6] = channels->ch6;
-            rx_state.last_packet.channels[7] = channels->ch7;
-            rx_state.last_packet.channels[8] = channels->ch8;
-            rx_state.last_packet.channels[9] = channels->ch9;
+            rx_state.last_packet.channels[0]  = channels->ch0;
+            rx_state.last_packet.channels[1]  = channels->ch1;
+            rx_state.last_packet.channels[2]  = channels->ch2;
+            rx_state.last_packet.channels[3]  = channels->ch3;
+            rx_state.last_packet.channels[4]  = channels->ch4;
+            rx_state.last_packet.channels[5]  = channels->ch5;
+            rx_state.last_packet.channels[6]  = channels->ch6;
+            rx_state.last_packet.channels[7]  = channels->ch7;
+            rx_state.last_packet.channels[8]  = channels->ch8;
+            rx_state.last_packet.channels[9]  = channels->ch9;
             rx_state.last_packet.channels[10] = channels->ch10;
             rx_state.last_packet.channels[11] = channels->ch11;
             rx_state.last_packet.channels[12] = channels->ch12;
@@ -215,5 +215,26 @@ static void handle_new_packet(crsf_packet_t* packet)
             printf("UNKNOWN CRSF FRAME TYPE 0x%02x\n", packet->frame_type);
             parse_errors++;
             break;
+    }
+}
+
+#define CRSF_RC_CHANNEL_SCALE_LEGACY                0.62477120195241f
+
+void crsf_scale_rc_channels(const rc_input_t* raw, rc_input_t* scaled)
+{
+     /* FROM BETAFLIGHT :)
+         conversion from RC value to PWM
+        * for 0x16 RC frame
+        *       RC     PWM
+        * min  172 ->  988us
+        * mid  992 -> 1500us
+        * max 1811 -> 2012us
+        * scale factor = (2012-988) / (1811-172) = 0.62477120195241
+        * offset = 988 - 172 * 0.62477120195241 = 880.53935326418548
+    */
+    //return (channelScale * (float)crsfChannelData[chan]) + 881;
+    for (int i = 0; i < 16; i++)
+    {
+        scaled->channels[i] = (CRSF_RC_CHANNEL_SCALE_LEGACY * (float) raw->channels[i]) + 881;
     }
 }
