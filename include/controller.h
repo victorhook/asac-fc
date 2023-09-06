@@ -34,6 +34,7 @@ extern imu_reading_t         imu_reading;
 extern imu_reading_t         imu_bias;
 extern imu_reading_t         imu_filtered;
 extern rates_t               ctrl_attitude_rates_measured;
+extern rx_state_t            rx_state;
 extern rc_input_t            ctrl_rc_input_raw;
 extern rc_input_t            ctrl_rc_input_constrained;
 extern setpoint_t            setpoint;

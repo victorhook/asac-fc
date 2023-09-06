@@ -29,10 +29,12 @@ static uint8_t buf_tx[MAVLINK_MAX_BUF_SIZE];
 static mavlink_status_t status;
 
 // Periodic mavlink messages
-#define HEARTBEAT_MSG_PERIOD_MS 1000
-#define ATTITUDE_MSG_PERIOD_MS  100
+#define HEARTBEAT_MSG_PERIOD_MS  1000
+#define ATTITUDE_MSG_PERIOD_MS   100
+#define RC_CHANNEL_MSG_PERIOD_MS 100
 static uint32_t last_sent_heartbeat;
 static uint32_t last_sent_attitude;
+static uint32_t last_sent_rc_channels;
 
 typedef enum {
     PARAM_STATE_WAIT_FOR_REQUEST,
@@ -59,6 +61,7 @@ static void broadcast_param_value(const mavlink_param_set_t* msg_param_set);
 static void serial_mavlink_broadcast_heartbeat();
 static void serial_mavlink_send_raw_imu();
 static void serial_mavlink_send_attitude();
+static void serial_mavlink_send_rc_channels();
 
 
 int serial_mavlink_init()
@@ -103,6 +106,11 @@ void serial_mavlink_update()
     {
         serial_mavlink_send_attitude();
         last_sent_attitude = t0;
+    }
+    if ((t0 - last_sent_rc_channels) >= RC_CHANNEL_MSG_PERIOD_MS)
+    {
+        serial_mavlink_send_rc_channels();
+        last_sent_rc_channels = t0;
     }
 
     uint16_t msg_id;
@@ -208,10 +216,6 @@ static void serial_mavlink_broadcast_heartbeat()
 }
 
 static void serial_mavlink_send_raw_imu() {
-    if (!tud_cdc_connected()) {
-        return;
-    }
-
     mavlink_msg_scaled_imu_pack_chan(
         MAVLINK_SYSTEM_ID,
         MAV_COMP_ID_IMU,
@@ -231,10 +235,6 @@ static void serial_mavlink_send_raw_imu() {
 }
 
 static void serial_mavlink_send_attitude() {
-    if (!tud_cdc_connected()) {
-        return;
-    }
-
     mavlink_msg_attitude_pack_chan(
         MAVLINK_SYSTEM_ID,
         MAV_COMP_ID_IMU,
@@ -251,6 +251,39 @@ static void serial_mavlink_send_attitude() {
 
     send_mavlink_msg(&msg_tx);
 }
+
+static void serial_mavlink_send_rc_channels() {
+    mavlink_msg_rc_channels_pack_chan(
+        MAVLINK_SYSTEM_ID,
+        0,
+        MAVLINK_CHANNEL_SERIAL,
+        &msg_tx,
+        ms_since_boot(),
+        16,
+        ctrl_rc_input_constrained.channels[0],
+        ctrl_rc_input_constrained.channels[1],
+        ctrl_rc_input_constrained.channels[2],
+        ctrl_rc_input_constrained.channels[3],
+        ctrl_rc_input_constrained.channels[4],
+        ctrl_rc_input_constrained.channels[5],
+        ctrl_rc_input_constrained.channels[6],
+        ctrl_rc_input_constrained.channels[7],
+        ctrl_rc_input_constrained.channels[8],
+        ctrl_rc_input_constrained.channels[9],
+        ctrl_rc_input_constrained.channels[10],
+        ctrl_rc_input_constrained.channels[11],
+        ctrl_rc_input_constrained.channels[12],
+        ctrl_rc_input_constrained.channels[13],
+        ctrl_rc_input_constrained.channels[14],
+        ctrl_rc_input_constrained.channels[15],
+        0xFFFF,
+        0xFFFF,
+        rx_state.statistics.rssi
+    );
+    send_mavlink_msg(&msg_tx);
+}
+
+
 
 static bool broadcast_param_values() {
     mavlink_msg_param_value_encode(

@@ -21,6 +21,8 @@ static void go_to_error_during_startup();
 
 static void core1_entry();
 
+static void print_system_params();
+
 static int init_result = 0;
 
 
@@ -53,11 +55,15 @@ int main() {
 
     // Done booting
     led_set(LED_RED, 0);
+    led_set(LED_GREEN, 1);
 
     if (init_result != 0) {
         state.mode = MODE_ERROR;
         go_to_error_during_startup();
     }
+
+    printf("Boot OK, using following settings:\n");
+    print_system_params();
 
     // Create tasks
     //vsrtos_create_task(controller_debug,    "Controller debug", 10, 1);
@@ -102,6 +108,21 @@ static void core1_entry() {
     while (1) {
         //telemetry_update();
     }
+}
+
+static void print_system_params()
+{
+    printf("  - pid_gyro_roll_p: %f\n", system_params.pid_gyro_roll_p.param_value);
+    printf("  - pid_gyro_roll_i: %f\n", system_params.pid_gyro_roll_i.param_value);
+    printf("  - pid_gyro_roll_d: %f\n", system_params.pid_gyro_roll_d.param_value);
+    printf("  - pid_gyro_pitch_p: %f\n", system_params.pid_gyro_pitch_p.param_value);
+    printf("  - pid_gyro_pitch_i: %f\n", system_params.pid_gyro_pitch_i.param_value);
+    printf("  - pid_gyro_pitch_d: %f\n", system_params.pid_gyro_pitch_d.param_value);
+    printf("  - pid_gyro_yaw_p: %f\n", system_params.pid_gyro_yaw_p.param_value);
+    printf("  - pid_gyro_yaw_i: %f\n", system_params.pid_gyro_yaw_i.param_value);
+    printf("  - pid_gyro_yaw_d: %f\n", system_params.pid_gyro_yaw_d.param_value);
+    printf("  - rx_protocol: %f\n", system_params.rx_protocol.param_value);
+    printf("\n");
 }
 
 static void go_to_error_during_startup() {

@@ -7,6 +7,8 @@
 
 #include "stdbool.h"
 
+#define UART    uart1
+#define UART_HW uart1_hw
 
 #define IBUS_BAUDRATE 115200
 #define CRSF_BAUDRATE 420000
@@ -23,8 +25,10 @@ static void init_uart(const uint32_t baudrate, const uart_parity_t parity);
 
 
 int receiver_init() {
+    rx_protocol_t rx_proto = (rx_protocol_t) system_params.rx_protocol.param_value;
+    rx_proto = RX_PROTOCOL_CRSF;
 
-    switch ((rx_protocol_t) system_params.rx_protocol.param_value)
+    switch (rx_proto)
     {
         case RX_PROTOCOL_IBUS:
             parse_byte = ibus_parse_byte;
@@ -34,7 +38,7 @@ int receiver_init() {
             break;
         case RX_PROTOCOL_CRSF:
             parse_byte = crsf_parse_byte;
-            get_last_state = crfs_get_last_state;
+            get_last_state = crsf_get_last_state;
             init_uart(CRSF_BAUDRATE, UART_PARITY_NONE);
             crsf_init();
             break;
