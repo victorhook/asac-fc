@@ -1,0 +1,27 @@
+#!/bin/bash
+
+TOOLS_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR=$TOOLS_DIR/..
+PYENV=$PROJECT_DIR/env
+
+OUTPUT_C=${PROJECT_DIR}/include/mavlink
+INPUT=${PROJECT_DIR}/mavlink/message_definitions/v1.0/common.xml
+
+
+# Arguments:
+
+#   $1 - Lang
+#   $2 - Output dir
+generate_mavlink() {
+    LANG=$1
+    OUTPUT_DIR=$2
+
+    source ${PYENV}/bin/activate && \
+        mavgen.py                   \
+            --lang=$LANG            \
+            --wire-protocol=1.0     \
+            --output=${OUTPUT_DIR}  \
+            ${INPUT}
+}
+
+generate_mavlink C ${OUTPUT_C}

@@ -4,7 +4,7 @@
 #include "asac_fc.h"
 #include "mavlink_params.h"
 
-#include "mavlink/asac/mavlink.h"
+#include "mavlink/common/mavlink.h"
 
 #include <tusb.h>
 #include <pico/stdio.h>

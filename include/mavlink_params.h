@@ -1,7 +1,7 @@
 #ifndef MAVLINK_PARAMS_H
 #define MAVLINK_PARAMS_H
 
-#include "mavlink/asac/mavlink.h"
+#include "mavlink/common/mavlink.h"
 
 
 typedef enum
