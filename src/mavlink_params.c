@@ -1,7 +1,7 @@
 #include "mavlink_params.h"
 
 
-system_params_t system_params = {
+system_params_t default_system_params = {
     .pid_gyro_roll_p = {
         .param_value = 1,
         .param_id = "pid_gyro_roll_p",
@@ -15,6 +15,11 @@ system_params_t system_params = {
     .pid_gyro_roll_d = {
         .param_value = 0.001,
         .param_id = "pid_gyro_roll_d",
+        .param_type = MAV_PARAM_TYPE_REAL32
+    },
+    .pid_gyro_roll_f = {
+        .param_value = 0,
+        .param_id = "pid_gyro_roll_f",
         .param_type = MAV_PARAM_TYPE_REAL32
     },
     .pid_gyro_pitch_p = {
@@ -32,6 +37,11 @@ system_params_t system_params = {
         .param_id = "pid_gyro_pitch_d",
         .param_type = MAV_PARAM_TYPE_REAL32
     },
+    .pid_gyro_pitch_f = {
+        .param_value = 0,
+        .param_id = "pid_gyro_pitch_f",
+        .param_type = MAV_PARAM_TYPE_REAL32
+    },
     .pid_gyro_yaw_p = {
         .param_value = 0.5,
         .param_id = "pid_gyro_yaw_p",
@@ -45,6 +55,11 @@ system_params_t system_params = {
     .pid_gyro_yaw_d = {
         .param_value = 0,
         .param_id = "pid_gyro_yaw_d",
+        .param_type = MAV_PARAM_TYPE_REAL32
+    },
+    .pid_gyro_yaw_f = {
+        .param_value = 0,
+        .param_id = "pid_gyro_yaw_f",
         .param_type = MAV_PARAM_TYPE_REAL32
     },
     .rc_protocol = {

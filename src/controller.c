@@ -407,18 +407,21 @@ int pid_controller_init() {
     pid_roll.Kp = system_settings.pid_gyro_roll_p.param_value;
     pid_roll.Ki = system_settings.pid_gyro_roll_i.param_value;
     pid_roll.Kd = system_settings.pid_gyro_roll_d.param_value;
+    pid_roll.Kff = system_settings.pid_gyro_roll_f.param_value;
     pid_roll.integral_limit_threshold = 1000;
 
     memset(&pid_pitch, 0, sizeof(pid_state_t));
     pid_pitch.Kp = system_settings.pid_gyro_pitch_p.param_value;
     pid_pitch.Ki = system_settings.pid_gyro_pitch_i.param_value;
     pid_pitch.Kd = system_settings.pid_gyro_pitch_d.param_value;
+    pid_pitch.Kff = system_settings.pid_gyro_pitch_f.param_value;
     pid_pitch.integral_limit_threshold = 1000;
 
     memset(&pid_yaw, 0, sizeof(pid_state_t));
     pid_yaw.Kp = system_settings.pid_gyro_yaw_p.param_value;
     pid_yaw.Ki = system_settings.pid_gyro_yaw_i.param_value;
     pid_yaw.Kd = system_settings.pid_gyro_yaw_d.param_value;
+    pid_yaw.Kff = system_settings.pid_gyro_yaw_f.param_value;
     pid_yaw.integral_limit_threshold = 1000;
 
     return 0;
