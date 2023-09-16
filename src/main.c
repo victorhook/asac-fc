@@ -77,7 +77,6 @@ int main() {
     multicore_launch_core1(core1_entry);
 
     state.mode = MODE_IDLE;
-    led_set(LED_BLUE, 1);
 
     // Start scheduler
     vsrtos_scheduler_start();
