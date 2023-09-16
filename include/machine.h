@@ -4,6 +4,8 @@
 
 // Pin definitions for custom PCB - Revision B
 // TODO: Incorrect motor names!!
+// Motor MIXER M1 and M2 are swapped. The motor mixer uses betaflights
+// motor mix!
 // M1 in schematic and PCB is actually M2 according to motor mixer :)
 // So M1 and M2 are swapped
 //#define PIN_M1                 1
