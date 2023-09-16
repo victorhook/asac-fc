@@ -212,7 +212,7 @@ static void handle_msg_command_int(const mavlink_message_t* msg_rx)
 static void handle_msg_param_set(const mavlink_message_t* msg_rx)
 {
     mavlink_param_set_t msg_param_set;
-    mavlink_msg_param_set_decode(&msg_rx, &msg_param_set);
+    mavlink_msg_param_set_decode(msg_rx, &msg_param_set);
     if (set_param(&msg_param_set)) {
         broadcast_param_value(&msg_param_set);
     }
