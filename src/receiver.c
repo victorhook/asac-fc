@@ -13,9 +13,9 @@
 #define IBUS_BAUDRATE 115200
 #define CRSF_BAUDRATE 420000
 
-static rx_parse_byte     parse_byte;
-static rx_get_last_state get_last_state;
-static rx_state_t last_state;
+static rc_parse_byte     parse_byte;
+static rc_get_last_state get_last_state;
+static rc_scale_channel  scale_channel;
 
 
 // RX interrupt handler
@@ -25,25 +25,26 @@ static void init_uart(const uint32_t baudrate, const uart_parity_t parity);
 
 
 int receiver_init() {
-    rx_protocol_t rx_proto = (rx_protocol_t) system_params.rx_protocol.param_value;
-    rx_proto = RX_PROTOCOL_CRSF;
+    rx_protocol_t rx_proto = (rx_protocol_t) system_params.rc_protocol.param_value;
 
     switch (rx_proto)
     {
         case RX_PROTOCOL_IBUS:
             parse_byte = ibus_parse_byte;
             get_last_state = ibus_get_last_state;
+            scale_channel = ibus_scale_channel;
             init_uart(IBUS_BAUDRATE, UART_PARITY_EVEN);
             ibus_init();
             break;
         case RX_PROTOCOL_CRSF:
             parse_byte = crsf_parse_byte;
             get_last_state = crsf_get_last_state;
+            scale_channel = crsf_scale_channel;
             init_uart(CRSF_BAUDRATE, UART_PARITY_NONE);
             crsf_init();
             break;
         default:
-            printf("NO VALID RX PROTOCOL FOUND, %d!\n", system_params.rx_protocol);
+            printf("NO VALID RX PROTOCOL FOUND, %d!\n", system_params.rc_protocol);
             return -1;
             break;
     }
@@ -53,6 +54,11 @@ int receiver_init() {
 
 void receiver_get_state(rx_state_t* rx_state) {
     get_last_state(rx_state);
+}
+
+
+uint16_t receiver_scale_channel(const uint16_t raw) {
+    return scale_channel(raw);
 }
 
 
