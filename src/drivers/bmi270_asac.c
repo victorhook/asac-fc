@@ -1,5 +1,6 @@
 #include "drivers/bmi270_asac.h"
 #include "asac_fc.h"
+#include "math.h"
 
 #include "bmi270.h"
 #include "bmi2_ois.h"
@@ -108,7 +109,7 @@ int bmi270_asac_init(bmi270_t* bmi, spi_inst_t* spi, uint8_t cs_pin) {
     config[BMI2_ACCEL].cfg.acc.filter_perf = BMI2_PERF_OPT_MODE, // Filter performance mode
     config[BMI2_ACCEL].cfg.acc.range       = BMI2_ACC_RANGE_8G, // g-range
 
-    res = bmi270_set_sensor_config(&config, 2, &dev);
+    res = bmi270_set_sensor_config((struct bmi2_sens_config*) &config, 2, &dev);
     if (res != 0) {
         return res;
     }
@@ -136,6 +137,7 @@ int bmi270_asac_read(bmi270_t* bmi, float acc[3], float gyro[3]) {
     // gyro[0] = lsb_to_dps_example(sensor_data.gyr.x, 2000, dev.resolution);
     // gyro[1] = lsb_to_dps_example(sensor_data.gyr.y, 2000, dev.resolution);
     // gyro[2] = lsb_to_dps_example(sensor_data.gyr.z, 2000, dev.resolution);
+    return 0;
 }
 
 
