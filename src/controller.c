@@ -61,6 +61,9 @@ pid_state_t           pid_roll;
 pid_state_t           pid_pitch;
 pid_state_t           pid_yaw;
 
+// External, global variables
+extern motor_command_t motor_command_test;
+
 
 #ifdef TELEMETRY_LOGGING
     static log_block_data_control_loop_t log_block;
@@ -168,11 +171,28 @@ void controller_update() {
         convert_rc_input_to_setpoint(&ctrl_rc_input_constrained, &setpoint);
     }
 
-    // Check if we're armed
+    // Check if we're connected to USB
+    bool is_usb_connected = usb_connected();
+    if (is_usb_connected != state.is_usb_connected) {
+        if (is_usb_connected) {
+            usb_connect();
+        } else {
+            usb_disconnect();
+        }
+    }
+
+    // IDEAS:
+    // 1. To arm normal: Several flags needs to be OK, before we ARM -> idle thrust
+    // 2. To arm forced: Ignore flags above, but don't start idle thrust. Allow raw throttle inputs per motor
+
+    // Check if arm input switch is toggled
     bool armed = is_armed(&ctrl_rc_input_constrained);
     if (armed != state.is_armed) {
         if (armed) {
-            arm();
+            // Pilot wants to arm, let's ensure that we can do this
+            //if (!state.is_usb_connected) {
+                arm();
+            //}
         } else {
             disarm();
         }
@@ -182,6 +202,7 @@ void controller_update() {
     // TODO: Different handling of this with flags, eg connected to USB.
     state.can_run_motors = state.is_armed && \
                            state.is_rc_connected;// && \
+                           //(!state.is_usb_connected);
 
     // Update PID values with IMU reading and desired rotation rates.
     pid_controller_update(&attitude_rates_measured, &setpoint, &attitude_rates_adjust);
@@ -197,16 +218,23 @@ void controller_update() {
     motor_command_non_restricted.m3 = (constrain(motor_mixer_command.m3, THROTTLE_MIN, THROTTLE_MAX) - 1000) / 1000.0;
     motor_command_non_restricted.m4 = (constrain(motor_mixer_command.m4, THROTTLE_MIN, THROTTLE_MAX) - 1000) / 1000.0;
 
-    if (state.can_run_motors) {
-        ctrl_motor_command.m1 = motor_command_non_restricted.m1;
-        ctrl_motor_command.m2 = motor_command_non_restricted.m2;
-        ctrl_motor_command.m3 = motor_command_non_restricted.m3;
-        ctrl_motor_command.m4 = motor_command_non_restricted.m4;
+    if (state.is_force_armed) {
+        ctrl_motor_command.m1 = motor_command_test.m1;
+        ctrl_motor_command.m2 = motor_command_test.m2;
+        ctrl_motor_command.m3 = motor_command_test.m3;
+        ctrl_motor_command.m4 = motor_command_test.m4;
     } else {
-        ctrl_motor_command.m1 = 0;
-        ctrl_motor_command.m2 = 0;
-        ctrl_motor_command.m3 = 0;
-        ctrl_motor_command.m4 = 0;
+        if (state.can_run_motors) {
+            ctrl_motor_command.m1 = motor_command_non_restricted.m1;
+            ctrl_motor_command.m2 = motor_command_non_restricted.m2;
+            ctrl_motor_command.m3 = motor_command_non_restricted.m3;
+            ctrl_motor_command.m4 = motor_command_non_restricted.m4;
+        } else {
+            ctrl_motor_command.m1 = 0;
+            ctrl_motor_command.m2 = 0;
+            ctrl_motor_command.m3 = 0;
+            ctrl_motor_command.m4 = 0;
+        }
     }
 
     // Set motor output

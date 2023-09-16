@@ -3,6 +3,7 @@
 #include "controller.h"
 #include "asac_fc.h"
 #include "mavlink_params.h"
+#include "settings.h"
 
 #include "mavlink/common/mavlink.h"
 
@@ -22,9 +23,11 @@
     tud_cdc_write(buf, size);           \
     tud_cdc_write_flush()
 
+
+motor_command_t motor_command_test;
+
 static mavlink_message_t msg_rx;
 static mavlink_message_t msg_tx;
-static uint8_t buf_rx[MAVLINK_MAX_BUF_SIZE];
 static uint8_t buf_tx[MAVLINK_MAX_BUF_SIZE];
 static mavlink_status_t status;
 
@@ -148,6 +151,10 @@ static void handle_msg_command_int(const mavlink_message_t* msg_rx)
     mavlink_command_int_t mavlink_command;
     mavlink_msg_command_int_decode(msg_rx, &mavlink_command);
 
+    uint8_t motor;
+    uint8_t motor_test_throttle_type;
+    float throttle;
+
     switch (mavlink_command.command) {
         case MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN:
             if (mavlink_command.param1 == REBOOT_AUTOPILOT) {
@@ -167,7 +174,34 @@ static void handle_msg_command_int(const mavlink_message_t* msg_rx)
                     break;
                 case PARAM_RESET_ALL_DEFAULT:
                     break;
+                default:
+                    break;
             }
+            break;
+        case MAV_CMD_DO_MOTOR_TEST:
+            motor = (uint8_t) mavlink_command.param1;
+            motor_test_throttle_type = (uint8_t) mavlink_command.param2;
+            if (motor_test_throttle_type != MOTOR_TEST_THROTTLE_PERCENT)
+            {
+                // TODO: Fix?
+                // We only support throttle percentage
+                return;
+            }
+            if ((motor < 1) || (motor > 4))
+            {
+                // TODO: Nbr of motors
+                return;
+            }
+
+            // Set throttle to desired test throttle value
+            // Incoming throttle is between 0-100, let's scale it to 0-1
+            throttle = mavlink_command.param3 / 100.0;
+            // "motor" is value between 1 and number of motors, so the index is motors-1
+            ((float*) &motor_command_test)[motor - 1] = throttle;
+
+            // Force arm!
+            state.is_force_armed = true;
+
             break;
         default:
             break;
