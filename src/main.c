@@ -74,7 +74,11 @@ int main() {
         multicore_launch_core1(core1_entry);
     #endif
 
+    // Start second core
     multicore_launch_core1(core1_entry);
+
+    // This is needed to allow second core to pause execution in primary core, which is necessary when writing to flash etc.
+    multicore_lockout_victim_init();
 
     state.mode = MODE_IDLE;
 

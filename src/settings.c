@@ -4,6 +4,7 @@
 
 #include <hardware/sync.h>
 #include <hardware/flash.h>
+#include <pico/multicore.h>
 
 // Inspired by: https://www.makermatrix.com/blog/read-and-write-data-with-the-pi-pico-onboard-flash/
 
@@ -55,12 +56,18 @@ void settings_write_to_flash(const system_settings_t* settings) {
     memcpy(&flash_buf[0], &flash_settings_hash, 4);
     memcpy(&flash_buf[4], settings, sizeof(system_settings_t));
 
+    // Put primary core in blocked state before we write the flash
+    // Inspired by this post: https://forums.raspberrypi.com/viewtopic.php?t=311709
+    multicore_lockout_start_blocking();
+
     int int_status = save_and_disable_interrupts();
     // For some reason we need to erase the flash before writing, not sure why.
     flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
     flash_range_program(FLASH_TARGET_OFFSET, flash_buf, SETTINGS_FLASH_SIZE);
     restore_interrupts(int_status);
 
+    // Put primary core to running again
+    multicore_lockout_end_blocking();
 }
 
 void settings_reset_default() {
