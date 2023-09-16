@@ -77,11 +77,15 @@ static void state_estimator(const imu_reading_t* imu_filtered, const float ctrl_
 
 static bool is_armed(const rc_input_t* rc_input_constrained);
 
-static bool is_connected(const rc_input_t* rc_input_raw);
+static bool is_rc_connected(const rc_input_t* rc_input_raw);
 
 static void disconnect();
 
 static void connect();
+
+static void usb_connect();
+
+static void usb_disconnect();
 
 static void arm();
 
@@ -147,16 +151,16 @@ void controller_update() {
     rc_input_t* ctrl_rc_input_raw = &rx_state.last_packet;
 
     // Check if we're connected (gotten radio packet within ~X ms)
-    bool connected = is_connected(ctrl_rc_input_raw);
-    if (connected != state.is_connected) {
-        if (connected) {
+    bool rc_connected = is_rc_connected(ctrl_rc_input_raw);
+    if (rc_connected != state.is_rc_connected) {
+        if (rc_connected) {
             connect();
         } else {
             disconnect();
         }
     }
 
-    if (state.is_connected) {
+    if (state.is_rc_connected) {
         // Constrain/crop RC input in case they're out of expected range.
         constrain_rc_input(ctrl_rc_input_raw, &ctrl_rc_input_constrained);
 
@@ -176,21 +180,8 @@ void controller_update() {
 
     // Safety mechanism for running motors.
     // TODO: Different handling of this with flags, eg connected to USB.
-    if (state.is_armed && state.is_connected) {
-        state.can_run_motors = true;
-    } else {
-        state.can_run_motors = false;
-    }
-
-    // If we cannot run the motors, we set setpoint to 0 for all
-    // TODO: Is his necessary, since some lines below, we set the motor commands
-    // to 0 if we cannot run the motors anyways.
-    if (!state.can_run_motors) {
-        setpoint.rates.roll  = 0;
-        setpoint.rates.pitch = 0;
-        setpoint.rates.yaw   = 0;
-        setpoint.throttle    = 0;
-    }
+    state.can_run_motors = state.is_armed && \
+                           state.is_rc_connected;// && \
 
     // Update PID values with IMU reading and desired rotation rates.
     pid_controller_update(&attitude_rates_measured, &setpoint, &attitude_rates_adjust);
@@ -293,8 +284,12 @@ static void disconnect() {
 }
 
 static void connect() {
-    led_set(LED_GREEN, 1);
-    state.is_connected = true;
+static void usb_connect() {
+    state.is_usb_connected = true;
+}
+
+static void usb_disconnect() {
+    state.is_usb_connected = false;
 }
 
 static void arm() {
@@ -317,7 +312,7 @@ static void remove_bias_from_imu_reading(imu_reading_t* imu_no_bias, const imu_r
     imu_no_bias->gyro_z = imu_raw->gyro_z - imu_bias->gyro_z;
 }
 
-static bool is_connected(const rc_input_t* rc_input_raw) {
+static bool is_rc_connected(const rc_input_t* rc_input_raw) {
     return ((ms_since_boot() - rc_input_raw->timestamp) < (CONNECTED_TIMEOUT_MS));
 }
 
@@ -427,7 +422,7 @@ void pid_controller_reset() {
         log_block.setpoint_pitch = setpoint.rates.pitch;
         log_block.setpoint_yaw = setpoint.rates.yaw;
         log_block.setpoint_throttle = setpoint.throttle;
-        log_block.is_connected = state.is_connected;
+        log_block.is_rc_connected = state.is_rc_connected;
         log_block.is_armed = state.is_armed;
         log_block.can_run_motors = state.can_run_motors;
 
