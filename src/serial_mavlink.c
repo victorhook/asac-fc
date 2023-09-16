@@ -65,6 +65,7 @@ static void serial_mavlink_broadcast_heartbeat();
 static void serial_mavlink_send_raw_imu();
 static void serial_mavlink_send_attitude();
 static void serial_mavlink_send_rc_channels();
+static void serial_mavlink_statustext(const MAV_SEVERITY severity, const char* text);
 
 
 int serial_mavlink_init()
@@ -317,7 +318,17 @@ static void serial_mavlink_send_rc_channels() {
     send_mavlink_msg(&msg_tx);
 }
 
-
+static void serial_mavlink_statustext(const MAV_SEVERITY severity, const char* text) {
+    mavlink_msg_statustext_pack_chan(
+        MAVLINK_SYSTEM_ID,
+        0,
+        MAVLINK_CHANNEL_SERIAL,
+        &msg_tx,
+        severity,
+        text
+    );
+    send_mavlink_msg(&msg_tx);
+}
 
 static bool broadcast_param_values() {
     mavlink_msg_param_value_encode(
