@@ -120,7 +120,7 @@ static void print_system_params()
     printf("  - pid_gyro_yaw_p: %f\n", system_params.pid_gyro_yaw_p.param_value);
     printf("  - pid_gyro_yaw_i: %f\n", system_params.pid_gyro_yaw_i.param_value);
     printf("  - pid_gyro_yaw_d: %f\n", system_params.pid_gyro_yaw_d.param_value);
-    printf("  - rx_protocol: %f\n", system_params.rx_protocol.param_value);
+    printf("  - rc_protocol: %f\n", system_params.rc_protocol.param_value);
     printf("\n");
 }
 
