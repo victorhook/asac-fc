@@ -7,9 +7,11 @@ typedef struct {
     float Kp;
     float Ki;
     float Kd;
+    float Kff;
     float p;
     float i;
     float d;
+    float ff;   // Feed Forward
     float err;
     float err_integral;
     float last_err;
@@ -18,7 +20,6 @@ typedef struct {
     float integral_limit_threshold;
     bool  integral_disabled;
     uint32_t integral_disabled_timestamp;
-    uint16_t feed_forward;
 } pid_state_t;
 
 

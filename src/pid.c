@@ -47,11 +47,14 @@ float pid_update(pid_state_t* pid, const float measured, const float desired, co
         pid->i = pid->Ki * pid->err_integral;
     }
 
+    // Feed forward
+    pid->ff = pid->Kff * desired;
+
     pid->d = pid->Kd * pid->d_err;
 
     pid->last_err = pid->err;
 
-    pid->pid = pid->p + pid->i + pid->d;
+    pid->pid = pid->p + pid->i + pid->d + pid->ff;
 
     return pid->pid;
 }
