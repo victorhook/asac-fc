@@ -53,8 +53,9 @@ int ibus_init()
     return 0;
 }
 
-void ibus_parse_byte(uint8_t byte)
+bool ibus_parse_byte(uint8_t byte)
 {
+    bool new_packet = false;
     buf[bytes_read] = byte;
     bytes_read++;
     ibus_parse_state_t next_state = ibus_state;
@@ -111,6 +112,7 @@ void ibus_parse_byte(uint8_t byte)
                        IBUS_PAYLOAD_SIZE);
                 successful_packets++;
                 packet_rate_counter++;
+                new_packet = true;
             }
             else
             {
@@ -125,6 +127,12 @@ void ibus_parse_byte(uint8_t byte)
     update_statistics();
 
     ibus_state = next_state;
+    return new_packet;
+}
+
+uint16_t ibus_scale_channel(const uint16_t raw) {
+    // IBUS input values are already between 1000-2000
+    return raw;
 }
 
 void ibus_get_last_state(rx_state_t* state)

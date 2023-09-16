@@ -328,9 +328,10 @@ static bool is_armed(const rc_input_t* rc_input_constrained) {
 
 static void constrain_rc_input(const rc_input_t* unconstrained, rc_input_t* constrained) {
     // TODO: Move this to receiver!
-    crsf_scale_rc_channels(unconstrained, constrained);
+    //crsf_scale_rc_channels(unconstrained, constrained);
     for (int i = 0; i < RC_MAX_NBR_OF_CHANNELS ; i++) {
-        constrained->channels[i] = constrain(constrained->channels[i], 1000, 2000);
+        uint16_t rc_scaled = receiver_scale_channel(unconstrained->channels[i]);
+        constrained->channels[i] = constrain(rc_scaled, 1000, 2000);
     }
 }
 

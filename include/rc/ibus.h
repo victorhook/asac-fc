@@ -28,12 +28,15 @@ int ibus_init();
 /*
  * Processes a single byte in the internal state machine.
  */
-void ibus_parse_byte(uint8_t data);
+bool ibus_parse_byte(uint8_t data);
 
 /*
  * Fills the `state` with the current state of the IBUS receiver.
  */
 void ibus_get_last_state(rx_state_t* state);
+
+
+uint16_t ibus_scale_channel(const uint16_t raw);
 
 
 #endif /* IBUS_H */

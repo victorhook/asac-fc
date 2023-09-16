@@ -220,6 +220,10 @@ static void handle_new_packet(crsf_packet_t* packet)
 
 #define CRSF_RC_CHANNEL_SCALE_LEGACY                0.62477120195241f
 
+uint16_t crsf_scale_channel(const uint16_t raw) {
+    return (CRSF_RC_CHANNEL_SCALE_LEGACY * (float) raw) + 881;
+}
+
 void crsf_scale_rc_channels(const rc_input_t* raw, rc_input_t* scaled)
 {
      /* FROM BETAFLIGHT :)

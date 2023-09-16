@@ -28,12 +28,19 @@ typedef struct
  * Parses a single byte in the RX state machine.
  * Returns true if a new packet has been parsed
  */
-typedef bool (*rx_parse_byte)(const uint8_t byte);
+typedef bool (*rc_parse_byte)(const uint8_t byte);
 
 /*
  * Fills `state` with the current RX state.
  */
-typedef void (*rx_get_last_state)(rx_state_t* state);
+typedef void (*rc_get_last_state)(rx_state_t* state);
+
+
+/*
+ * Scales the value of a single RAW channel
+ * Returns the scaled channel value
+ */
+typedef uint16_t (*rc_scale_channel)(const uint16_t raw);
 
 
 #endif /* RC_H */
