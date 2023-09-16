@@ -167,9 +167,12 @@ static void handle_msg_command_int(const mavlink_message_t* msg_rx)
                 case PARAM_READ_PERSISTENT:
                     break;
                 case PARAM_WRITE_PERSISTENT:
-                    settings_write_to_flash(&system_params);
+                    serial_mavlink_statustext(MAV_SEVERITY_DEBUG, "SAVING TO FLASH!");
+                    settings_write_to_flash(&system_settings);
                     break;
                 case PARAM_RESET_CONFIG_DEFAULT:
+                    serial_mavlink_statustext(MAV_SEVERITY_DEBUG, "PARAM RESET!");
+                    settings_reset_default();
                     break;
                 case PARAM_RESET_SENSOR_DEFAULT:
                     break;
