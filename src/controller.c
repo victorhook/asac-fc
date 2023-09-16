@@ -279,11 +279,15 @@ static void state_estimator(const imu_reading_t* imu_filtered, const float ctrl_
 }
 
 static void disconnect() {
-    led_set(LED_GREEN, 0);
-    state.is_connected = false;
+    led_set(LED_BLUE, 0);
+    state.is_rc_connected = false;
 }
 
 static void connect() {
+    led_set(LED_BLUE, 1);
+    state.is_rc_connected = true;
+}
+
 static void usb_connect() {
     state.is_usb_connected = true;
 }
