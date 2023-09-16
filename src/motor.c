@@ -14,7 +14,7 @@ typedef enum {
     ESC_PROTOCOL_MULTISHOT,   // Pulse duration: (5us - 25us)      Freq: ? kHz
 } esc_protocol_t;
 
-#define PWM_PULSE_WIDTH          ((float) 0.5)
+#define PWM_PULSE_WIDTH          ((float) 0.05)
 #define ONESHOT_125_PULSE_WIDTH  ((float) 0.125)
 
 typedef struct {
