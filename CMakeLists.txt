@@ -52,11 +52,15 @@ add_executable(asac-fc
   include/drivers/oneshot.pio
 )
 
+# Add compiler flags to the target
+# -Wno-address-of-packed-member: Known from MAVLINK. Hopefully doesn't crash anything.
+target_compile_options(asac-fc PRIVATE -Wno-address-of-packed-member)
+
+
 # Add PIO programs
 pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/uart_tx.pio)
 pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/uart_rx.pio)
 pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/oneshot.pio)
-
 
 add_definitions(
   # 16MB: 16 * 1024 * 1024 = 16777216
