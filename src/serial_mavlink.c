@@ -117,7 +117,6 @@ void serial_mavlink_update()
         last_sent_rc_channels = t0;
     }
 
-    uint16_t msg_id;
     t0 = us_since_boot();
 
     // Check for any input and read if there's any available
@@ -167,8 +166,9 @@ static void handle_msg_command_int(const mavlink_message_t* msg_rx)
                 case PARAM_READ_PERSISTENT:
                     break;
                 case PARAM_WRITE_PERSISTENT:
-                    serial_mavlink_statustext(MAV_SEVERITY_DEBUG, "SAVING TO FLASH!");
+                    serial_mavlink_statustext(MAV_SEVERITY_DEBUG, "Saving params to flash");
                     settings_write_to_flash(&system_settings);
+                    serial_mavlink_statustext(MAV_SEVERITY_DEBUG, "Params saved to flash");
                     break;
                 case PARAM_RESET_CONFIG_DEFAULT:
                     serial_mavlink_statustext(MAV_SEVERITY_DEBUG, "PARAM RESET!");
@@ -223,7 +223,6 @@ static void handle_msg_param_set(const mavlink_message_t* msg_rx)
 
 static void handle_msg_param_request_list(const mavlink_message_t* msg_rx)
 {
-    update_param_values();
     tud_cdc_write_flush();
     param_state = PARAM_STATE_BROADCAST_VALUES;
 }
@@ -322,13 +321,15 @@ static void serial_mavlink_send_rc_channels() {
 }
 
 static void serial_mavlink_statustext(const MAV_SEVERITY severity, const char* text) {
+    char buf[50];
+    strncpy(buf, text, 50);
     mavlink_msg_statustext_pack_chan(
         MAVLINK_SYSTEM_ID,
         0,
         MAVLINK_CHANNEL_SERIAL,
         &msg_tx,
         severity,
-        text
+        buf
     );
     send_mavlink_msg(&msg_tx);
 }
@@ -373,20 +374,6 @@ static void broadcast_param_value(const mavlink_param_set_t* msg_param_set) {
         &param
     );
     send_mavlink_msg(&msg_tx);
-}
-
-static void update_param_values() {
-    pid_roll.p = system_settings.pid_gyro_roll_p.param_value;
-    pid_roll.i = system_settings.pid_gyro_roll_i.param_value;
-    pid_roll.d = system_settings.pid_gyro_roll_d.param_value;
-
-    pid_pitch.p = system_settings.pid_gyro_pitch_p.param_value;
-    pid_pitch.i = system_settings.pid_gyro_pitch_i.param_value;
-    pid_pitch.d = system_settings.pid_gyro_pitch_d.param_value;
-
-    pid_yaw.p = system_settings.pid_gyro_yaw_p.param_value;
-    pid_yaw.i = system_settings.pid_gyro_yaw_i.param_value;
-    pid_yaw.d = system_settings.pid_gyro_yaw_d.param_value;
 }
 
 static void send_mavlink_msg(const mavlink_message_t* mav_msg)
