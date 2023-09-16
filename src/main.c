@@ -62,7 +62,7 @@ int main() {
         go_to_error_during_startup();
     }
 
-    printf("Boot OK, using following settings:\n");
+    printf("Boot OK, using following settings (%d):\n", NBR_OF_PARAM_VALUES);
     print_system_params();
 
     // Create tasks
@@ -110,16 +110,16 @@ static void core1_entry() {
 
 static void print_system_params()
 {
-    printf("  - pid_gyro_roll_p: %f\n", system_params.pid_gyro_roll_p.param_value);
-    printf("  - pid_gyro_roll_i: %f\n", system_params.pid_gyro_roll_i.param_value);
-    printf("  - pid_gyro_roll_d: %f\n", system_params.pid_gyro_roll_d.param_value);
-    printf("  - pid_gyro_pitch_p: %f\n", system_params.pid_gyro_pitch_p.param_value);
-    printf("  - pid_gyro_pitch_i: %f\n", system_params.pid_gyro_pitch_i.param_value);
-    printf("  - pid_gyro_pitch_d: %f\n", system_params.pid_gyro_pitch_d.param_value);
-    printf("  - pid_gyro_yaw_p: %f\n", system_params.pid_gyro_yaw_p.param_value);
-    printf("  - pid_gyro_yaw_i: %f\n", system_params.pid_gyro_yaw_i.param_value);
-    printf("  - pid_gyro_yaw_d: %f\n", system_params.pid_gyro_yaw_d.param_value);
-    printf("  - rc_protocol: %f\n", system_params.rc_protocol.param_value);
+    mavlink_param_value_t* params = (mavlink_param_value_t*) &system_settings;
+
+    for (int i = 0; i < NBR_OF_PARAM_VALUES; i++)
+    {
+        mavlink_param_value_t* param = &params[i];
+        char name[17];
+        strncpy(name, param->param_id, 16);
+        name[16] = 0;
+        printf("  - %s: %f\n", name, param->param_value);
+    }
     printf("\n");
 }
 

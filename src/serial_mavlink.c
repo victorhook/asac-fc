@@ -335,7 +335,7 @@ static bool broadcast_param_values() {
         MAVLINK_SYSTEM_ID,
         MAV_COMP_ID_ALL,
         &msg_tx,
-        &((mavlink_param_value_t*) &system_params)[current_param_index]
+        &((mavlink_param_value_t*) &system_settings)[current_param_index]
     );
     send_mavlink_msg(&msg_tx);
 
@@ -345,7 +345,7 @@ static bool broadcast_param_values() {
 
 static bool set_param(const mavlink_param_set_t* msg_param_set) {
     for (int i = 0; i < NBR_OF_PARAM_VALUES; i++) {
-        mavlink_param_value_t* param = &((mavlink_param_value_t*) &system_params)[i];
+        mavlink_param_value_t* param = &((mavlink_param_value_t*) &system_settings)[i];
         if (strncmp(param->param_id, msg_param_set->param_id, 16) == 0) {
             param->param_value = msg_param_set->param_value;
             return true;
@@ -373,17 +373,17 @@ static void broadcast_param_value(const mavlink_param_set_t* msg_param_set) {
 }
 
 static void update_param_values() {
-    pid_roll.p = system_params.pid_gyro_roll_p.param_value;
-    pid_roll.i = system_params.pid_gyro_roll_i.param_value;
-    pid_roll.d = system_params.pid_gyro_roll_d.param_value;
+    pid_roll.p = system_settings.pid_gyro_roll_p.param_value;
+    pid_roll.i = system_settings.pid_gyro_roll_i.param_value;
+    pid_roll.d = system_settings.pid_gyro_roll_d.param_value;
 
-    pid_pitch.p = system_params.pid_gyro_pitch_p.param_value;
-    pid_pitch.i = system_params.pid_gyro_pitch_i.param_value;
-    pid_pitch.d = system_params.pid_gyro_pitch_d.param_value;
+    pid_pitch.p = system_settings.pid_gyro_pitch_p.param_value;
+    pid_pitch.i = system_settings.pid_gyro_pitch_i.param_value;
+    pid_pitch.d = system_settings.pid_gyro_pitch_d.param_value;
 
-    pid_yaw.p = system_params.pid_gyro_yaw_p.param_value;
-    pid_yaw.i = system_params.pid_gyro_yaw_i.param_value;
-    pid_yaw.d = system_params.pid_gyro_yaw_d.param_value;
+    pid_yaw.p = system_settings.pid_gyro_yaw_p.param_value;
+    pid_yaw.i = system_settings.pid_gyro_yaw_i.param_value;
+    pid_yaw.d = system_settings.pid_gyro_yaw_d.param_value;
 }
 
 static void send_mavlink_msg(const mavlink_message_t* mav_msg)

@@ -21,10 +21,12 @@ typedef struct {
     mavlink_param_value_t pid_gyro_yaw_p;
     mavlink_param_value_t pid_gyro_yaw_i;
     mavlink_param_value_t pid_gyro_yaw_d;
-    mavlink_param_value_t rx_protocol;
+
+    // RC Protocol
+    mavlink_param_value_t rc_protocol;
 }__attribute__((packed)) system_params_t;
 
-extern system_params_t system_params;
+extern system_params_t default_system_params;
 
 extern const uint16_t NBR_OF_PARAM_VALUES;
 

@@ -11,59 +11,66 @@
 #define FLASH_TARGET_OFFSET    (ASAC_FC_FLASH_SIZE - FLASH_SECTOR_SIZE)
 #define FLASH_PAGES_PER_SECTOR (FLASH_SECTOR_SIZE / FLASH_PAGE_SIZE)
 
+#define SETTINGS_NBR_OF_FLASH_PAGES ((sizeof(system_settings_t) / FLASH_PAGE_SIZE) + 1)
+#define SETTINGS_FLASH_SIZE (SETTINGS_NBR_OF_FLASH_PAGES * FLASH_PAGE_SIZE)
+
+
 static int* settings_hash_ptr     = (int*)        (XIP_BASE + FLASH_TARGET_OFFSET);
-static settings_t* flash_settings = (settings_t*) (XIP_BASE + FLASH_TARGET_OFFSET + 4);
+static system_settings_t* flash_settings = (system_settings_t*) (XIP_BASE + FLASH_TARGET_OFFSET + 4);
 
-static int settings_hash;
-static uint8_t flash_buf[FLASH_PAGE_SIZE];
+static uint8_t flash_buf[SETTINGS_FLASH_SIZE];
 
-settings_t* settings;
+static int calculate_simple_hash(const system_settings_t* settings);
 
-static int calculate_simple_hash(const settings_t* settings);
+system_settings_t system_settings;
+
+//#define USE_DEFAULT_SETTINGS
 
 
 int settings_init() {
-    settings = &system_params;
-    settings_hash = *settings_hash_ptr;
-
-    int hash = calculate_simple_hash(flash_settings);
-
-
     #ifdef USE_DEFAULT_SETTINGS
         printf("Using default settings!\n");
-        settings_write_to_flash(settings);
+        settings_reset_default();
     #else
-        if (hash != settings_hash) {
+        int flash_settings_hash = *settings_hash_ptr;
+        int hash = calculate_simple_hash(flash_settings);
+
+        if (hash != flash_settings_hash) {
             printf("Hash calculation for settings failed, using default...!\n");
-            printf("Expected %d, got: %d\n", hash, settings_hash);
-            settings_write_to_flash(settings);
+            printf("Expected %d, got: %d\n", hash, flash_settings_hash);
+            settings_reset_default();
         } else {
-            memcpy(settings, flash_settings, sizeof(settings_t));
+            // Copy settings from FLASH to RAM
+            memcpy(&system_settings, flash_settings, sizeof(system_settings_t));
         }
     #endif
 
     return 0;
 }
 
-int settings_write_to_flash(const settings_t* ASD) {
-    settings_hash = calculate_simple_hash(ASD);
+void settings_write_to_flash(const system_settings_t* settings) {
+    int flash_settings_hash = calculate_simple_hash(settings);
 
     // Prepare settings buffer
-    memcpy(&flash_buf[0], &settings_hash, 4);
-    memcpy(&flash_buf[4], ASD, sizeof(settings_t));
+    memcpy(&flash_buf[0], &flash_settings_hash, 4);
+    memcpy(&flash_buf[4], settings, sizeof(system_settings_t));
 
     int int_status = save_and_disable_interrupts();
     // For some reason we need to erase the flash before writing, not sure why.
     flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
-    flash_range_program(FLASH_TARGET_OFFSET, flash_buf, FLASH_PAGE_SIZE);
+    flash_range_program(FLASH_TARGET_OFFSET, flash_buf, SETTINGS_FLASH_SIZE);
     restore_interrupts(int_status);
-    return 0;
+
 }
 
+void settings_reset_default() {
+    memcpy(&system_settings, &default_system_params, sizeof(system_settings_t));
+    settings_write_to_flash(&system_settings);
+}
 
-static int calculate_simple_hash(const settings_t* settings) {
+static int calculate_simple_hash(const system_settings_t* settings) {
     int hash = 0;
-    for (int byte = 0; byte < sizeof(settings_t); byte++) {
+    for (int byte = 0; byte < sizeof(system_settings_t); byte++) {
         hash ^= ((uint8_t*) settings)[byte];
     }
     return hash;

@@ -25,7 +25,7 @@ static void init_uart(const uint32_t baudrate, const uart_parity_t parity);
 
 
 int receiver_init() {
-    rx_protocol_t rx_proto = (rx_protocol_t) system_params.rc_protocol.param_value;
+    rx_protocol_t rx_proto = (rx_protocol_t) system_settings.rc_protocol.param_value;
 
     switch (rx_proto)
     {
@@ -44,7 +44,7 @@ int receiver_init() {
             crsf_init();
             break;
         default:
-            printf("NO VALID RX PROTOCOL FOUND, %d!\n", system_params.rc_protocol);
+            printf("NO VALID RX PROTOCOL FOUND, %d!\n", system_settings.rc_protocol);
             return -1;
             break;
     }

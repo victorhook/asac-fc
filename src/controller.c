@@ -4,7 +4,7 @@
 #include "telemetry.h"
 #include "log.h"
 #include "math.h"
-#include "mavlink_params.h"
+#include "settings.h"
 
 
 // RC Input mappings, should they be here?
@@ -404,21 +404,21 @@ int pid_controller_init() {
     last_pid_update = us_since_boot();
 
     memset(&pid_roll, 0, sizeof(pid_state_t));
-    pid_roll.Kp = system_params.pid_gyro_roll_p.param_value;
-    pid_roll.Ki = system_params.pid_gyro_roll_i.param_value;
-    pid_roll.Kd = system_params.pid_gyro_roll_d.param_value;
+    pid_roll.Kp = system_settings.pid_gyro_roll_p.param_value;
+    pid_roll.Ki = system_settings.pid_gyro_roll_i.param_value;
+    pid_roll.Kd = system_settings.pid_gyro_roll_d.param_value;
     pid_roll.integral_limit_threshold = 1000;
 
     memset(&pid_pitch, 0, sizeof(pid_state_t));
-    pid_pitch.Kp = system_params.pid_gyro_pitch_p.param_value;
-    pid_pitch.Ki = system_params.pid_gyro_pitch_i.param_value;
-    pid_pitch.Kd = system_params.pid_gyro_pitch_d.param_value;
+    pid_pitch.Kp = system_settings.pid_gyro_pitch_p.param_value;
+    pid_pitch.Ki = system_settings.pid_gyro_pitch_i.param_value;
+    pid_pitch.Kd = system_settings.pid_gyro_pitch_d.param_value;
     pid_pitch.integral_limit_threshold = 1000;
 
     memset(&pid_yaw, 0, sizeof(pid_state_t));
-    pid_yaw.Kp = system_params.pid_gyro_yaw_p.param_value;
-    pid_yaw.Ki = system_params.pid_gyro_yaw_i.param_value;
-    pid_yaw.Kd = system_params.pid_gyro_yaw_d.param_value;
+    pid_yaw.Kp = system_settings.pid_gyro_yaw_p.param_value;
+    pid_yaw.Ki = system_settings.pid_gyro_yaw_i.param_value;
+    pid_yaw.Kd = system_settings.pid_gyro_yaw_d.param_value;
     pid_yaw.integral_limit_threshold = 1000;
 
     return 0;
