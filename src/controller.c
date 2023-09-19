@@ -331,6 +331,7 @@ static void usb_disconnect() {
 static void arm() {
     led_set(LED_RED, 1);
     state.is_armed = true;
+    pid_controller_reset();
 }
 
 static void disarm() {
