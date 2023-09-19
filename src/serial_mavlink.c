@@ -33,9 +33,11 @@ static mavlink_status_t status;
 
 // Periodic mavlink messages
 #define HEARTBEAT_MSG_PERIOD_MS  1000
+#define BATTERY_STATUS_PERIOD_MS 500
 #define ATTITUDE_MSG_PERIOD_MS   100
 #define RC_CHANNEL_MSG_PERIOD_MS 100
 static uint32_t last_sent_heartbeat;
+static uint32_t last_sent_battery_status;
 static uint32_t last_sent_attitude;
 static uint32_t last_sent_rc_channels;
 
@@ -62,6 +64,7 @@ static bool set_param(const mavlink_param_set_t* msg_param_set);
 static void broadcast_param_value(const mavlink_param_set_t* msg_param_set);
 
 static void serial_mavlink_broadcast_heartbeat();
+static void serial_mavlink_send_battery_status();
 static void serial_mavlink_send_raw_imu();
 static void serial_mavlink_send_attitude();
 static void serial_mavlink_send_rc_channels();
@@ -73,8 +76,11 @@ int serial_mavlink_init()
     tud_cdc_read_flush();
     tud_cdc_write_flush();
     param_state = PARAM_STATE_WAIT_FOR_REQUEST;
-    current_param_index = 0;
-    last_sent_heartbeat = 0;
+    current_param_index      = 0;
+    last_sent_heartbeat      = 0;
+    last_sent_battery_status = 0;
+    last_sent_attitude       = 0;
+    last_sent_rc_channels    = 0;
     return 0;
 }
 
@@ -105,6 +111,11 @@ void serial_mavlink_update()
     {
         serial_mavlink_broadcast_heartbeat();
         last_sent_heartbeat = t0;
+    }
+    if ((t0 - last_sent_battery_status) >= BATTERY_STATUS_PERIOD_MS)
+    {
+        serial_mavlink_send_battery_status();
+        last_sent_battery_status = t0;
     }
     if ((t0 - last_sent_attitude) >= ATTITUDE_MSG_PERIOD_MS)
     {
@@ -231,10 +242,6 @@ static void handle_msg_param_request_list(const mavlink_message_t* msg_rx)
 
 static void serial_mavlink_broadcast_heartbeat()
 {
-    if (!tud_cdc_connected()) {
-        return;
-    }
-
     mavlink_msg_heartbeat_pack_chan(
         MAVLINK_SYSTEM_ID,
         MAV_COMP_ID_ALL,
@@ -250,6 +257,28 @@ static void serial_mavlink_broadcast_heartbeat()
 
     uint16_t size = mavlink_msg_to_send_buffer(buf_tx, &msg_tx);
     mavlink_write_serial(buf_tx, size);
+}
+
+static void serial_mavlink_send_battery_status() {
+    int16_t voltages[10];
+    memset(voltages, 0xff, 20);
+    voltages[0] = (int16_t) vbat.scaledMv;
+    mavlink_msg_battery_status_pack_chan(
+        MAVLINK_SYSTEM_ID,
+        MAV_COMP_ID_ALL,
+        MAVLINK_CHANNEL_SERIAL,
+        &msg_tx,
+        0,
+        MAV_BATTERY_FUNCTION_AVIONICS,
+        MAV_BATTERY_TYPE_LIPO,
+        0xFFFF,  // Unknown temp
+        voltages,
+        -1,
+        -1,
+        -1,
+        -1
+    );
+    send_mavlink_msg(&msg_tx);
 }
 
 static void serial_mavlink_send_raw_imu() {

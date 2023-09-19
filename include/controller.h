@@ -6,6 +6,7 @@
 #include "motor.h"
 #include "receiver.h"
 #include "pid.h"
+#include "battery_adc.h"
 
 
 typedef struct {
@@ -47,6 +48,7 @@ extern bool                  can_run_motors;
 extern pid_state_t           pid_roll;
 extern pid_state_t           pid_pitch;
 extern pid_state_t           pid_yaw;
+extern vbat_t                vbat;
 
 
 #endif /* CONTROLLER_H */
