@@ -11,9 +11,12 @@
 #define VOLTAGE_DIVIDER_R1 10000
 #define VOLTAGE_DIVIDER_R2 5600
 #define VOLTAGE_DIVIDER_MULT_FACTOR ( (float)(1.0 / ( (float) VOLTAGE_DIVIDER_R2 / ((float) VOLTAGE_DIVIDER_R1 + (float) VOLTAGE_DIVIDER_R2) )) )
-#define ADC_CONVERT (ADC_VREF / ADC_RANGE)
+#define ADC_CONVERT (float) (ADC_VREF / ADC_RANGE)
 
-static uint16_t vbat_adc_raw;
+// This conversion factor is found experimentally
+#define VBAT_ADC_CONVERSION_MV (float) (0.002048502238502238 * 1000.0)
+
+vbat_t vbat;
 
 
 int battery_adc_init() {
@@ -25,7 +28,8 @@ int battery_adc_init() {
 
 float battery_adc_read() {
     adc_select_input(VBAT_ADC_INPUT_NUMBER);
-    vbat_adc_raw = adc_read();
-    return vbat_adc_raw * ADC_CONVERT * VOLTAGE_DIVIDER_MULT_FACTOR;
+    vbat.raw = adc_read();
+    vbat.scaledMv = (float) vbat.raw * VBAT_ADC_CONVERSION_MV;
+    return vbat.scaledMv;
 }
 

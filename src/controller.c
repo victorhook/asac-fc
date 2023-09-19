@@ -198,6 +198,10 @@ void controller_update() {
         }
     }
 
+    // We don't use the value right now, but it updates the vbat state.
+    // Might not be necessary to do this in pid loop...
+    battery_adc_read();
+
     // Safety mechanism for running motors.
     // TODO: Different handling of this with flags, eg connected to USB.
     state.can_run_motors = state.is_armed && \

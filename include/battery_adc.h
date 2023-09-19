@@ -4,6 +4,13 @@
 #include "hardware/adc.h"
 
 
+typedef struct
+{
+    uint16_t raw;
+    float scaledMv;
+} vbat_t;
+
+
 /* Initializes the battery ADC. */
 int battery_adc_init();
 
