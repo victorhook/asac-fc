@@ -375,7 +375,11 @@ static void convert_rc_input_to_setpoint(const rc_input_t* rc_input, setpoint_t*
     setpoint->rates.roll  = -RATES_ROLL_MAX  + ( ( (roll  - 1000) / 1000.0 ) * 2*RATES_ROLL_MAX );
     setpoint->rates.pitch = -RATES_PITCH_MAX + ( ( (pitch - 1000) / 1000.0 ) * 2*RATES_PITCH_MAX );
     setpoint->rates.yaw   = -RATES_YAW_MAX  +  ( ( (yaw   - 1000) / 1000.0 ) * 2*RATES_YAW_MAX );
-    setpoint->throttle = throttle;
+
+    // Throttle input is between 1000-2000, but we always have a minimum throttle when we're armed, so
+    // we need to offset the throttle value to THROTTLE_MIN and scaled it accordingly.
+    // If not, the throttle position between 1000 and THROTTLE_MIN would not have ANY effect.
+    setpoint->throttle = THROTTLE_MIN + ((throttle - 1000) / 1000.0) * (THROTTLE_MAX - THROTTLE_MIN);
 }
 
 void motor_mixer_update(uint16_t throttle, const pid_adjust_t* adjust, motor_command_t* motor_command) {
