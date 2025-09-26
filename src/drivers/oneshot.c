@@ -1,6 +1,6 @@
 #include "drivers/oneshot.h"
 #include "oneshot.pio.h"
-#include "machine.h"
+#include "hal/hal_rp2040/hal_impl.h"
 
 #include <pico/stdlib.h>
 

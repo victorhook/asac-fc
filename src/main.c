@@ -1,15 +1,15 @@
-#include "asac_fc.h"
-#include "motor.h"
-#include "receiver.h"
-#include "imu.h"
-#include "vsrtos.h"
-#include "controller.h"
-#include "led.h"
-#include "battery_adc.h"
-#include "settings.h"
+#include "util.h"
+#include "motor/motor.h"
+#include "rc/receiver.h"
+#include "imu/imu.h"
+#include "control/controller.h"
+#include "led/led.h"
+#include "battery/battery_adc.h"
+#include "parameter/settings.h"
 #include "state.h"
-#include "telemetry.h"
-#include "serial_mavlink.h"
+#include "mavlink_driver/serial_mavlink.h"
+
+#include "vsrtos.h"
 
 #include <pico/stdio.h>
 #include <pico/multicore.h>

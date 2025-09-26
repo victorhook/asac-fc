@@ -5,3 +5,9 @@
 [submodule "vendor/pico-sdk"]
 	path = vendor/pico-sdk
 	url = git@github.com:raspberrypi/pico-sdk.git
+[submodule "vendor/picotool"]
+	path = vendor/picotool
+	url = git@github.com:raspberrypi/picotool.git
+[submodule "vendor/c_library_v2"]
+	path = vendor/c_library_v2
+	url = git@github.com:mavlink/c_library_v2.git

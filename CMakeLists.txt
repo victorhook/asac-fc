@@ -19,23 +19,20 @@ pico_sdk_init()
 
 add_executable(asac-fc
   src/main.c
-  src/battery_adc.c
-  src/settings.c
-  src/pid.c
-  src/imu.c
-  src/receiver.c
-  src/controller.c
-  src/motor.c
-  src/led.c
-  src/controller.c
+  src/battery/battery_adc.c
+  src/pid/pid.c
+  src/imu/imu.c
+  src/control/controller.c
+  src/motor/motor.c
+  src/led/led.c
   src/vsrtos.c
   src/state.c
-  src/vstp.c
-  src/asac_fc.c
-  src/telemetry.c
-  src/serial_mavlink.c
-  src/mavlink_params.c
+  src/util.c
+  src/mavlink_driver/serial_mavlink.c
+  src/parameter/mavlink_params.c
+  src/parameter/settings.c
   # RX
+  src/rc/receiver.c
   src/rc/ibus.c
   src/rc/crsf.c
   # Drivers
@@ -47,20 +44,19 @@ add_executable(asac-fc
   vendor/BMI270-Sensor-API/bmi270.c
   vendor/BMI270-Sensor-API/bmi2.c
   # PIO programs
-  include/drivers/uart_tx.pio
-  include/drivers/uart_rx.pio
-  include/drivers/oneshot.pio
+  src/hal/hal_rp2040/uart_tx.pio
+  src/hal/hal_rp2040/uart_rx.pio
+  src/hal/hal_rp2040/oneshot.pio
 )
 
 # Add compiler flags to the target
 # -Wno-address-of-packed-member: Known from MAVLINK. Hopefully doesn't crash anything.
 target_compile_options(asac-fc PRIVATE -Wno-address-of-packed-member)
 
-
 # Add PIO programs
-pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/uart_tx.pio)
-pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/uart_rx.pio)
-pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/include/drivers/oneshot.pio)
+pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/src/hal/hal_rp2040/uart_tx.pio)
+pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/src/hal/hal_rp2040/uart_rx.pio)
+pico_generate_pio_header(asac-fc ${CMAKE_CURRENT_LIST_DIR}/src/hal/hal_rp2040/oneshot.pio)
 
 add_definitions(
   # 16MB: 16 * 1024 * 1024 = 16777216
@@ -87,8 +83,10 @@ pico_enable_stdio_usb(asac-fc 1)
 # Add the standard include files to the build
 target_include_directories(asac-fc PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
-  ${CMAKE_CURRENT_LIST_DIR}/include
+  ${CMAKE_CURRENT_LIST_DIR}/src
   ${CMAKE_CURRENT_LIST_DIR}/vendor/BMI270-Sensor-API/
+  ${CMAKE_CURRENT_LIST_DIR}/vendor/c_library_v2/
+  ${CMAKE_CURRENT_LIST_DIR}/vendor/c_library_v2/ardupilotmega
 )
 
 # Add any user requested libraries
