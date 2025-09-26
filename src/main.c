@@ -25,6 +25,7 @@ static int init_result = 0;
 */
 
 int main() {
+    printf("HELLO WORLD!\n");
     /*
     stdio_usb_init();
     system_init();
