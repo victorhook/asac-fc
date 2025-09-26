@@ -106,7 +106,7 @@ static void print_rc_input();
 
 
 int controller_init() {
-    last_ctrl_update = us_since_boot();
+    last_ctrl_update = hal_micros();
 
     // Note that the controller is expected to be initialized AFTER IMU.
     // This is so that we can retrieve the correct IMU offsets/bias.
@@ -122,16 +122,16 @@ void controller_update() {
     // Average controller update time: ~300us
     // Measured experimentally
 
-    uint32_t ctrl_loop_started = us_since_boot();
+    uint32_t ctrl_loop_started = hal_micros();
     float ctrl_loop_dt_s = (float) (ctrl_loop_started - last_ctrl_update) / 1000000.0;
 
     // Read data from IMU
     imu_read(&imu_raw);
 
     // Ensure the orientation of the coordinate is correct
-    imu_raw.gyro_x *= IMU_ORIENTATION_X;
-    imu_raw.gyro_y *= IMU_ORIENTATION_Y;
-    imu_raw.gyro_z *= IMU_ORIENTATION_Z;
+    //imu_raw.gyro_x *= IMU_ORIENTATION_X;
+    //imu_raw.gyro_y *= IMU_ORIENTATION_Y;
+    //imu_raw.gyro_z *= IMU_ORIENTATION_Z;
 
     // Remove bias from imu readings
     remove_bias_from_imu_reading(&imu_no_bias, &imu_raw, &imu_bias);
@@ -244,7 +244,7 @@ void controller_update() {
     set_all_motors_pwm(&ctrl_motor_command);
 
     // Update timestamp with last update
-    last_ctrl_update = us_since_boot();
+    last_ctrl_update = hal_micros();
 }
 
 
@@ -349,7 +349,7 @@ static void remove_bias_from_imu_reading(imu_reading_t* imu_no_bias, const imu_r
 }
 
 static bool is_rc_connected(const rc_input_t* rc_input_raw) {
-    return ((ms_since_boot() - rc_input_raw->timestamp) < (CONNECTED_TIMEOUT_MS));
+    return ((hal_millis() - rc_input_raw->timestamp) < (CONNECTED_TIMEOUT_MS));
 }
 
 static bool is_armed(const rc_input_t* rc_input_constrained) {
@@ -409,7 +409,7 @@ void motor_mixer_update(uint16_t throttle, const pid_adjust_t* adjust, motor_com
 }
 
 int pid_controller_init() {
-    last_pid_update = us_since_boot();
+    last_pid_update = hal_micros();
 
     memset(&pid_roll, 0, sizeof(pid_state_t));
     pid_roll.Kp = system_settings.pid_gyro_roll_p.param_value;
@@ -436,11 +436,11 @@ int pid_controller_init() {
 }
 
 void pid_controller_update(const rates_t* measured, const setpoint_t* desired, pid_adjust_t* adjust) {
-    float dt_s = (float) (us_since_boot() - last_pid_update) / 1000000.0;
+    float dt_s = (float) (hal_micros() - last_pid_update) / 1000000.0;
     adjust->roll  = pid_update(&pid_roll,  measured->roll,  desired->rates.roll,  desired->throttle, dt_s);
     adjust->pitch = pid_update(&pid_pitch, measured->pitch, desired->rates.pitch, desired->throttle, dt_s);
     adjust->yaw   = pid_update(&pid_yaw,   measured->yaw,   desired->rates.yaw,   desired->throttle, dt_s);
-    last_pid_update = us_since_boot();
+    last_pid_update = hal_micros();
 }
 
 void pid_controller_reset() {

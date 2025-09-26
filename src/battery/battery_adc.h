@@ -1,8 +1,7 @@
 #ifndef BATTERY_H
 #define BATTERY_H
 
-#include "hardware/adc.h"
-
+#include "hal.h"
 
 typedef struct
 {

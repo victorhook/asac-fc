@@ -1,7 +1,7 @@
-#include "drivers/mpu6050.h"
+#include "mpu6050.h"
 
-#include "stdio.h"
 
+/*
 
 #define MPU_I2C_ADDR 0x68
 
@@ -69,10 +69,10 @@ int mpu6050_init(mpu6050_t* mpu, i2c_inst_t* i2c_bus) {
         return mpu->result;
     }
 
-    sleep_ms(100);
+    hal_sleep_ms(100);
     // Then we'll reset all signal paths
     mpu6050_write_reg(mpu, REG_SIGNAL_PATH_RESET, REG_SIGNAL_PATH_RESET_GYRO_RESET | REG_SIGNAL_PATH_RESET_ACCEL_RESET | REG_SIGNAL_PATH_RESET_TEMP_RESET);
-    sleep_ms(100);
+    hal_sleep_ms(100);
 
     // Set power ON
     mpu6050_write_reg(mpu, REG_PWR_MGMT_1, 0);
@@ -155,3 +155,6 @@ static void debugPrintHex(const uint8_t* buf, const uint8_t len) {
     }
     printf("\n");
 }
+
+
+*/

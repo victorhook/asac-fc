@@ -2,11 +2,10 @@
 #define LED_H
 
 #include "stdint.h"
-#include "hal/hal_rp2040/hal_impl.h"
 
-#define LED_RED   PIN_LED_RED
-#define LED_GREEN PIN_LED_GREEN
-#define LED_BLUE  PIN_LED_BLUE
+#define LED_RED   0 // PIN_LED_RED
+#define LED_GREEN 0 // PIN_LED_GREEN
+#define LED_BLUE  0 // PIN_LED_BLUE
 
 
 int led_init();

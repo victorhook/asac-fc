@@ -1,5 +1,20 @@
-#ifndef MACHINE_H
-#define MACHINE_H
+#ifndef HAL_IMPL
+#define HAL_IMPL
+
+#include <pico/stdlib.h>
+#include <pico/stdio.h>
+#include <pico/time.h>
+#include <pico/stdio.h>
+#include <pico/multicore.h>
+#include <pico/stdio_usb.h>
+#include <tusb.h>
+#include <hardware/watchdog.h>
+#include <hardware/adc.h>
+#include <hardware/pwm.h>
+#include <hardware/i2c.h>
+#include <hardware/spi.h>
+#include <hardware/sync.h>
+#include <hardware/flash.h>
 
 
 // Pin definitions for custom PCB - Revision B

@@ -15,7 +15,7 @@
     #include "stdlib.h"
     #include "pico/stdlib.h"
     #define yield()
-    #define current_time_us()         (time_us_32())
+    #define current_time_us()         (hal_micros())
     #define DEBUG_PRINTF(_Format, ...) printf(_Format, __VA_ARGS__)
     #define DEBUG_PRINT(msg)           printf(msg)
 #endif

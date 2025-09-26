@@ -1,10 +1,8 @@
 #ifndef IBUS_H
 #define IBUS_H
 
-#include <stdio.h>
-#include "pico/stdlib.h"
-
-#include "rc/rc.h"
+#include "util.h"
+#include "rc.h"
 
 
 typedef struct {

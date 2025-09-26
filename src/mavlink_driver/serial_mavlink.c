@@ -7,11 +7,6 @@
 
 #include "mavlink.h"
 
-#include <tusb.h>
-#include <pico/stdio.h>
-#include <pico/stdio_usb.h>
-
-
 #define MAVLINK_MAX_BUF_SIZE   256
 #define MAVLINK_CHANNEL_SERIAL 0
 #define MAVLINK_SYSTEM_ID      0
@@ -104,7 +99,7 @@ void serial_mavlink_update()
         }
     }
 
-    uint32_t t0 = ms_since_boot();
+    uint32_t t0 = hal_millis();
 
     // Check if it's time for any periodic messages to be sent
     if ((t0 - last_sent_heartbeat) >= HEARTBEAT_MSG_PERIOD_MS)
@@ -128,10 +123,10 @@ void serial_mavlink_update()
         last_sent_rc_channels = t0;
     }
 
-    t0 = us_since_boot();
+    t0 = hal_micros();
 
     // Check for any input and read if there's any available
-    while (serial_available() & ((us_since_boot() - t0) < UPDATE_FUNCTION_MAX_RUNTIME_US)) {
+    while (serial_available() & ((hal_micros() - t0) < UPDATE_FUNCTION_MAX_RUNTIME_US)) {
         char new_byte = tud_cdc_read_char();
 
         if (mavlink_parse_char(MAVLINK_CHANNEL_SERIAL, new_byte, &msg_rx, &status)) {
@@ -309,7 +304,7 @@ static void serial_mavlink_send_attitude() {
         MAV_COMP_ID_IMU,
         MAVLINK_CHANNEL_SERIAL,
         &msg_tx,
-        ms_since_boot(),
+        hal_millis(),
         state.roll,
         state.pitch,
         state.yaw,
@@ -327,7 +322,7 @@ static void serial_mavlink_send_rc_channels() {
         0,
         MAVLINK_CHANNEL_SERIAL,
         &msg_tx,
-        ms_since_boot(),
+        hal_millis(),
         16,
         ctrl_rc_input_constrained.channels[0],
         ctrl_rc_input_constrained.channels[1],

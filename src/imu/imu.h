@@ -1,9 +1,7 @@
 #ifndef IMU_H
 #define IMU_H
 
-
-#include "stdint.h"
-#include "stdio.h"
+#include "hal.h"
 
 typedef struct {
     float x;

@@ -6,7 +6,7 @@ set(PICO_SDK_PATH "${CMAKE_CURRENT_SOURCE_DIR}/vendor/pico-sdk")
 set(PICO_BOARD pico CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
-include(pico_sdk_import.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/src/hal/hal_rp2040/pico_sdk_import.cmake)
 
 if (PICO_SDK_VERSION_STRING VERSION_LESS "1.4.0")
   message(FATAL_ERROR "Raspberry Pi Pico SDK version 1.4.0 (or later) required. Your version is ${PICO_SDK_VERSION_STRING}")
@@ -21,32 +21,35 @@ add_executable(asac-fc
   src/main.c
   src/battery/battery_adc.c
   src/pid/pid.c
-  src/imu/imu.c
   src/control/controller.c
+  # Motor
+  src/motor/oneshot.c
   src/motor/motor.c
   src/led/led.c
   src/vsrtos.c
   src/state.c
-  src/util.c
+  src/util/util.c
   src/mavlink_driver/serial_mavlink.c
   src/parameter/mavlink_params.c
   src/parameter/settings.c
+  # Utils
+  src/util/ringbuf.c
   # RX
   src/rc/receiver.c
   src/rc/ibus.c
   src/rc/crsf.c
-  # Drivers
-  src/drivers/mpu6050.c
-  src/drivers/bmi270_asac.c
-  src/drivers/oneshot.c
+  # IMU
+  src/imu/imu.c
+  #src/imu/mpu6050.c
+  #src/imu/bmi270_asac.c
   # Vendor - BMI270
   vendor/BMI270-Sensor-API/bmi2_ois.c
   vendor/BMI270-Sensor-API/bmi270.c
   vendor/BMI270-Sensor-API/bmi2.c
-  # PIO programs
-  src/hal/hal_rp2040/uart_tx.pio
-  src/hal/hal_rp2040/uart_rx.pio
-  src/hal/hal_rp2040/oneshot.pio
+  ${PROJECT_SOURCE_DIR}/src/hal/hal_rp2040/uart_tx.pio
+  ${PROJECT_SOURCE_DIR}/src/hal/hal_rp2040/uart_rx.pio
+  ${PROJECT_SOURCE_DIR}/src/hal/hal_rp2040/oneshot.pio
+  ${PROJECT_SOURCE_DIR}/src/hal/hal_rp2040/hal_impl.c
 )
 
 # Add compiler flags to the target
@@ -84,6 +87,8 @@ pico_enable_stdio_usb(asac-fc 1)
 target_include_directories(asac-fc PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
   ${CMAKE_CURRENT_LIST_DIR}/src
+  ${CMAKE_CURRENT_LIST_DIR}/src/hal
+  ${CMAKE_CURRENT_LIST_DIR}/src/util
   ${CMAKE_CURRENT_LIST_DIR}/vendor/BMI270-Sensor-API/
   ${CMAKE_CURRENT_LIST_DIR}/vendor/c_library_v2/
   ${CMAKE_CURRENT_LIST_DIR}/vendor/c_library_v2/ardupilotmega

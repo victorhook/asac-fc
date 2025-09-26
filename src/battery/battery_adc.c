@@ -1,6 +1,6 @@
 #include "battery_adc.h"
-#include "hal/hal_rp2040/hal_impl.h"
 
+/*
 #define ADC_VREF 3.3
 #define ADC_RANGE ((1 << 12) - 1)  // 12 bit ADC, 0 <-> 4095
 
@@ -17,19 +17,20 @@
 #define VBAT_ADC_CONVERSION_MV (float) (0.002048502238502238 * 1000.0)
 
 vbat_t vbat;
+*/
 
-
-int battery_adc_init() {
-    adc_init();
-    adc_gpio_init(PIN_VBAT_ADC);
-    return 0;
+int battery_adc_init()
+{
+    // TODO: Fix channel
+    return hal_adc_init(0);
 }
 
 
-float battery_adc_read() {
-    adc_select_input(VBAT_ADC_INPUT_NUMBER);
-    vbat.raw = adc_read();
-    vbat.scaledMv = (float) vbat.raw * VBAT_ADC_CONVERSION_MV;
-    return vbat.scaledMv;
+float battery_adc_read()
+{
+    // TODO: Fix channel
+    int raw_adc;
+    hal_adc_read(0, &raw_adc);
+    return (float) raw_adc;
 }
 

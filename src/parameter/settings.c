@@ -1,10 +1,12 @@
 #include "settings.h"
-#include "hal/hal_rp2040/hal_impl.h"
+#include "hal.h"
 #include "util.h"
 
-#include <hardware/sync.h>
-#include <hardware/flash.h>
-#include <pico/multicore.h>
+#define SETTINGS_FLASH_SIZE 100
+#define XIP_BASE 30
+#define ASAC_FC_FLASH_SIZE 200
+#define FLASH_SECTOR_SIZE 200
+#define FLASH_PAGE_SIZE 200
 
 // Inspired by: https://www.makermatrix.com/blog/read-and-write-data-with-the-pi-pico-onboard-flash/
 
@@ -50,6 +52,7 @@ int settings_init() {
 }
 
 void settings_write_to_flash(const system_settings_t* settings) {
+    /*
     int flash_settings_hash = calculate_simple_hash(settings);
 
     // Prepare settings buffer
@@ -68,6 +71,7 @@ void settings_write_to_flash(const system_settings_t* settings) {
 
     // Put primary core to running again
     multicore_lockout_end_blocking();
+    */
 }
 
 void settings_reset_default() {

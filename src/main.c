@@ -11,10 +11,8 @@
 
 #include "vsrtos.h"
 
-#include <pico/stdio.h>
-#include <pico/multicore.h>
 
-
+/*
 static void init_driver(int (*init_function)(), const char* name);
 
 static void go_to_error_during_startup();
@@ -24,9 +22,10 @@ static void core1_entry();
 static void print_system_params();
 
 static int init_result = 0;
-
+*/
 
 int main() {
+    /*
     stdio_usb_init();
     system_init();
 
@@ -88,12 +87,13 @@ int main() {
     // Should never reach this point
     while (1);
 
+    */
     return 0;
 }
 
 
 // -- Helper functions -- //
-
+/*
 static void init_driver(int (*init_function)(), const char* name) {
     int res = init_function();
     printf("  Init: %s ", name);
@@ -132,8 +132,9 @@ static void go_to_error_during_startup() {
         // TODO: Better error handling
         printf("Error occurred during startup: %d\n", init_result);
         led_set(LED_RED, 1);
-        sleep_ms(500);
+        hal_sleep_ms(500);
         led_set(LED_RED, 0);
-        sleep_ms(500);
+        hal_sleep_ms(500);
     }
 }
+*/

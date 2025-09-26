@@ -95,7 +95,7 @@ bool crsf_parse_byte(const uint8_t byte)
             rx.crc = byte;
             if (valid_crc(byte))
             {
-                rx_state.last_packet.timestamp = ms_since_boot();
+                rx_state.last_packet.timestamp = hal_millis();
                 handle_new_packet(&rx);
                 new_packet = true;
             }

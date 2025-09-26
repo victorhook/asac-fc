@@ -1,10 +1,5 @@
-#include "motor/motor.h"
-#include "hal/hal_rp2040/hal_impl.h"
-#include "drivers/oneshot.h"
-
-#include "pico/stdlib.h"
-#include "stdio.h"
-#include "hardware/pwm.h"
+#include "motor.h"
+#include "oneshot.h"
 
 
 typedef enum {
@@ -18,10 +13,10 @@ typedef enum {
 #define ONESHOT_125_PULSE_WIDTH  ((float) 0.125)
 
 typedef struct {
-    uint     gpio;
+    uint32_t     gpio;
     uint16_t wrap;
-    uint     slice;
-    uint     channel;
+    uint32_t     slice;
+    uint32_t     channel;
 } pwm_t;
 
 // TODO: Clean up logic here and make this a setting!
@@ -51,7 +46,7 @@ static inline void pwm_set(const pwm_t* pwm, const float duty);
 
 static inline void pwm_set_level(const pwm_t* pwm, const uint16_t level);
 
-static void init_pwm(pwm_t* pwm, uint gpio, float clk_divider, uint16_t wrap);
+static void init_pwm(pwm_t* pwm, uint32_t gpio, float clk_divider, uint16_t wrap);
 
 
 // -- Public API -- //
@@ -68,16 +63,16 @@ int motors_init() {
             // PWM 50 Hz:
             wrap = MOTOR_PWM_LEVEL_SCALER;
             clk_div = 250.0;
-            init_pwm(&pwm_m1, PIN_M1, clk_div, wrap);
-            init_pwm(&pwm_m2, PIN_M2, clk_div, wrap);
-            init_pwm(&pwm_m3, PIN_M3, clk_div, wrap);
-            init_pwm(&pwm_m4, PIN_M4, clk_div, wrap);
+            //init_pwm(&pwm_m1, PIN_M1, clk_div, wrap);
+            //init_pwm(&pwm_m2, PIN_M2, clk_div, wrap);
+            //init_pwm(&pwm_m3, PIN_M3, clk_div, wrap);
+            //init_pwm(&pwm_m4, PIN_M4, clk_div, wrap);
             break;
         case ESC_PROTOCOL_ONESHOT_125:
-            oneshot_init(ONESHOT_TYPE_125);
+            //oneshot_init(ONESHOT_TYPE_125);
             break;
         case ESC_PROTOCOL_ONESHOT_42:
-            oneshot_init(ONESHOT_TYPE_42);
+            //oneshot_init(ONESHOT_TYPE_42);
             break;
         case ESC_PROTOCOL_MULTISHOT:
             break;
@@ -109,7 +104,7 @@ void set_motor_pwm(const uint8_t motor, const float pwm) {
         case ESC_PROTOCOL_ONESHOT_125:
         case ESC_PROTOCOL_ONESHOT_42:
             // Motor values are 1,2,3,4 ut oneshot expects 0,1,2,3
-            oneshot_set(motor-1, pwm);
+            //oneshot_set(motor-1, pwm);
             break;
         case ESC_PROTOCOL_MULTISHOT:
             break;
@@ -129,7 +124,7 @@ void set_all_motors_pwm(const motor_command_t* motor_command) {
             // Oneshot doesn't apply the values directly but writes them to
             // buffer, so we need to apply the values here.
             // This way, they are all synced.
-            oneshot_apply();
+            //oneshot_apply();
         }
 }
 
@@ -137,16 +132,16 @@ void set_all_motors_pwm(const motor_command_t* motor_command) {
 
 static inline void pwm_set(const pwm_t* pwm, const float duty)
 {
-    pwm_set_chan_level(pwm->slice, pwm->channel, (duty / 100.0) * pwm->wrap);
+    //pwm_set_chan_level(pwm->slice, pwm->channel, (duty / 100.0) * pwm->wrap);
 }
 
 static inline void pwm_set_level(const pwm_t* pwm, const uint16_t level)
 {
-    pwm_set_chan_level(pwm->slice, pwm->channel, level);
+    //pwm_set_chan_level(pwm->slice, pwm->channel, level);
 }
 
-static void init_pwm(pwm_t* pwm, uint gpio, float clk_divider, uint16_t wrap)
-{
+static void init_pwm(pwm_t* pwm, uint32_t gpio, float clk_divider, uint16_t wrap)
+{/*
     gpio_set_function(gpio, GPIO_FUNC_PWM);
     pwm->slice = pwm_gpio_to_slice_num(gpio);
     pwm->channel = pwm_gpio_to_channel(gpio);
@@ -156,4 +151,5 @@ static void init_pwm(pwm_t* pwm, uint gpio, float clk_divider, uint16_t wrap)
     pwm_set_wrap(pwm->slice, pwm->wrap);
     pwm_set_chan_level(pwm->slice, pwm->channel, 0);
     pwm_set_enabled(pwm->slice, true);
+    */
 }

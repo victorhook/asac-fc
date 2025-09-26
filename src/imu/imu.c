@@ -1,12 +1,9 @@
 #include "imu/imu.h"
-#include "hal/hal_rp2040/hal_impl.h"
 #include "util.h"
-#include "drivers/bmi270_asac.h"
-#include "drivers/mpu6050.h"
+#include "hal.h"
 
-
-#include <hardware/i2c.h>
-#include <hardware/spi.h>
+//#include "bmi270_asac.h"
+//#include "mpu6050.h"
 
 
 #define GYRO_FILTER_ORDER 2
@@ -19,8 +16,8 @@ static int gyro_filter_index;
 #define CALIBRATION_SAMPLES                  1000
 #define CALIBRATION_DELAY_BETWEEN_SAMPLES_MS 1
 imu_reading_t last_reading;
-mpu6050_t mpu;
-bmi270_t bmi;
+//mpu6050_t mpu;
+//bmi270_t bmi;
 
 static imu_reading_t imu_bias;
 
@@ -123,7 +120,7 @@ int imu_calibrate() {
         //    calibration.gyro_z
         //);
         //printf("\n");
-        sleep_ms(CALIBRATION_DELAY_BETWEEN_SAMPLES_MS);
+        hal_sleep_ms(CALIBRATION_DELAY_BETWEEN_SAMPLES_MS);
     }
 
     imu_bias.gyro_x /= CALIBRATION_SAMPLES;
@@ -148,7 +145,7 @@ void imu_read(imu_reading_t* reading) {
         bmi270_asac_read(&bmi, &reading->acc_x, &reading->gyro_x);
     #endif
 
-    reading->timestamp_us = time_us_32();
+    reading->timestamp_us = hal_micros();
 
     //printf("ACC %f, %f, %f\n", reading->acc_x, reading->acc_y, reading->acc_z);
     //printf("GYRO %f, %f, %f\n", reading->gyro_x, reading->gyro_y, reading->gyro_z);

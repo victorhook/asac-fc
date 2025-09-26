@@ -1,14 +1,14 @@
-#include "drivers/bmi270_asac.h"
+#include "bmi270_asac.h"
 #include "util.h"
 #include "math.h"
 
 #include "bmi270.h"
 #include "bmi2_ois.h"
 
-
+/*
 static struct bmi2_dev dev;
 static struct bmi2_sens_data sensor_data;
-
+*/
 #define GRAVITY_EARTH  (9.80665f)
 
 #define GYRO_RANGE_VALUE 2000
@@ -60,7 +60,7 @@ static inline float lsb_to_dps(int16_t val);
  *  @return Degree per second.
  */
 static inline float lsb_to_dps_example(int16_t val, float dps, uint8_t bit_width);
-
+/*
 int bmi270_asac_init(bmi270_t* bmi, spi_inst_t* spi, uint8_t cs_pin) {
     bmi->spi = spi;
     bmi->cs_pin = cs_pin;
@@ -139,7 +139,7 @@ int bmi270_asac_read(bmi270_t* bmi, float acc[3], float gyro[3]) {
     // gyro[2] = lsb_to_dps_example(sensor_data.gyr.z, 2000, dev.resolution);
     return 0;
 }
-
+*/
 
 // -- Helper functions -- //
 
@@ -201,5 +201,8 @@ int8_t bmi270_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, voi
 }
 
 void bmi270_delay(uint32_t period, void *intf_ptr) {
-    sleep_us(period);
+    shal_sleep_us(period);
 }
+
+
+*/

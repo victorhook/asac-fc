@@ -1,8 +1,7 @@
-#include "drivers/oneshot.h"
-#include "oneshot.pio.h"
-#include "hal/hal_rp2040/hal_impl.h"
+#include "oneshot.h"
 
-#include <pico/stdlib.h>
+//#include "oneshot.pio.h"
+//#include <pico/stdlib.h>
 
 /*
     Oneshot PIO implementation wrapper, supports oneshot125 and oneshot42.
@@ -28,7 +27,7 @@ static uint16_t pulse_width_delay;
 
 
 int oneshot_init(const oneshot_type_t oneshot_type)
-{
+{/*
     switch (oneshot_type)
     {
         case ONESHOT_TYPE_125:
@@ -53,7 +52,7 @@ int oneshot_init(const oneshot_type_t oneshot_type)
     // Enable interrupts
     irq_set_enabled(ONESHOT_IRQ_NUM, true);
     pio_set_irq0_source_enabled(ONESHOT_PIO, ONESHOT_PIO_IRQ_SOURCE, true);
-
+*/
     return 0;
 }
 
@@ -61,12 +60,12 @@ int oneshot_init(const oneshot_type_t oneshot_type)
 void oneshot_set(const uint8_t motor, const float throttle)
 {
     // Calculate delay time, aka how long the pulse should be high.
-    uint16_t delay = min_delay + (throttle * pulse_width_delay);
-    ONESHOT_PIO->txf[motor] = delay;
+    //uint16_t delay = min_delay + (throttle * pulse_width_delay);
+    //ONESHOT_PIO->txf[motor] = delay;
 }
 
 void oneshot_apply()
 {
     // Clear PIO interrupt to trigger the pulses.
-    pio_interrupt_clear(ONESHOT_PIO, ONESHOT_PIO_IRQ_SOURCE);
+    //pio_interrupt_clear(ONESHOT_PIO, ONESHOT_PIO_IRQ_SOURCE);
 }

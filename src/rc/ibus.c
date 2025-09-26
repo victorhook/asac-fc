@@ -49,7 +49,7 @@ int ibus_init()
     parse_errors           = 0;
     successful_packets     = 0;
     packet_rate_counter    = 0;
-    packet_rate_counter_t0 = ms_since_boot();
+    packet_rate_counter_t0 = hal_millis();
     return 0;
 }
 
@@ -105,7 +105,7 @@ bool ibus_parse_byte(uint8_t byte)
             // Validate checksum
             if ((rx_checksum) == checksum)
             {
-                rx_state.last_packet.timestamp = ms_since_boot();
+                rx_state.last_packet.timestamp = hal_millis();
                 // Ibus data includes 14 channels
                 memcpy(rx_state.last_packet.channels,
                        &buf[IBUS_HEADER_SIZE],
@@ -143,7 +143,7 @@ void ibus_get_last_state(rx_state_t* state)
 
 static void update_statistics()
 {
-    uint32_t now = ms_since_boot();
+    uint32_t now = hal_millis();
     if ((now - packet_rate_counter_t0) > 1000 )
     {
         // Update statistics

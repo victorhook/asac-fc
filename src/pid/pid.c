@@ -31,7 +31,7 @@ float pid_update(pid_state_t* pid, const float measured, const float desired, co
                 (pid->err_integral < -pid->integral_limit_threshold)) {
                 // Anti-windup START
                 pid->integral_disabled = true;
-                pid->integral_disabled_timestamp = time_us_32();
+                pid->integral_disabled_timestamp = hal_micros();
             }
         }
     }
