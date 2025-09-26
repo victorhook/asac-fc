@@ -11,7 +11,7 @@ typedef struct {
     float p;
     float i;
     float d;
-    float ff;   // Feed Forward
+    float ff;
     float err;
     float err_integral;
     float last_err;

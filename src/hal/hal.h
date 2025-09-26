@@ -6,24 +6,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include "util/ringbuf.h"
-
+#include "serial/serial.h"
 
 // Pull in correct HAL
 #if defined(HAL_RP2040)
-    #warning "HAL_RP2040 is defined"
+    #warning "Using RP2040 HAL"
     #include "hal_rp2040/hal_impl.h"
-#else
+#elif defined(HAL_SITL)
+    #warning "Using SITL HAL"
+    #include "hal_rp2040/hal_impl.h"
 #endif
 
-
-
-typedef struct
-{
-    uint8_t nbr;
-    ringbuf_t* rx_queue;
-    ringbuf_t* tx_queue;
-} serial_t;
 
 
 /** Initializes primary HAL stuff */
@@ -65,9 +58,9 @@ int hal_pwm_set(const int channel, const int gpio, const uint16_t value);
 
 int hal_pin_set(const uint8_t port, const uint8_t pin, const uint8_t value);
 
-void hal_shal_sleep_us(const uint32_t us);
+void hal_sleep_us(const uint32_t us);
 
-void hal_hal_sleep_ms(const uint32_t ms);
+void hal_sleep_ms(const uint32_t ms);
 
 uint32_t hal_millis();
 

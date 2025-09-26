@@ -1,5 +1,5 @@
 #include "pid.h"
-
+#include "hal.h" 
 
 float pid_update(pid_state_t* pid, const float measured, const float desired, const uint16_t throttle, const float dt_s) {
     // Calculate error

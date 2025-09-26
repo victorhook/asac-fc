@@ -1,5 +1,4 @@
 #include "imu/imu.h"
-#include "util.h"
 #include "hal.h"
 
 //#include "bmi270_asac.h"

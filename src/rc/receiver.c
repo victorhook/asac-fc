@@ -1,6 +1,5 @@
 #include "receiver.h"
 #include "hal.h"
-#include "parameter/settings.h"
 #include "rc/rc.h"
 #include "rc/ibus.h"
 #include "rc/crsf.h"
@@ -25,7 +24,8 @@ static void on_uart_rx();
 
 
 int receiver_init() {
-    rx_protocol_t rx_proto = (rx_protocol_t) system_settings.rc_protocol.param_value;
+    /*
+    rx_protocol_t rx_proto = RC_PROO;//(rx_protocol_t) system_settings.rc_protocol.param_value;
 
     switch (rx_proto)
     {
@@ -44,11 +44,12 @@ int receiver_init() {
             crsf_init();
             break;
         default:
-            printf("NO VALID RX PROTOCOL FOUND, %d!\n", system_settings.rc_protocol);
+            //printf("NO VALID RX PROTOCOL FOUND, %d!\n", system_settings.rc_protocol);
             return -1;
             break;
+            
     }
-
+*/
     return 0;
 }
 

@@ -1,6 +1,6 @@
 #include "rc/ibus.h"
 #include "rc/rc.h"
-#include "util.h"
+#include "hal.h"
 
 
 #define IBUS_HEADER_FIRST_BYTE  0x20

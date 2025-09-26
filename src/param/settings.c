@@ -30,7 +30,7 @@ system_settings_t system_settings;
 //#define USE_DEFAULT_SETTINGS
 
 
-int settings_init() {
+int param_init() {
     #ifdef USE_DEFAULT_SETTINGS
         printf("Using default settings!\n");
         settings_reset_default();

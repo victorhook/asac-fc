@@ -23,8 +23,7 @@ void controller_telemetry();
 
 void controller_debug();
 
-void controller_update();
-
+void controller_pid_loop();
 
 // Intermediate variables used to calculate correct commands for motors
 //   from the RC input.
@@ -49,6 +48,7 @@ extern pid_state_t           pid_roll;
 extern pid_state_t           pid_pitch;
 extern pid_state_t           pid_yaw;
 extern vbat_t                vbat;
+
 
 
 #endif /* CONTROLLER_H */

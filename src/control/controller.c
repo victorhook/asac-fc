@@ -3,7 +3,7 @@
 #include "led/led.h"
 #include "log/log.h"
 #include "math.h"
-#include "parameter/settings.h"
+#include "rc/receiver.h"
 
 
 // RC Input mappings, should they be here?
@@ -118,7 +118,8 @@ int controller_init() {
     return result;
 }
 
-void controller_update() {
+void controller_pid_loop()
+{
     // Average controller update time: ~300us
     // Measured experimentally
 
@@ -410,6 +411,7 @@ void motor_mixer_update(uint16_t throttle, const pid_adjust_t* adjust, motor_com
 
 int pid_controller_init() {
     last_pid_update = hal_micros();
+    /*
 
     memset(&pid_roll, 0, sizeof(pid_state_t));
     pid_roll.Kp = system_settings.pid_gyro_roll_p.param_value;
@@ -431,7 +433,7 @@ int pid_controller_init() {
     pid_yaw.Kd = system_settings.pid_gyro_yaw_d.param_value;
     pid_yaw.Kff = system_settings.pid_gyro_yaw_f.param_value;
     pid_yaw.integral_limit_threshold = 1000;
-
+*/
     return 0;
 }
 

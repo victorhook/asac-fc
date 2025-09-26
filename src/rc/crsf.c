@@ -1,7 +1,7 @@
 #include "rc/crsf.h"
 #include "rc/rc.h"
 
-#include "util.h"
+#include "hal.h"
 
 
 typedef enum

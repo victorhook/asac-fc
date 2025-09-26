@@ -21,5 +21,7 @@ int receiver_init();
 void receiver_get_state(rx_state_t* rx_state);
 
 
+uint16_t receiver_scale_channel(const uint16_t raw);
+
 
 #endif /* RECEIVER_H */
