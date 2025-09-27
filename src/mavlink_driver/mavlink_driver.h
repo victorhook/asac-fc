@@ -5,8 +5,8 @@
 #include "serial/serial.h"
 
 #define MAVLINK_CHANNEL_SERIAL 0
-#define MAVLINK_SYSTEM_ID      0
-#define MAVLINK_COMPONENT_ID   0
+#define MAVLINK_SYSTEM_ID      1
+#define MAVLINK_COMPONENT_ID   1
 
 typedef struct
 {

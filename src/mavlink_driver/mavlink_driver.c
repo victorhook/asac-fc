@@ -30,33 +30,12 @@ flightmode_t flightmode;
 
 static bool send_param_request = false;
 static uint32_t param_index = 0;
-static uint32_t total_params = 2;
-
-// Mavlink message handlers handlers
-static void handle_msg_command_int(const mavlink_message_t* msg_rx);
-static void handle_msg_param_set(const mavlink_message_t* msg_rx);
-static void handle_msg_param_request_list(const mavlink_message_t* msg_rx);
 
 // Helper functions
 static inline void send_mavlink_msg(const mavlink_message_t* mav_msg);
-static inline uint32_t serial_available();
-void gcs_printf(const uint8_t severity, const char* fmt, ...);
-
-static void send_parameter_request_list();
-static void handle_param_set(mavlink_message_t* msg);
 
 static void handle_mavlink_message(mavlink_message_t* msg, mavlink_status_t* status);
 
-static void mavlink_driver_broadcast_heartbeat();
-static void mavlink_driver_send_battery_status();
-static void mavlink_driver_send_raw_imu();
-static void mavlink_driver_send_attitude();
-static void mavlink_driver_send_rc_channels();
-static void mavlink_driver_statustext(const MAV_SEVERITY severity, const char* text);
-static void handle_command_int(mavlink_message_t* msg);
-static void handle_command_long(mavlink_message_t* msg);
-static void handle_rc_channels_override(mavlink_message_t* msg);
-void mav_send_heartbeat(mavlink_channel_handler_t* channel);
 
 int mavlink_driver_init()
 {
@@ -73,176 +52,11 @@ int mavlink_driver_init()
 }
 
 
-void mavlink_driver_update()
-{
-    if (!usb_connected())
-    {
-        // USB is not connected, so we don't care about wasting computation resources
-        // on any type of checks here.
-        return;
-    }
-
-    if (send_param_request)
-    {
-        send_parameter_request_list();
-    }
-
-    uint32_t t0 = hal_millis();
-
-    // Check if it's time for any periodic messages to be sent
-    if ((t0 - last_sent_heartbeat) >= HEARTBEAT_MSG_PERIOD_MS)
-    {
-        mav_send_heartbeat(&gcs_handler);
-        last_sent_heartbeat = t0;
-    }
-    if ((t0 - last_sent_battery_status) >= BATTERY_STATUS_PERIOD_MS)
-    {
-        mavlink_driver_send_battery_status();
-        last_sent_battery_status = t0;
-    }
-    if ((t0 - last_sent_attitude) >= ATTITUDE_MSG_PERIOD_MS)
-    {
-        mavlink_driver_send_attitude();
-        last_sent_attitude = t0;
-    }
-    if ((t0 - last_sent_rc_channels) >= RC_CHANNEL_MSG_PERIOD_MS)
-    {
-        mavlink_driver_send_rc_channels();
-        last_sent_rc_channels = t0;
-    }
-
-    t0 = hal_micros();
-
-
-    // Check RX data from buffer
-    int bytes_to_read = min(hal_serial_available(gcs_handler.serial->nbr), MAVLINK_INTENRAL_BUF_SIZE);
-
-    // Parse RX data from buffer and handle message
-    mavlink_message_t msg;
-    mavlink_status_t status;
-
-    uint8_t buf[MAVLINK_INTENRAL_BUF_SIZE];
-    int bytes_read = hal_serial_read(gcs_handler.serial, buf, bytes_to_read);
-
-    for (int i = 0; i < bytes_read; i++)
-    {
-        uint8_t byte = buf[i];
-
-        if (mavlink_parse_char(gcs_handler.channel, byte, &msg, &status))
-        {
-            handle_mavlink_message(&msg, &status);
-        }
-    }
-}
-
-static void handle_mavlink_message(mavlink_message_t* msg, mavlink_status_t* status)
-{
-    switch (msg->msgid)
-    {
-        case MAVLINK_MSG_ID_COMMAND_INT:
-            handle_command_int(msg);
-            break;
-
-        case MAVLINK_MSG_ID_COMMAND_LONG:
-            handle_command_long(msg);
-            break;
-
-        case MAVLINK_MSG_ID_HEARTBEAT:
-            // No action
-            break;
-
-        case MAVLINK_MSG_ID_PARAM_REQUEST_LIST:
-            send_param_request = true;
-            break;
-
-        case MAVLINK_MSG_ID_PARAM_SET:
-            handle_param_set(msg);
-            break;
-
-        case MAVLINK_MSG_ID_REQUEST_DATA_STREAM:
-            // TODO
-            break;
-
-        case MAVLINK_MSG_ID_RC_CHANNELS_OVERRIDE:
-            handle_rc_channels_override(msg);
-            break;
-            
-        default:
-            printf("Unknown message: %d\n", msg->msgid);
-            break;
-    }
-}
+#define SEND_IF_TIME_FOR(function)
 
 // -- Private -- //
 
 // Message handlers
-
-static void handle_msg_command_int(const mavlink_message_t* msg_rx)
-{
-    const int REBOOT_AUTOPILOT = 1;
-    mavlink_command_int_t mavlink_command;
-    mavlink_msg_command_int_decode(msg_rx, &mavlink_command);
-
-    uint8_t motor;
-    uint8_t motor_test_throttle_type;
-    float throttle;
-
-    switch (mavlink_command.command) {
-        case MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN:
-            if (mavlink_command.param1 == REBOOT_AUTOPILOT) {
-                system_reboot();
-            }
-            break;
-        case MAV_CMD_PREFLIGHT_STORAGE:
-            switch ((PREFLIGHT_STORAGE_PARAMETER_ACTION) mavlink_command.param1) {
-                case PARAM_READ_PERSISTENT:
-                    break;
-                case PARAM_WRITE_PERSISTENT:
-                    mavlink_driver_statustext(MAV_SEVERITY_DEBUG, "Saving params to flash");
-                    //settings_write_to_flash(&system_settings);
-                    mavlink_driver_statustext(MAV_SEVERITY_DEBUG, "Params saved to flash");
-                    break;
-                case PARAM_RESET_CONFIG_DEFAULT:
-                    mavlink_driver_statustext(MAV_SEVERITY_DEBUG, "PARAM RESET!");
-                    //settings_reset_default();
-                    break;
-                case PARAM_RESET_SENSOR_DEFAULT:
-                    break;
-                case PARAM_RESET_ALL_DEFAULT:
-                    break;
-                default:
-                    break;
-            }
-            break;
-        case MAV_CMD_DO_MOTOR_TEST:
-            motor = (uint8_t) mavlink_command.param1;
-            motor_test_throttle_type = (uint8_t) mavlink_command.param2;
-            if (motor_test_throttle_type != MOTOR_TEST_THROTTLE_PERCENT)
-            {
-                // TODO: Fix?
-                // We only support throttle percentage
-                return;
-            }
-            if ((motor < 1) || (motor > 4))
-            {
-                // TODO: Nbr of motors
-                return;
-            }
-
-            // Set throttle to desired test throttle value
-            // Incoming throttle is between 0-100, let's scale it to 0-1
-            throttle = mavlink_command.param3 / 100.0;
-            // "motor" is value between 1 and number of motors, so the index is motors-1
-            ((float*) &motor_command_test)[motor - 1] = throttle;
-
-            // Force arm!
-            state.is_force_armed = true;
-
-            break;
-        default:
-            break;
-    }
-}
 
 static void handle_rc_channels_override(mavlink_message_t* msg)
 {
@@ -311,6 +125,31 @@ static void handle_command_int(mavlink_message_t* msg)
     printf("COMMAND INT: %d\n", cmd.command);
     switch (cmd.command)
     {
+        case MAV_CMD_DO_MOTOR_TEST:
+            /*motor = (uint8_t) mavlink_command.param1;
+            motor_test_throttle_type = (uint8_t) mavlink_command.param2;
+            if (motor_test_throttle_type != MOTOR_TEST_THROTTLE_PERCENT)
+            {
+                // TODO: Fix?
+                // We only support throttle percentage
+                return;
+            }
+            if ((motor < 1) || (motor > 4))
+            {
+                // TODO: Nbr of motors
+                return;
+            }
+
+            // Set throttle to desired test throttle value
+            // Incoming throttle is between 0-100, let's scale it to 0-1
+            throttle = mavlink_command.param3 / 100.0;
+            // "motor" is value between 1 and number of motors, so the index is motors-1
+            ((float*) &motor_command_test)[motor - 1] = throttle;
+
+            // Force arm!
+            state.is_force_armed = true;*/
+            break;
+
     }
 }
 
@@ -334,7 +173,7 @@ static void handle_command_long(mavlink_message_t* msg)
     }
 }
 
-static void mavlink_driver_send_battery_status() {
+static void mav_send_battery_status() {
     /*
     int16_t voltages[10];
     memset(voltages, 0xff, 20);
@@ -357,7 +196,7 @@ static void mavlink_driver_send_battery_status() {
     send_mavlink_msg(&msg_tx);*/
 }
 
-static void mavlink_driver_send_raw_imu() {
+static void mav_send_raw_imu() {
     /*
     mavlink_msg_scaled_imu_pack_chan(
         MAVLINK_SYSTEM_ID,
@@ -378,7 +217,7 @@ static void mavlink_driver_send_raw_imu() {
     */
 }
 
-static void mavlink_driver_send_attitude() {
+static void mav_send_attitude() {
     /*
     mavlink_msg_attitude_pack_chan(
         MAVLINK_SYSTEM_ID,
@@ -397,7 +236,7 @@ static void mavlink_driver_send_attitude() {
     send_mavlink_msg(&msg_tx);*/
 }
 
-static void mavlink_driver_send_rc_channels() {
+static void mav_send_rc_channels() {
     /*
     mavlink_msg_rc_channels_pack_chan(
         MAVLINK_SYSTEM_ID,
@@ -459,7 +298,7 @@ static void send_param_value(const char* param_id, const float param_value, cons
         nbr_of_parameters,
         param_index
     );
-    //mav_send(&gcs_handler, &msg);
+    mav_send(&gcs_handler, &msg);
     printf("Send param %s = %.3f, %d/%d\n", param_id_buf, param_value, param_index+1, nbr_of_parameters);
 }
 
@@ -489,13 +328,75 @@ static void handle_param_set(mavlink_message_t* msg)
     }
 }
 
-static uint32_t serial_available()
-{
-    // Manually update the TinyUSB task
-    //tud_task();
-    // Check if we're connected and data available
-    //return tud_cdc_connected() && tud_cdc_available();
+static void handle_file_transfer_protocol(mavlink_message_t* msg) {
+    mavlink_file_transfer_protocol_t ftp;
+    mavlink_msg_file_transfer_protocol_decode(msg, &ftp);
+
+    // Prepare a NACK reply
+    mavlink_message_t resp;
+    mavlink_file_transfer_protocol_t ftp_resp = {0};
+    ftp_resp.target_network = ftp.target_network;
+    ftp_resp.target_system  = ftp.target_system;
+    ftp_resp.target_component = ftp.target_component;
+
+    // Fill in payload as a NACK
+    uint8_t* payload = ftp_resp.payload;
+    payload[0] = 0x01; // NACK
+    payload[1] = ftp.payload[0]; // req_opcode (echo original)
+    payload[2] = 0; // result code = "unsupported"
+
+    mavlink_msg_file_transfer_protocol_encode(
+        MAVLINK_SYSTEM_ID,
+        MAVLINK_COMPONENT_ID,
+        &resp,
+        &ftp_resp
+    );
+    mav_send(&gcs_handler, &resp);
 }
+
+
+static void handle_mavlink_message(mavlink_message_t* msg, mavlink_status_t* status)
+{
+    switch (msg->msgid)
+    {
+        case MAVLINK_MSG_ID_COMMAND_INT:
+            handle_command_int(msg);
+            break;
+
+        case MAVLINK_MSG_ID_COMMAND_LONG:
+            handle_command_long(msg);
+            break;
+
+        case MAVLINK_MSG_ID_HEARTBEAT:
+            // No action
+            break;
+
+        case MAVLINK_MSG_ID_PARAM_REQUEST_LIST:
+            send_param_request = true;
+            break;
+
+        case MAVLINK_MSG_ID_PARAM_SET:
+            handle_param_set(msg);
+            break;
+
+        case MAVLINK_MSG_ID_REQUEST_DATA_STREAM:
+            // TODO
+            break;
+
+        case MAVLINK_MSG_ID_FILE_TRANSFER_PROTOCOL:
+            handle_file_transfer_protocol(msg);
+            break;
+
+        case MAVLINK_MSG_ID_RC_CHANNELS_OVERRIDE:
+            handle_rc_channels_override(msg);
+            break;
+            
+        default:
+            printf("Unknown message: %d\n", msg->msgid);
+            break;
+    }
+}
+
 
 
 void gcs_vprintf(const uint8_t severity, const char* fmt, va_list args) {
@@ -525,3 +426,65 @@ void gcs_printf(const uint8_t severity, const char* fmt, ...)
     va_end(args);
 }
 
+
+void mavlink_driver_update()
+{
+    //if (!usb_connected())
+    //{
+    //    // USB is not connected, so we don't care about wasting computation resources
+    //    // on any type of checks here.
+    //    return;
+    //}
+
+    // Check RX data from buffer
+    int bytes_to_read = min(hal_serial_available(gcs_handler.serial->nbr), MAVLINK_INTENRAL_BUF_SIZE);
+
+    // Parse RX data from buffer and handle message
+    mavlink_message_t msg;
+    mavlink_status_t status;
+
+    uint8_t buf[MAVLINK_INTENRAL_BUF_SIZE];
+    int bytes_read = hal_serial_read(gcs_handler.serial, buf, bytes_to_read);
+
+    for (int i = 0; i < bytes_read; i++)
+    {
+        uint8_t byte = buf[i];
+
+        if (mavlink_parse_char(gcs_handler.channel, byte, &msg, &status))
+        {
+            handle_mavlink_message(&msg, &status);
+        }
+    }
+
+
+    if (send_param_request)
+    {
+        send_parameter_request_list();
+    }
+
+    uint32_t t0 = hal_millis();
+
+    // Check if it's time for any periodic messages to be sent
+    if ((t0 - last_sent_heartbeat) >= HEARTBEAT_MSG_PERIOD_MS)
+    {
+        mav_send_heartbeat(&gcs_handler);
+        last_sent_heartbeat = t0;
+    }
+    if ((t0 - last_sent_battery_status) >= BATTERY_STATUS_PERIOD_MS)
+    {
+        mav_send_battery_status();
+        last_sent_battery_status = t0;
+    }
+    if ((t0 - last_sent_attitude) >= ATTITUDE_MSG_PERIOD_MS)
+    {
+        mav_send_attitude();
+        last_sent_attitude = t0;
+    }
+    if ((t0 - last_sent_rc_channels) >= RC_CHANNEL_MSG_PERIOD_MS)
+    {
+        mav_send_rc_channels();
+        last_sent_rc_channels = t0;
+    }
+
+    t0 = hal_micros();
+}
