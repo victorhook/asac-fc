@@ -52,8 +52,8 @@ add_library(asac-core
     src/param/param.c
     # IMU
     src/imu/imu.c
-    #src/imu/mpu6050.c
-    #src/imu/bmi270_asac.c
+    src/imu/imu_mpu6050.c
+    src/imu/imu_bmi270.c
     # Vendor - BMI270
     vendor/BMI270-Sensor-API/bmi2_ois.c
     vendor/BMI270-Sensor-API/bmi270.c
@@ -126,6 +126,7 @@ elseif("${HAL}" STREQUAL "SITL")  # -- SITL -- #
     add_executable(asac-fc
         src/hal/hal_sitl/hal_impl.c
         src/hal/hal_sitl/hal_serial.c
+        src/imu/imu_sitl.c
     )
 
     target_link_libraries(asac-fc

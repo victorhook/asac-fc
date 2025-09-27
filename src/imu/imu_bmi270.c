@@ -1,4 +1,4 @@
-#include "bmi270_asac.h"
+#include "imu_bmi270.h"
 #include "util.h"
 #include "math.h"
 
@@ -14,6 +14,54 @@ static struct bmi2_sens_data sensor_data;
 #define GYRO_RANGE_VALUE 2000
 #define GYRO_RANGE       BMI2_GYR_RANGE_2000
 
+
+int imu_bmi270_do_init()
+{
+    return 0;
+}
+
+bool imu_bmi270_do_read(imu_reading_t* imu_reading)
+{
+    return true;
+}
+
+/*
+typedef struct {
+    int result;
+    spi_inst_t* spi;
+    uint8_t cs_pin;
+} bmi270_t;
+*/
+
+
+//int imu_bmi270_init(bmi270_t* bmi, spi_inst_t* spi, uint8_t cs_pin);
+
+
+//int imu_bmi270_read(bmi270_t* bmi, float acc[3], float gyro[3]);
+
+
+int asdasd()
+{/*
+    // Initialize SPI bus, BMI270 operates at max 10 MHz, allows
+    // CPOL=0 & CPHA=0, or CPOL=1 & CPHA=1
+    // The CS pin we control manually, thus setting to normal GPIO,
+    // active low
+    spi_init(IMU_SPI_BUS, 10000000); // 10 MHz
+    spi_set_format(IMU_SPI_BUS, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+    gpio_set_function(PIN_IMU_MOSI, GPIO_FUNC_SPI);
+    gpio_set_function(PIN_IMU_MISO, GPIO_FUNC_SPI);
+    gpio_set_function(PIN_IMU_SCK, GPIO_FUNC_SPI);
+    gpio_init(PIN_IMU_CS);
+    gpio_set_dir(PIN_IMU_CS, GPIO_OUT);
+    gpio_put(PIN_IMU_CS, HIGH);
+
+    result = imu_bmi270_init(&bmi, IMU_SPI_BUS, PIN_IMU_CS);
+    if (result != 0) {
+        return result;
+    }
+        */
+    return 0;
+}
 
 
 // -- API for used by Bosch C driver -- //
@@ -61,7 +109,7 @@ static inline float lsb_to_dps(int16_t val);
  */
 static inline float lsb_to_dps_example(int16_t val, float dps, uint8_t bit_width);
 /*
-int bmi270_asac_init(bmi270_t* bmi, spi_inst_t* spi, uint8_t cs_pin) {
+int imu_bmi270_init(bmi270_t* bmi, spi_inst_t* spi, uint8_t cs_pin) {
     bmi->spi = spi;
     bmi->cs_pin = cs_pin;
     gpio_put(bmi->cs_pin, HIGH);
@@ -117,7 +165,7 @@ int bmi270_asac_init(bmi270_t* bmi, spi_inst_t* spi, uint8_t cs_pin) {
     return res;
 }
 
-int bmi270_asac_read(bmi270_t* bmi, float acc[3], float gyro[3]) {
+int imu_bmi270_read(bmi270_t* bmi, float acc[3], float gyro[3]) {
     // The bmi2 driver to read sensor data and the example function that
     // converts the data to dps takes 450 ~us
     // The implementation below takes 200 ~us instead which is quite a lot.
@@ -185,24 +233,23 @@ static inline float lsb_to_dps_example(int16_t val, float dps, uint8_t bit_width
 }
 
 int8_t bmi270_spi_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr) {
-    gpio_put(((bmi270_t*) intf_ptr)->cs_pin, 0);
-    spi_write_blocking(((bmi270_t*) intf_ptr)->spi, &reg_addr, 1);
-    spi_read_blocking(((bmi270_t*) intf_ptr)->spi, 0, reg_data, len);
-    gpio_put(((bmi270_t*) intf_ptr)->cs_pin, 1);
+    //gpio_put(((bmi270_t*) intf_ptr)->cs_pin, 0);
+    //spi_write_blocking(((bmi270_t*) intf_ptr)->spi, &reg_addr, 1);
+    //spi_read_blocking(((bmi270_t*) intf_ptr)->spi, 0, reg_data, len);
+    //gpio_put(((bmi270_t*) intf_ptr)->cs_pin, 1);
+    //return 0;
     return 0;
 }
 
 int8_t bmi270_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr) {
-    gpio_put(((bmi270_t*) intf_ptr)->cs_pin, 0);
-    spi_write_blocking(((bmi270_t*) intf_ptr)->spi, &reg_addr, 1);
-    spi_write_blocking(((bmi270_t*) intf_ptr)->spi, reg_data, len);
-    gpio_put(((bmi270_t*) intf_ptr)->cs_pin, 1);
+    //gpio_put(((bmi270_t*) intf_ptr)->cs_pin, 0);
+    //spi_write_blocking(((bmi270_t*) intf_ptr)->spi, &reg_addr, 1);
+    //spi_write_blocking(((bmi270_t*) intf_ptr)->spi, reg_data, len);
+    //gpio_put(((bmi270_t*) intf_ptr)->cs_pin, 1);
+    //return 0;
     return 0;
 }
 
 void bmi270_delay(uint32_t period, void *intf_ptr) {
-    shal_sleep_us(period);
+    hal_sleep_us(period);
 }
-
-
-*/

@@ -1,5 +1,34 @@
-#include "mpu6050.h"
+#include "imu_mpu6050.h"
 
+
+int imu_mpu6050_do_init()
+{
+    return 0;
+}
+
+bool imu_mpu6050_do_read(imu_reading_t* imu_reading)
+{
+    return true;
+}
+
+int imu_do_init()
+{
+    /*
+            // Initialize i2c bus and gpio
+        i2c_init(I2C_BUS_IMU, 400 * 1000);
+        gpio_set_function(PIN_SDA1, GPIO_FUNC_I2C);
+        gpio_set_function(PIN_SCL1, GPIO_FUNC_I2C);
+        gpio_pull_up(PIN_SDA1);
+        gpio_pull_up(PIN_SCL1);
+
+        // Enable interrupts
+        result = mpu6050_init(&mpu, I2C_BUS_IMU);
+        if (result != 0) {
+            return result;
+        }
+    */
+    return 0;
+}
 
 /*
 

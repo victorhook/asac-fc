@@ -3,11 +3,13 @@
 
 #include "hal.h"
 
-typedef struct {
-    float x;
-    float y;
-    float z;
-}__attribute__((packed)) vector_3d_t;
+typedef enum
+{
+    IMU_TYPE_MPU6050,
+    IMU_TYPE_BMI270,
+    IMU_TYPE_SITL,
+} imu_type_t;
+
 typedef struct {
     float gyro_x;
     float gyro_y;
@@ -18,18 +20,31 @@ typedef struct {
     uint32_t timestamp_us;
 }__attribute__((packed)) imu_reading_t;
 
+typedef struct {
+    float gyro_x;
+    float gyro_y;
+    float gyro_z;
+    float acc_x;
+    float acc_y;
+    float acc_z;
+} imu_calibration_t;
+
 
 int imu_init();
 
+void imu_update(imu_reading_t* reading);
 
-int imu_calibrate();
+bool imu_calibrate_gyro();
 
+bool imu_calibrate_accel();
 
-const imu_reading_t* imu_get_bias();
+void imu_get_calibration(imu_calibration_t* calibration);
 
+void imu_set_calibration(const imu_calibration_t* calibration);
 
-void imu_filter_gyro(vector_3d_t* filtered, const vector_3d_t* raw);
+void imu_filter(imu_reading_t* filtered, const imu_reading_t* raw);
 
+// Abstract
 void imu_read(imu_reading_t* reading);
 
 
