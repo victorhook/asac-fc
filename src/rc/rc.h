@@ -2,45 +2,52 @@
 #define RC_H
 
 #include "stdint.h"
+#include <stdbool.h>
 
-#define RC_MAX_NBR_OF_CHANNELS 16
+#define RC_MAX_NBR_OF_CHANNELS 18
 
 typedef struct
 {
     uint32_t timestamp;
     uint16_t channels[RC_MAX_NBR_OF_CHANNELS];
-} rc_input_t;
-
-typedef struct
-{
     int rssi;          // dBm
     int link_quality;  // %
-} rc_link_statistics_t;
+} rc_input_t;
+
+typedef enum
+{
+    RC_PROTOCOL_ELRS = 1,
+    RC_PROTOCOL_IBUS = 2
+} rc_protocol_t;
+
+typedef int (*rc_do_update)(rc_input_t* rc_input);
 
 typedef struct
 {
-    rc_input_t           last_packet;
-    rc_link_statistics_t statistics;
-} rx_state_t;
+    rc_protocol_t protocol;
+    rc_do_update update;
+} rc_config_t;
 
 
-/*
- * Parses a single byte in the RX state machine.
- * Returns true if a new packet has been parsed
- */
-typedef bool (*rc_parse_byte)(const uint8_t byte);
+
+void rc_update(rc_input_t* rc_input);
 
 /*
- * Fills `state` with the current RX state.
+ * Initializes the receiver.
+ * Depending on which RX protocol is found in the settings, this
+ * will initialize the correct RX protocol handler, eg IBUS/CRSF etc.
+ * Returns 0 on success.
  */
-typedef void (*rc_get_last_state)(rx_state_t* state);
-
+int rc_init();
 
 /*
- * Scales the value of a single RAW channel
- * Returns the scaled channel value
+ * Fills `rc_input` with the curent state of the receiver
+ * This state includes the latest received packet as well as statistics of the RX link.
  */
-typedef uint16_t (*rc_scale_channel)(const uint16_t raw);
+void rc_update(rc_input_t* rc_input);
+
+
+uint16_t receiver_scale_channel(const uint16_t raw);
 
 
 #endif /* RC_H */

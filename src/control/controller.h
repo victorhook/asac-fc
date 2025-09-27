@@ -4,7 +4,7 @@
 #include "util.h"
 #include "imu/imu.h"
 #include "motor/motor.h"
-#include "rc/receiver.h"
+#include "rc/rc.h"
 #include "pid/pid.h"
 #include "battery/battery_adc.h"
 

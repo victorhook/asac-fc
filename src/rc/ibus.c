@@ -11,6 +11,17 @@
 #define IBUS_PACKET_SIZE        (IBUS_HEADER_SIZE + IBUS_PAYLOAD_SIZE + IBUS_CHECKSUM_SIZE)
 #define CHECKSUM_START_VALUE    ((uint16_t) (0xFFFF - IBUS_HEADER_FIRST_BYTE - IBUS_HEADER_SECOND_BYTE))
 
+typedef struct {
+    uint16_t channels[14];
+}__attribute__((packed)) ibus_packet_t;
+
+typedef struct {
+    uint32_t successful_packets;
+    uint32_t parse_errors;
+    uint32_t last_received_packet;
+    uint32_t packet_rate;
+} ibus_statistics_t;
+
 typedef enum {
     HEADER_FIRST_BYTE,
     HEADER_SECOND_BYTE,
@@ -30,7 +41,8 @@ static uint16_t           packet_rate_counter;
 static uint16_t           packet_rate;
 static uint32_t           parse_errors;
 static uint32_t           successful_packets;
-static rx_state_t         rx_state;
+
+#define IBUS_BAUDRATE 115200
 
 static void update_statistics();
 
@@ -53,7 +65,7 @@ int ibus_init()
     return 0;
 }
 
-bool ibus_parse_byte(uint8_t byte)
+bool ibus_parse_byte(const uint8_t byte, rc_input_t* rc_input)
 {
     bool new_packet = false;
     buf[bytes_read] = byte;
@@ -64,15 +76,15 @@ bool ibus_parse_byte(uint8_t byte)
     {
         case HEADER_FIRST_BYTE:
             if (byte == IBUS_HEADER_FIRST_BYTE)
-                {   // First byte of header
-                    next_state = HEADER_SECOND_BYTE;
-                }
-                else
-                {
-                    parse_errors++;
-                    bytes_read = 0;
-                    next_state = HEADER_FIRST_BYTE;
-                }
+            {   // First byte of header
+                next_state = HEADER_SECOND_BYTE;
+            }
+            else
+            {
+                parse_errors++;
+                bytes_read = 0;
+                next_state = HEADER_FIRST_BYTE;
+            }
             break;
         case HEADER_SECOND_BYTE:
             if (byte == IBUS_HEADER_SECOND_BYTE)
@@ -105,11 +117,9 @@ bool ibus_parse_byte(uint8_t byte)
             // Validate checksum
             if ((rx_checksum) == checksum)
             {
-                rx_state.last_packet.timestamp = hal_millis();
+                rc_input->timestamp = hal_millis();
                 // Ibus data includes 14 channels
-                memcpy(rx_state.last_packet.channels,
-                       &buf[IBUS_HEADER_SIZE],
-                       IBUS_PAYLOAD_SIZE);
+                memcpy(rc_input->channels, &buf[IBUS_HEADER_SIZE], IBUS_PAYLOAD_SIZE);
                 successful_packets++;
                 packet_rate_counter++;
                 new_packet = true;
@@ -127,6 +137,7 @@ bool ibus_parse_byte(uint8_t byte)
     update_statistics();
 
     ibus_state = next_state;
+
     return new_packet;
 }
 
@@ -134,12 +145,6 @@ uint16_t ibus_scale_channel(const uint16_t raw) {
     // IBUS input values are already between 1000-2000
     return raw;
 }
-
-void ibus_get_last_state(rx_state_t* state)
-{
-    memcpy(state, &rx_state, sizeof(rx_state_t));
-}
-
 
 static void update_statistics()
 {

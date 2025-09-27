@@ -3,7 +3,7 @@
 #include "led/led.h"
 #include "log/log.h"
 #include "math.h"
-#include "rc/receiver.h"
+#include "rc/rc.h"
 
 
 // RC Input mappings, should they be here?
@@ -46,9 +46,9 @@ imu_reading_t         imu_no_bias;
 imu_reading_t         imu_filtered;
 imu_reading_t         imu_filtered_dterm;
 rates_t               attitude_rates_measured;
-rx_state_t            rx_state;
+rc_input_t            rc_input_raw;
 rc_input_t            ctrl_rc_input_raw;
-rc_input_t            ctrl_rc_input_constrained;
+rc_input_t            rc_input_constrained;
 setpoint_t            setpoint;
 pid_adjust_t          attitude_rates_adjust; // @cal;
 motor_command_t       motor_mixer_command;
@@ -149,26 +149,29 @@ void controller_pid_loop()
     // Give measurements to state estimator, that estimates our current state
     state_estimator(&imu_filtered, ctrl_loop_dt_s, &state);
 
-    // Get latest state from the receiver
-    receiver_get_state(&rx_state);
-    rc_input_t* ctrl_rc_input_raw = &rx_state.last_packet;
+    // Read RC input
+    rc_update(&rc_input_raw);
 
     // Check if we're connected (gotten radio packet within ~X ms)
-    bool rc_connected = is_rc_connected(ctrl_rc_input_raw);
-    if (rc_connected != state.is_rc_connected) {
-        if (rc_connected) {
+    bool rc_connected = is_rc_connected(&rc_input_raw);
+    if (rc_connected != state.is_rc_connected)
+    {
+        if (rc_connected)
+        {
             connect();
-        } else {
+        }
+        else
+        {
             disconnect();
         }
     }
 
     if (state.is_rc_connected) {
         // Constrain/crop RC input in case they're out of expected range.
-        constrain_rc_input(ctrl_rc_input_raw, &ctrl_rc_input_constrained);
+        constrain_rc_input(&rc_input_constrained, &rc_input_raw);
 
         // Map receiver data to desired rotation rates.
-        convert_rc_input_to_setpoint(&ctrl_rc_input_constrained, &setpoint);
+        convert_rc_input_to_setpoint(&rc_input_constrained, &setpoint);
     }
 
     // Check if we're connected to USB
@@ -186,7 +189,7 @@ void controller_pid_loop()
     // 2. To arm forced: Ignore flags above, but don't start idle thrust. Allow raw throttle inputs per motor
 
     // Check if arm input switch is toggled
-    bool armed = is_armed(&ctrl_rc_input_constrained);
+    bool armed = is_armed(&rc_input_constrained);
     if (armed != state.is_armed) {
         if (armed) {
             // Pilot wants to arm, let's ensure that we can do this
@@ -271,16 +274,16 @@ void controller_debug() {
 }
 
 static void print_rc_input() {
-    printf("T: %u, ", rx_state.last_packet.timestamp);
+    printf("T: %u, ", rc_input_raw.timestamp);
     printf("Channels: ");
     for (int i = 0; i < RC_MAX_NBR_OF_CHANNELS; i++) {
-        printf("%d ", rx_state.last_packet.channels[i]);
+        printf("%d ", rc_input_raw.channels[i]);
     }
     printf("\n");
 }
 
 
-static void state_estimator(const imu_reading_t* imu_filtered, const float ctrl_loop_dt_s, state_t* state) {
+static void estimate_attitude(const imu_reading_t* imu_filtered, const float ctrl_loop_dt_s, state_t* state) {
     // Resources:
     // https://www.youtube.com/watch?v=CHSYgLfhwUo&ab_channel=Code%26Supply
     // https://ahrs.readthedocs.io/en/latest/filters/tilt.html
@@ -354,7 +357,7 @@ static bool is_rc_connected(const rc_input_t* rc_input_raw) {
 }
 
 static bool is_armed(const rc_input_t* rc_input_constrained) {
-    uint16_t arm_value = ctrl_rc_input_constrained.channels[RC_CHANNEL_ARM];
+    uint16_t arm_value = rc_input_constrained->channels[RC_CHANNEL_ARM];
     return (arm_value >= arm_range.min) && (arm_value <= arm_range.max);
 }
 
