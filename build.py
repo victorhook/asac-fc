@@ -36,7 +36,7 @@ if __name__ == '__main__':
     print('*' * w)
     print(f'Building for board {board}')
 
-    hal_flag = f'-DHAL=HAL_{board.upper()}'
+    hal_flag = f'-DHAL={board.upper()}'
     os.system(f'cd build && cmake {hal_flag} .. && make -j$(nproc)')
 
     print('Done')

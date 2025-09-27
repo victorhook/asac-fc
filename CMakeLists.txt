@@ -3,10 +3,12 @@ cmake_minimum_required(VERSION 3.13)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE Debug)
-set(HAL "HAL_RP2040" CACHE STRING "Which HAL to use")
+set(HAL "RP2040" CACHE STRING "Which HAL to use")
 
-if ("${HAL}" STREQUAL "HAL_RP2040")
-    ## -- Pico
+message("CMAKE is using HAL: ${HAL}")
+
+if ("${HAL}" STREQUAL "RP2040")
+    ## Pull in pico cmake, must be done before project()
     set(PICO_SDK_PATH "${CMAKE_CURRENT_SOURCE_DIR}/vendor/pico-sdk")
     set(PICO_BOARD pico CACHE STRING "Board type")
 
@@ -21,8 +23,8 @@ endif()
 
 project(asac-fc C CXX ASM)
 
-if ("${HAL}" STREQUAL "HAL_RP2040")
-    # Initialise the Raspberry Pi Pico SDK
+if ("${HAL}" STREQUAL "RP2040")
+    # Initialise the Raspberry Pi Pico SDK, must be done after project()
     pico_sdk_init()
 endif()
 
@@ -78,7 +80,7 @@ target_include_directories(asac-core PUBLIC
 target_compile_options(asac-core PRIVATE -Wno-address-of-packed-member)
 
 
-if ("${HAL}" STREQUAL "HAL_RP2040")  # -- RP2040 -- #
+if ("${HAL}" STREQUAL "RP2040")  # -- RP2040 -- #
     add_executable(asac-fc
         ${PROJECT_SOURCE_DIR}/src/hal/hal_rp2040/uart_tx.pio
         ${PROJECT_SOURCE_DIR}/src/hal/hal_rp2040/uart_rx.pio
