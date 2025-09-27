@@ -22,6 +22,7 @@ typedef struct {
 
 #define MAX_SERIALS 4
 static serial_impl_t g_serials[MAX_SERIALS];
+#define TCP_PORT_BASE 5000
 
 static int set_nonblocking(int fd) {
     int flags = fcntl(fd, F_GETFL, 0);
@@ -33,7 +34,7 @@ static void* serial_thread(void* arg) {
     serial_impl_t* impl = (serial_impl_t*)arg;
 
     while (impl->running) {
-        printf("[HAL] Waiting for TCP client on port %d...\n", impl->sockfd - 5000);
+        printf("[HAL] Waiting for TCP client on port %d...\n", TCP_PORT_BASE + impl->serial->nbr);
         int clientfd = accept(impl->sockfd, NULL, NULL);
         if (clientfd < 0) {
             if (errno == EINTR) continue; // interrupted, retry
@@ -47,30 +48,31 @@ static void* serial_thread(void* arg) {
 
         uint8_t buf[256];
         while (impl->running) {
-            // RX
+            // --- RX ---
             int n = recv(clientfd, buf, sizeof(buf), MSG_DONTWAIT);
             if (n > 0) {
-                for (int i = 0; i < n; i++) {
-                    ringbuf_add(&impl->serial->rx_buf, buf[i]);
-                }
+                ringbuf_add_bytes(&impl->serial->rx_buf, buf, n);
             } else if (n == 0) {
-                // client disconnected
                 printf("[HAL] Client disconnected\n");
                 break;
             }
 
-            // TX
-            while (!ringbuf_is_empty(&impl->serial->tx_buf)) {
-                uint8_t b;
-                if (!ringbuf_get(&impl->serial->tx_buf, &b)) break;
-                int sent = send(clientfd, &b, 1, MSG_DONTWAIT);
-                if (sent <= 0) {
-                    ringbuf_add(&impl->serial->tx_buf, b);
-                    break;
+            // --- TX ---
+            if (!ringbuf_is_empty(&impl->serial->tx_buf)) {
+                uint8_t* txptr;
+                uint32_t available = ringbuf_peek(&impl->serial->tx_buf, &txptr);
+                if (available > 0) {
+                    int sent = send(clientfd, txptr, available, MSG_DONTWAIT);
+                    if (sent > 0) {
+                        ringbuf_advance(&impl->serial->tx_buf, sent);
+                    } else if (sent < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
+                        perror("send");
+                        break;
+                    }
                 }
             }
 
-            usleep(1000);
+            usleep(1000); // still yields CPU, but less wasteful now
         }
 
         close(clientfd);
@@ -99,7 +101,7 @@ int hal_serial_init(serial_t* serial, const uint8_t serial_nbr, const uint32_t b
 
     struct sockaddr_in addr = {0};
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(5000 + serial_nbr);
+    addr.sin_port = htons(TCP_PORT_BASE + serial_nbr);
     addr.sin_addr.s_addr = INADDR_ANY;
 
     if (bind(sockfd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
