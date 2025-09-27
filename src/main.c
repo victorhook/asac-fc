@@ -1,3 +1,4 @@
+#include "mavlink.h"
 #include "util.h"
 #include "motor/motor.h"
 #include "rc/receiver.h"
@@ -14,15 +15,17 @@ static void init_driver(int (*init_function)(), const char* name);
 
 static int init_result = 0;
 
-int main() {
+int main()
+{
     hal_init();
 
     // Initialize USB serial to allow messages to be sent/buffered to GCS
     serial_usb_init();
+    mavlink_driver_init();
 
     // Initialize all drivers
     state.mode = MODE_BOOTING;
-    printf("Booting up...\n");
+    gcs_printf(MAV_SEVERITY_INFO, "ASAC Booting up");
 
     // Initialize LED driver and blink boot-up sequence
     init_driver(led_init, "Led");
@@ -36,12 +39,13 @@ int main() {
     init_driver(imu_init,            "IMU");
     init_driver(controller_init,     "Controller");
     init_driver(motors_init,         "Motors");
-    init_driver(mavlink_driver_init, "Serial MAVlink");
 
     // Done booting
     led_set(LED_RED, 0);
     led_set(LED_GREEN, 1);
     state.mode = MODE_IDLE;
+
+    gcs_printf(MAV_SEVERITY_INFO, "Drivers initialized, let's go!");
 
     while (1)
     {
@@ -59,25 +63,20 @@ int main() {
             {
 
             }
-            if (frame % 1 == 0)      // 100 Hz
+            if (frame % 10 == 0)      // 100 Hz
             {
-
             }
+            mavlink_driver_update();
 
             // 1 kHz
             //controller_pid_loop();
 
             // Wait for next loop
             int time_to_sleep = next_loop - hal_micros();
-            printf("%lu\n", frame);
             
             if (time_to_sleep > 0)
             {
                 hal_sleep_us(time_to_sleep);
-            }
-            else
-            {
-                printf("PLS\n");
             }
 
             next_loop += period_us;
@@ -90,13 +89,13 @@ int main() {
 
 
 // -- Helper functions -- //
-static void init_driver(int (*init_function)(), const char* name) {
+static void init_driver(int (*init_function)(), const char* name)
+{
     int res = init_function();
-    printf("  Init: %s ", name);
     if (res == 0) {
-        printf("OK\n");
+        gcs_printf(MAV_SEVERITY_DEBUG, "Init %s OK", name);
     } else {
-        printf("Error: %d\n", res);
+        gcs_printf(MAV_SEVERITY_ERROR, "Init %s: Error (%d)", name, res);
     }
 
     init_result |= res;
