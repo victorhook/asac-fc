@@ -5,9 +5,9 @@
 
 typedef enum
 {
-    IMU_TYPE_MPU6050,
-    IMU_TYPE_BMI270,
-    IMU_TYPE_SITL,
+    IMU_TYPE_MPU6050 = 1,
+    IMU_TYPE_BMI270  = 2,
+    IMU_TYPE_SITL    = 3,
 } imu_type_t;
 
 typedef struct {

@@ -18,15 +18,7 @@
 
 #define CALIBRATION_SAMPLES                  1000
 #define CALIBRATION_DELAY_BETWEEN_SAMPLES_MS 1
-imu_reading_t last_reading;
 
-// Params
-extern float imu_type;
-extern float imu_bus;
-extern float calibrate_gyro_on_boot;
-
-
-static imu_calibration_t imu_calib;
 static void print_calib();
 
 // Backend handler
@@ -40,39 +32,55 @@ typedef struct
     imu_do_read read;
 } backend_t;
 
-backend_t backend;
 
+// Params
+extern float imu_calib_gyro_on_boot;
+extern float brd_imu_type;
+extern float imu_bus;
+extern float imu_offset_x;
+extern float imu_offset_y;
+extern float imu_offset_z;
+extern float imu_accelcal_x;
+extern float imu_accelcal_x;
+extern float imu_accelcal_x;
 
+static imu_calibration_t imu_calib = { 0 };
+
+static backend_t backend;
+
+/*
+INS_IMU_TYPE 1
+INS_IMU_BUS  1
+
+BRD_I2C1_SDA 6 # GP4
+BRD_I2C1_SCL 7 # GP5
+
+BRD_LED1 25 # GP19
+BRD_LED2 26 # GP20
+*/
 
 int imu_init()
 {
-    imu_type_t imu_type = (imu_type_t) imu_type;
-
-    switch (imu_type)
+    switch ((imu_type_t) brd_imu_type)
     {
         case IMU_TYPE_BMI270:
             backend.init = imu_bmi270_do_init;
             backend.read = imu_bmi270_do_read;
             break;
         case IMU_TYPE_MPU6050:
-            backend.init = imu_bmi270_do_init;
-            backend.read = imu_bmi270_do_read;
+            backend.init = imu_mpu6050_do_init;
+            backend.read = imu_mpu6050_do_read;
             break;
         case IMU_TYPE_SITL:
             backend.init = imu_sitl_do_init;
             backend.read = imu_sitl_do_read;
             break;
         default:
-            gcs_printf(MAV_SEVERITY_ERROR, "Invalid IMU type %d", imu_type);
+            gcs_printf(MAV_SEVERITY_ERROR, "Invalid IMU type %d", (imu_type_t) brd_imu_type);
+            backend.init = dummy_init;
+            backend.read = dummy_read;
             break;
     }
-
-    imu_calib.gyro_x = 0;
-    imu_calib.gyro_y = 0;
-    imu_calib.gyro_z = 0;
-    imu_calib.acc_x = 0;
-    imu_calib.acc_y = 0;
-    imu_calib.acc_z = 0;
 
     int result = backend.init();
     if (result != 0)
@@ -81,8 +89,9 @@ int imu_init()
         return result;
     }
 
-    if (calibrate_gyro_on_boot)
+    if (imu_calib_gyro_on_boot)
     {
+        gcs_printf(MAV_SEVERITY_DEBUG, "Calibrating gyro");
         imu_calibrate_gyro();
     }
     else
@@ -90,24 +99,7 @@ int imu_init()
 
     }
 
-    // TODO: Check params for gyro bias etc
-
-    // Pre-calibrated gyro bias. TODO: Place this in flash.
-    // BMI270
-    //imu_calib.gyro_x = -0.050177;
-    //imu_calib.gyro_y = 0.225903;
-    //imu_calib.gyro_z = -0.710046;
-
-    // MPU-6050
-    //imu_bias.gyro_x = -2.688686;
-    //imu_bias.gyro_y = -1.922470;
-    //imu_bias.gyro_z = 1.760995;
-    //imu_bias.acc_x  = -0.033133;
-    //imu_bias.acc_y  = -0.005135;
-    //imu_bias.acc_z  = 1.018919;
-
-    //memset(gyro_filter_mem, 0, sizeof(gyro_filter_mem) / sizeof(vector_3d_t));
-    //gyro_filter_index = 0;
+    // TODO: Load calibration from eeprom
 
     return 0;
 }

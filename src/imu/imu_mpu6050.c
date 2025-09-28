@@ -1,4 +1,5 @@
 #include "imu_mpu6050.h"
+#include "hal.h"
 
 
 int imu_mpu6050_do_init()
