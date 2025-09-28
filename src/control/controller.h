@@ -25,30 +25,4 @@ void controller_debug();
 
 void controller_pid_loop();
 
-// Intermediate variables used to calculate correct commands for motors
-//   from the RC input.
-// These purpose of having variables for each step in the control loop
-//   is to make debugging and logging easier.
-extern imu_reading_t         imu_raw;
-extern imu_reading_t         imu_reading;
-extern imu_reading_t         imu_bias;
-extern imu_reading_t         imu_filtered;
-extern rates_t               ctrl_attitude_rates_measured;
-extern rx_state_t            rx_state;
-extern rc_input_t            ctrl_rc_input_raw;
-extern rc_input_t            ctrl_rc_input_constrained;
-extern setpoint_t            setpoint;
-extern pid_adjust_t          ctrl_attitude_rates_adjust; // @cal;
-extern motor_command_t       ctrl_motor_mixer_command;
-extern motor_command_t       ctrl_motor_command_non_restricted;
-extern motor_command_t       ctrl_motor_command;
-extern uint32_t              last_ctrl_update;
-extern bool                  can_run_motors;
-extern pid_state_t           pid_roll;
-extern pid_state_t           pid_pitch;
-extern pid_state_t           pid_yaw;
-extern vbat_t                vbat;
-
-
-
 #endif /* CONTROLLER_H */
