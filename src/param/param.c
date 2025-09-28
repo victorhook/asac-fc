@@ -4,12 +4,12 @@
 #include "util/flightmode.h"
 #include "mavlink_driver/mavlink_driver.h"
 
-// Motor
+// -- Motor -- //
 float mot_pwm_min;
 float mot_pwm_max;
 float mot_pwm_arm;
 
-// Flight modes and channels
+// -- Flight modes and channels -- //
 float fltmode_channel;
 float fltmode1;
 float fltmode2;
@@ -21,60 +21,146 @@ float pitch_channel;
 float yaw_channel;
 float throttle_channel;
 
-// Tuning
+// -- Tuning -- //
 float atc_rat_rll_p;
 float atc_rat_rll_i;
 float atc_rat_rll_d;
+float atc_rat_rll_ff;
 float atc_rat_rll_imax;
 float atc_rat_pit_p;
 float atc_rat_pit_i;
 float atc_rat_pit_d;
+float atc_rat_pit_ff;
 float atc_rat_pit_imax;
 float atc_rat_yaw_p;
 float atc_rat_yaw_i;
 float atc_rat_yaw_d;
+float atc_rat_yaw_ff;
 float atc_rat_yaw_imax;
 
-// Rate
+// -- Rate -- //
 float max_roll_rate;
 float max_pitch_rate;
 float max_yaw_rate;
 
+// -- IMU -- //
+float imu_calib_gyro_on_boot;
+float imu_offset_x;
+float imu_offset_y;
+float imu_offset_z;
+float imu_accelcal_x;
+float imu_accelcal_x;
+float imu_accelcal_x;
+
+// -- Hardware - Board specific -- //
+// I2C 2
+float brd_i2c1_sda;
+float brd_i2c1_scl;
+float brd_i2c1_freq;
+
+// I2C 1
+float brd_i2c2_sda;
+float brd_i2c2_scl;
+float brd_i2c2_freq;
+
+// SPI 1
+float brd_spi1_mosi;
+float brd_spi1_miso;
+float brd_spi1_clk;
+float brd_spi1_freq;
+
+// SPI 2
+float brd_spi2_mosi;
+float brd_spi2_miso;
+float brd_spi2_clk;
+float brd_spi2_freq;
+
+// LEDs
+float brd_led1;
+float brd_led2;
+
+// IMU
+float brd_imu_type;
+float brd_imu_bus;
+float brd_imu_ss;
+
+
 mav_param_t mav_params[] = {
+    // Motor
     {"MOT_PWM_MIN", &mot_pwm_min},
     {"MOT_PWM_MAX", &mot_pwm_max},
     {"MOT_PWM_ARM", &mot_pwm_arm},
 
+    // Flight modes and channels
     {"FLTMODE_CH", &fltmode_channel},
-    {"FLTMODE1", &fltmode1},
-    {"FLTMODE2", &fltmode2},
-    {"FLTMODE3", &fltmode3},
-    {"ARM_CH", &arm_channel},
-    {"ARM_PWM", &arm_pwm},
-    {"RLL_CH", &roll_channel},
-    {"PIT_CH", &pitch_channel},
-    {"YAW_CH", &yaw_channel},
-    {"THR_CH", &throttle_channel},
+    {"FLTMODE1",   &fltmode1},
+    {"FLTMODE2",   &fltmode2},
+    {"FLTMODE3",   &fltmode3},
+    {"ARM_CH",     &arm_channel},
+    {"ARM_PWM",    &arm_pwm},
+    {"RLL_CH",     &roll_channel},
+    {"PIT_CH",    &pitch_channel},
+    {"YAW_CH",    &yaw_channel},
+    {"THR_CH",    &throttle_channel},
 
-    {"ATC_RAT_RLL_P", &atc_rat_rll_p},
-    {"ATC_RAT_RLL_I", &atc_rat_rll_i},
-    {"ATC_RAT_RLL_D", &atc_rat_rll_d},
+    // Tuning
+    {"ATC_RAT_RLL_P",    &atc_rat_rll_p},
+    {"ATC_RAT_RLL_I",    &atc_rat_rll_i},
+    {"ATC_RAT_RLL_D",    &atc_rat_rll_d},
+    {"ATC_RAT_RLL_FF",    &atc_rat_rll_ff},
     {"ATC_RAT_RLL_IMAX", &atc_rat_rll_imax},
 
-    {"ATC_RAT_PIT_P", &atc_rat_pit_p},
-    {"ATC_RAT_PIT_I", &atc_rat_pit_i},
-    {"ATC_RAT_PIT_D", &atc_rat_pit_d},
+    {"ATC_RAT_PIT_P",    &atc_rat_pit_p},
+    {"ATC_RAT_PIT_I",    &atc_rat_pit_i},
+    {"ATC_RAT_PIT_D",    &atc_rat_pit_d},
+    {"ATC_RAT_PIT_FF",    &atc_rat_pit_ff},
     {"ATC_RAT_PIT_IMAX", &atc_rat_pit_imax},
 
-    {"ATC_RAT_YAW_P", &atc_rat_yaw_p},
-    {"ATC_RAT_YAW_I", &atc_rat_yaw_i},
-    {"ATC_RAT_YAW_D", &atc_rat_yaw_d},
+    {"ATC_RAT_YAW_P",    &atc_rat_yaw_p},
+    {"ATC_RAT_YAW_I",    &atc_rat_yaw_i},
+    {"ATC_RAT_YAW_D",    &atc_rat_yaw_d},
+    {"ATC_RAT_YAW_FF",    &atc_rat_yaw_ff},
     {"ATC_RAT_YAW_IMAX", &atc_rat_yaw_imax},
+
+    // IMU
+    {"INS_GYR_CAL",   &imu_calib_gyro_on_boot},
+    {"INS_GYROFFS_X", &imu_offset_x},
+    {"INS_GYROFFS_Y", &imu_offset_y},
+    {"INS_GYROFFS_Z", &imu_offset_z},
+    {"INS_ACCSCAL_X", &imu_accelcal_x},
+    {"INS_ACCSCAL_Y", &imu_accelcal_x},
+    {"INS_ACCSCAL_Z", &imu_accelcal_x},
 
     // Rate
     {"ATC_RAT_RLL_MAX", &max_roll_rate},
     {"ATC_RAT_PIT_MAX", &max_pitch_rate},
     {"ATC_RAT_YAW_MAX", &max_yaw_rate},
+
+    // Hardware - Board specific
+    {"BRD_I2C1_SDA",  &brd_i2c1_sda},
+    {"BRD_I2C1_SCL",  &brd_i2c1_scl},
+    {"BRD_I2C1_FREQ", &brd_i2c1_freq},
+
+    {"BRD_I2C2_SDA",  &brd_i2c2_sda},
+    {"BRD_I2C2_SCL",  &brd_i2c2_scl},
+    {"BRD_I2C2_FREQ", &brd_i2c2_freq},
+
+    {"BRD_SPI1_MOSI", &brd_spi1_mosi},
+    {"BRD_SPI1_MISO", &brd_spi1_miso},
+    {"BRD_SPI1_CLK",  &brd_spi1_clk},
+    {"BRD_SPI1_FREQ", &brd_spi1_freq},
+
+    {"BRD_SPI2_MOSI", &brd_spi2_mosi},
+    {"BRD_SPI2_MISO", &brd_spi2_miso},
+    {"BRD_SPI2_CLK",  &brd_spi2_clk},
+    {"BRD_SPI2_FREQ", &brd_spi2_freq},
+
+    {"BRD_LED1",      &brd_led1},
+    {"BRD_LED2",      &brd_led2},
+
+    {"BRD_IMU_TYPE",  &brd_imu_type}, // Type of IMU, options are: [MPU6050, BMI270]
+    {"BRD_IMU_BUS",   &brd_imu_bus},  // Which bus the IMU talks on, options are: [i2c1, i2c2, spi1, spi2]
+    {"BRD_IMU_SS",    &brd_imu_ss}
 };
 
 const uint16_t nbr_of_parameters = (sizeof(mav_params) / sizeof(mav_param_t));
@@ -102,20 +188,34 @@ void reset_to_default_parameters()
     atc_rat_rll_p = 0.01;
     atc_rat_rll_i = 0.01;
     atc_rat_rll_d = 0;
+    atc_rat_rll_ff = 0;
     atc_rat_rll_imax = 1;
     atc_rat_pit_p = 0.01;
     atc_rat_pit_i = 0.01;
     atc_rat_pit_d = 0;
+    atc_rat_pit_ff = 0;
     atc_rat_pit_imax = 1;
     atc_rat_yaw_p = 0.1;
     atc_rat_yaw_i = 0.1;
     atc_rat_yaw_d = 0;
+    atc_rat_yaw_ff = 0;
     atc_rat_yaw_imax = 1;
+
+    // IMU
+    imu_calib_gyro_on_boot = 1;
+    imu_offset_x = 0;
+    imu_offset_y = 0;
+    imu_offset_z = 0;
+    imu_accelcal_x = 0;
+    imu_accelcal_x = 0;
+    imu_accelcal_x = 0;
 
     // Rates
     max_roll_rate = 720;
     max_pitch_rate = 720;
     max_yaw_rate = 360;
+    
+    // Hardware - Board specific
 }
 
 void read_parameters()
