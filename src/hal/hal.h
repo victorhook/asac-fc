@@ -6,9 +6,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include "serial/serial.h"
+#include "serial.h"
 #include "spi.h"
 #include "i2c.h"
+
 
 // Pull in correct HAL
 #if defined(HAL_RP2040)
@@ -63,21 +64,6 @@ void hal_adc_read(const int channel, int* value);
 int hal_gpio_init(const uint8_t pin, const hal_gpio_function_t function, const uint8_t value);
 
 
-// -- Serial -- //
-
-/** Initializes the serial port with given number and baudrate */
-int hal_serial_init(serial_t* serial, const uint8_t serial_nbr, const uint32_t baudrate);
-
-/** Writes data to the serial port (non-blocking). Returns the number of bytes written. */
-int hal_serial_write(serial_t* serial, const uint8_t* data, const uint16_t len);
-
-/** Reads number of bytes into `data`. Returns the number of bytes read. */
-int hal_serial_read(serial_t* serial, uint8_t* data, const uint16_t len);
-
-/** Returns number of bytes available in the serial RX buffer */
-int hal_serial_available(const uint8_t serial_nbr);
-
-
 uint32_t hal_log_get_next_id();
 
 bool hal_log_init(const uint32_t log_id);
@@ -113,6 +99,16 @@ void system_init();
 
 void system_reboot();
 
+
+// Bus defines
+extern i2c_t i2c1;
+extern i2c_t i2c2;
+
+extern spi_t spi1;
+extern spi_t spi2;
+
+extern serial_t serial0;
+extern serial_t serial1;
 
 
 #endif

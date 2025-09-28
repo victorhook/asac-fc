@@ -1,4 +1,5 @@
 #include "mavlink_driver.h"
+#include "serial.h"
 #include "state.h"
 #include "control/controller.h"
 #include "util.h"
@@ -95,7 +96,7 @@ void mav_send(mavlink_channel_handler_t* channel, const mavlink_message_t* msg)
 {
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
     uint16_t len = mavlink_msg_to_send_buffer(buf, msg);
-    if (!ringbuf_add_bytes(&channel->serial->tx_buf, buf, len))
+    if (hal_serial_write(channel->serial, buf, len) != len)
     {
         discarded_tx_packets++;
     }
@@ -299,7 +300,7 @@ static void send_param_value(const char* param_id, const float param_value, cons
         param_index
     );
     mav_send(&gcs_handler, &msg);
-    printf("Send param %s = %.3f, %d/%d\n", param_id_buf, param_value, param_index+1, nbr_of_parameters);
+    //printf("Send param %s = %.3f, %d/%d\n", param_id_buf, param_value, param_index+1, nbr_of_parameters);
 }
 
 static void send_parameter_request_list()
@@ -437,7 +438,7 @@ void mavlink_driver_update()
     //}
 
     // Check RX data from buffer
-    int bytes_to_read = min(hal_serial_available(gcs_handler.serial->nbr), MAVLINK_INTENRAL_BUF_SIZE);
+    int bytes_to_read = min(hal_serial_available(gcs_handler.serial), MAVLINK_INTENRAL_BUF_SIZE);
 
     // Parse RX data from buffer and handle message
     mavlink_message_t msg;
@@ -455,7 +456,6 @@ void mavlink_driver_update()
             handle_mavlink_message(&msg, &status);
         }
     }
-
 
     if (send_param_request)
     {

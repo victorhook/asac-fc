@@ -32,8 +32,4 @@ int hal_i2c_write(i2c_t* i2c, const uint8_t addr, const uint8_t *data, const uin
 
 int hal_i2c_write_byte(i2c_t* i2c, const uint8_t addr, const uint8_t *data, const uint32_t len);
 
-extern i2c_t i2c1;
-
-extern i2c_t i2c2;
-
 #endif

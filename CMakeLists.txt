@@ -46,8 +46,6 @@ add_library(asac-core
     src/rc/rc.c
     src/rc/ibus.c
     src/rc/crsf.c
-    # Serial
-    src/serial/serial.c
     # Params
     src/param/param.c
     # HAL

@@ -1,8 +1,9 @@
 #ifndef mavlink_driver_H
 #define mavlink_driver_H
 
+#include "mavlink.h"
 #include "motor/motor.h"
-#include "serial/serial.h"
+#include "serial.h"
 
 #define MAVLINK_CHANNEL_SERIAL 0
 #define MAVLINK_SYSTEM_ID      1

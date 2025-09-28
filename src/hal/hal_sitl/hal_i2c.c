@@ -24,6 +24,3 @@ int hal_i2c_write_byte(i2c_t* i2c, const uint8_t addr, const uint8_t *data, cons
 {
     return 0;
 }
-
-i2c_t i2c1;
-i2c_t i2c2;

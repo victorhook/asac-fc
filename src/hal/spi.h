@@ -36,8 +36,4 @@ int hal_spi_write(spi_t* spi, const uint8_t addr, const uint8_t *data, const uin
 
 int hal_spi_write_byte(spi_t* spi, const uint8_t addr, const uint8_t *data, const uint32_t len);
 
-extern spi_t spi1;
-
-extern spi_t spi2;
-
 #endif

@@ -4,6 +4,7 @@
 #include "pico/stdio.h"
 #include "vendor/pico-sdk/lib/tinyusb/src/tusb.h"
 #include <hardware/timer.h>
+#include <pico/stdio_usb.h>
 #include <pico/time.h>
 
 #define mavlink_write_serial(buf, size)
@@ -46,28 +47,9 @@ void hal_adc_read(const int channel, int* value)
 
 static void core1_entry();
 
-#include <stdio.h>
-#include "pico/stdlib.h"
-
-int main() {
-    stdio_init_all();
-    while (true) {
-        printf("Hello, world!\n");
-        sleep_ms(1000);
-    }
-}
-
 
 int hal_do_init()
 {
-    stdio_init_all();
-
-    while (1)
-    {
-        printf("Hello world!\n");
-        hal_sleep_ms(10);
-    }
-    
     return 0;
 
     // Initialize misc system stuff that isn't covered by any specific driver

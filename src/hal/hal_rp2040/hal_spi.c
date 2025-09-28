@@ -25,6 +25,3 @@ int hal_spi_write_byte(spi_t* spi, const uint8_t addr, const uint8_t *data, cons
     return 0;
 }
 
-
-spi_t spi1;
-spi_t spi2;
