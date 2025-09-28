@@ -21,9 +21,9 @@ static inline uint64_t micros64();
 static struct timespec start_time;
 
 
-bool hal_adc_init(const int channel)
+int hal_adc_init(const int channel)
 {
-    return true;
+    return 0;
 }
 
 void hal_adc_read(const int channel, int* value)
@@ -31,11 +31,18 @@ void hal_adc_read(const int channel, int* value)
 
 }
 
-int hal_init()
+
+
+int hal_do_init()
 {
     // Capture program start as "time zero"
     clock_gettime(CLOCK_MONOTONIC, &start_time);
 
+    return 0;
+}
+
+int hal_gpio_init(const uint8_t pin, const hal_gpio_function_t function, const uint8_t value)
+{
     return 0;
 }
 

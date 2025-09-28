@@ -1,5 +1,10 @@
 #include "hal_impl.h"
 
+#include "hal.h"
+#include "pico/stdio.h"
+#include "vendor/pico-sdk/lib/tinyusb/src/tusb.h"
+#include <hardware/timer.h>
+#include <pico/time.h>
 
 #define mavlink_write_serial(buf, size)
     //tud_cdc_write(buf, size);           \
@@ -10,11 +15,60 @@
 //tud_cdc_read_flush();
     //tud_cdc_write_flush();
 
+static uint32_t serial_available()
+{
+    // Manually update the TinyUSB task
+    //tud_task();
+    // Check if we're connected and data available
+    //return tud_cdc_connected() && tud_cdc_available();
+}
+
+
+bool hal_write_param(const uint32_t param_size, const uint32_t crc, const uint8_t* buf)
+{
+    
+}
+
+bool hal_read_param(uint32_t param_size, uint32_t* crc, uint8_t* buf)
+{
+
+}
+
+int hal_adc_init(const int channel)
+{
+    return 0;
+}
+
+void hal_adc_read(const int channel, int* value)
+{
+
+}
+
 static void core1_entry();
 
-int hal_init()
+#include <stdio.h>
+#include "pico/stdlib.h"
+
+int main() {
+    stdio_init_all();
+    while (true) {
+        printf("Hello, world!\n");
+        sleep_ms(1000);
+    }
+}
+
+
+int hal_do_init()
 {
-    stdio_usb_init();
+    stdio_init_all();
+
+    while (1)
+    {
+        printf("Hello world!\n");
+        hal_sleep_ms(10);
+    }
+    
+    return 0;
 
     // Initialize misc system stuff that isn't covered by any specific driver
 
@@ -29,6 +83,11 @@ int hal_init()
     multicore_lockout_victim_init();
 }
 
+int hal_gpio_init(const uint8_t pin, const hal_gpio_function_t function, const uint8_t value)
+{
+    return 0;
+}
+
 bool usb_connected()
 {
     return gpio_get(PIN_VUSB_SENSE) != 0;
@@ -40,8 +99,59 @@ void system_reboot()
 }
 
 
-static void core1_entry() {
-    while (1) {
-        mavlink_driver_update();
-    }
+static void core1_entry()
+{
+}
+
+#define UART    uart1
+#define UART_HW uart1_hw
+
+// RX interrupt handler
+static void on_uart_rx();
+
+//static void init_uart(const uint32_t baudrate, const uart_parity_t parity);
+
+
+// -- Private -- //
+static void on_uart_rx() {
+    /*while (uart_is_readable(uart1)) {
+        // Read 1 byte from UART buffer and give it to the RX protocol parser
+        uint8_t byte = uart_getc(uart1);
+        parse_byte(byte);
+    }*/
+}
+/*
+static void init_uart(const uint32_t baudrate, const uart_parity_t parity) {
+    uart_init(uart1, baudrate);
+    gpio_set_function(PIN_RX1, GPIO_FUNC_UART);
+
+    uart_set_hw_flow(uart1, false, false);
+    uart_set_format(uart1, 8, 1, parity);
+    uart_set_fifo_enabled(uart1, true);
+
+    // Enable UART interrupt
+    irq_set_exclusive_handler(UART1_IRQ, on_uart_rx);
+    irq_set_enabled(UART1_IRQ, true);
+    uart_set_irq_enables(uart1, true, false);
+}
+*/
+
+void hal_sleep_us(const uint32_t us)
+{
+    sleep_us(us);
+}
+
+void hal_sleep_ms(const uint32_t ms)
+{
+    sleep_ms(ms);
+}
+
+uint32_t hal_millis()
+{
+    return time_us_32() / 1000;
+}
+
+uint32_t hal_micros()
+{
+    return time_us_32();
 }

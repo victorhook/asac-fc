@@ -1,8 +1,9 @@
 #ifndef HAL_IMPL
 #define HAL_IMPL
 
+#include "hal.h"
+
 #include <pico/stdlib.h>
-#include <pico/stdio.h>
 #include <pico/time.h>
 #include <pico/stdio.h>
 #include <pico/multicore.h>

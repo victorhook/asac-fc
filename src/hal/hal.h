@@ -7,6 +7,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include "serial/serial.h"
+#include "spi.h"
+#include "i2c.h"
 
 // Pull in correct HAL
 #if defined(HAL_RP2040)
@@ -18,16 +20,50 @@
 #endif
 
 
+typedef enum
+{
+    BUS_TYPE_I2C  = 1,
+    BUS_TYPE_SPI  = 2,
+    BUS_TYPE_SITL = 3
+} bus_type_t;
+
+typedef struct
+{
+    bus_type_t bus;
+    union
+    {
+        bus_config_i2c_t i2c;
+        bus_config_spi_t spi;
+    };
+} bus_config_t;
+
+
+typedef enum
+{
+    HAL_GPIO_FUNCTION_OUTPUT,
+    HAL_GPIO_FUNCTION_INPUT,
+    HAL_GPIO_FUNCTION_INPUT_PULLUP
+} hal_gpio_function_t;
+
+#define HAL_GPIO_HIGH 1
+#define HAL_GPIO_LOW  0
 
 /** Initializes primary HAL stuff */
 int hal_init();
 
-// -- ADC //
+int hal_do_init();
 
-bool hal_adc_init(const int channel);
+// -- ADC -- //
+
+int hal_adc_init(const int channel);
 
 void hal_adc_read(const int channel, int* value);
 
+// -- GPIO -- //
+int hal_gpio_init(const uint8_t pin, const hal_gpio_function_t function, const uint8_t value);
+
+
+// -- Serial -- //
 
 /** Initializes the serial port with given number and baudrate */
 int hal_serial_init(serial_t* serial, const uint8_t serial_nbr, const uint32_t baudrate);
