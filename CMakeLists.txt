@@ -43,17 +43,20 @@ add_library(asac-core
     src/util/util.c
     src/util/ringbuf.c
     # RX
-    src/rc/receiver.c
+    src/rc/rc.c
     src/rc/ibus.c
     src/rc/crsf.c
     # Serial
     src/serial/serial.c
     # Params
     src/param/param.c
+    # HAL
+    src/hal/hal.c
     # IMU
     src/imu/imu.c
     src/imu/imu_mpu6050.c
     src/imu/imu_bmi270.c
+    src/imu/imu_sitl.c
     # Vendor - BMI270
     vendor/BMI270-Sensor-API/bmi2_ois.c
     vendor/BMI270-Sensor-API/bmi270.c
@@ -82,10 +85,13 @@ target_compile_options(asac-core PRIVATE -Wno-address-of-packed-member)
 
 if ("${HAL}" STREQUAL "RP2040")  # -- RP2040 -- #
     add_executable(asac-fc
-        ${PROJECT_SOURCE_DIR}/src/hal/hal_rp2040/uart_tx.pio
-        ${PROJECT_SOURCE_DIR}/src/hal/hal_rp2040/uart_rx.pio
-        ${PROJECT_SOURCE_DIR}/src/hal/hal_rp2040/oneshot.pio
-        ${PROJECT_SOURCE_DIR}/src/hal/hal_rp2040/hal_impl.c
+        src/hal/hal_rp2040/uart_tx.pio
+        src/hal/hal_rp2040/uart_rx.pio
+        src/hal/hal_rp2040/oneshot.pio
+        src/hal/hal_rp2040/hal_impl.c
+        src/hal/hal_rp2040/hal_i2c.c
+        src/hal/hal_rp2040/hal_spi.c
+        src/hal/hal_rp2040/hal_serial.c
     )
 
     # Add PIO programs
@@ -119,6 +125,8 @@ if ("${HAL}" STREQUAL "RP2040")  # -- RP2040 -- #
         hardware_pwm
         hardware_pio
     )
+
+    # create map/bin/hex/uf2 file etc.
     pico_add_extra_outputs(asac-fc)
 
 elseif("${HAL}" STREQUAL "SITL")  # -- SITL -- #
@@ -126,7 +134,8 @@ elseif("${HAL}" STREQUAL "SITL")  # -- SITL -- #
     add_executable(asac-fc
         src/hal/hal_sitl/hal_impl.c
         src/hal/hal_sitl/hal_serial.c
-        src/imu/imu_sitl.c
+        src/hal/hal_sitl/hal_spi.c
+        src/hal/hal_sitl/hal_i2c.c
     )
 
     target_link_libraries(asac-fc
