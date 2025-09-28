@@ -5,3 +5,9 @@ env/
 docs/resources/
 docs/movies/
 tools/grapher-frontend/src/LogTypes.js
+venv/
+mav.parm
+mav.tlog*
+.cache/
+eeprom.bin
+compile_commands.json

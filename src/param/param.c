@@ -158,8 +158,8 @@ mav_param_t mav_params[] = {
     {"BRD_LED1",      &brd_led1},
     {"BRD_LED2",      &brd_led2},
 
-    {"BRD_IMU_TYPE",  &brd_imu_type}, // Type of IMU, options are: [MPU6050, BMI270]
-    {"BRD_IMU_BUS",   &brd_imu_bus},  // Which bus the IMU talks on, options are: [i2c1, i2c2, spi1, spi2]
+    {"BRD_IMU_TYPE",  &brd_imu_type}, // Type of IMU, options are: [1=MPU6050, 2=BMI270]
+    {"BRD_IMU_BUS",   &brd_imu_bus},  // Which bus the IMU talks on, options are: [1=i2c1, 2=i2c2, 3=spi1, 4=spi2]
     {"BRD_IMU_SS",    &brd_imu_ss}
 };
 

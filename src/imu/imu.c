@@ -48,17 +48,6 @@ static imu_calibration_t imu_calib = { 0 };
 
 static backend_t backend;
 
-/*
-INS_IMU_TYPE 1
-INS_IMU_BUS  1
-
-BRD_I2C1_SDA 6 # GP4
-BRD_I2C1_SCL 7 # GP5
-
-BRD_LED1 25 # GP19
-BRD_LED2 26 # GP20
-*/
-
 int imu_init()
 {
     switch ((imu_type_t) brd_imu_type)

@@ -1,8 +1,33 @@
 # ASAC FC
 
-**A** **S**imple **A**nd **C**ool **F**light **C**ontroller (ASAC FC) is a flight controller based on the rp2040 microcontroller, completely open-source.
+**A** **S**imple **A**nd **C**ool **F**light **C**ontroller (**ASAC FC**) is a completely open-source flight controller that can run on multiple microcontrollers such as:
+- rp2040
+- rp2350
 
-![ASAC Takeoff](docs/asac_takeoff.gif)
+## Project goals
+- [ ] Build a drone with rp2040 devboard + external IMU
+- [ ] Build a drone with rp2350 devboard + external IMU
+- [ ] Add Stabilize flight mode
+- [ ] Add Althold flight mode (requires barometer)
+- [ ] Add support for SD card logging
+- [ ] UI To configure board
+- [X] Separate HAL to build for different platforms (rp2040, sitl etc)
+
+What should be configurable, and what should be built-in to firmware?
+### Built-in
+Must still be able to boot OK without any of these
+
+### Configurable
+- Barometer
+- IMU
+- RC receiver
+- Motor order
+- FC orientation
+
+---
+
+
+TODO: THIS GIF [ASAC Takeoff](docs/asac_takeoff.gif)
 
 ## Why rp2040?
 It's an incredibly cheap microcontroller that is quite powerful (up to 133 MHz), contains two cores, programmable I/O pins (PIO), seems to ignore the global silicon shortage and has an extensive C/C++ SDK.
