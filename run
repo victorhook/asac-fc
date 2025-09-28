@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+from argparse import ArgumentParser, Namespace
+import os
+import sys
+from pathlib import Path
+from dataclasses import dataclass
+import yaml
+import typing as t
+
+ROOT_DIR = Path(__file__).absolute().parent
+BUILD_DIR = ROOT_DIR / 'build'
+BOARD_DIR = ROOT_DIR / 'boards'
+CONFIG_FILE = BUILD_DIR / 'config.txt'
+TARGET = 'asac-fc'
+
+@dataclass
+class Board:
+    name: str
+    hal: str
+
+    def __post_init__(self) -> None:
+        self.hal = self.hal.upper()
+
+    def __eq__(self, other: t.Union['Board', str]) -> None:
+        print(f'SELF: {self.name} vs {other}')
+        if isinstance(other, Board):
+            return self.name.upper() == other.name.upper()
+        elif isinstance(other, str):
+            return self.name.upper() == other.upper()
+        else:
+            return False
+
+    @classmethod
+    def load_from_file(cls, filepath: Path) -> 'Board':
+        try:
+            if filepath.suffix != '.yaml':
+                filepath = filepath.with_suffix('.yaml')
+
+            with open(filepath) as f:
+                data: dict = yaml.safe_load(f)
+                hal = data.pop('hal')
+                name = filepath.name.split('.yaml')[0]
+                
+                board = Board(
+                    name=name,
+                    hal=hal,
+                )
+
+                for key, value in data.items():
+                    setattr(board, key, value)
+
+                return board
+        except Exception as e:
+            print(f'Failed to load yaml file for board {filepath}: {e}')
+
+
+def get_available_boards() -> dict[str, Board]:
+    # List available boards in boards dir
+    boards = {}
+
+    # Construct board obj for all yaml files
+    for board in os.listdir(BOARD_DIR):
+        found_board = Board.load_from_file(BOARD_DIR / board)
+        boards[found_board.name] = found_board
+
+    print(f'Found {len(boards)} boards available:')
+    for b in boards:
+        print(f'  {b}')
+
+    return boards
+
+
+def get_board(desired_board: str) -> Board:
+    boards = get_available_boards()
+
+    if board not in boards:
+        print(f'Board not valid, {board} must be one of: [{", ".join(str(b) for b in boards)}]')
+        sys.exit(0)
+
+    return boards[desired_board]
+
+def read_board_from_config_file(exit_if_not_exist: bool = True) -> Board:
+    if exit_if_not_exist and not CONFIG_FILE.exists():
+        print(f'Configuration file not found. Must first run "run config --board=XXX"')
+        sys.exit(0)
+
+    with open(CONFIG_FILE) as f:
+        board_name = f.read().strip()
+        return Board.load_from_file(BOARD_DIR / board_name)
+
+def write_config_file(board: str) -> str:
+    with open(CONFIG_FILE, 'w') as f:
+        f.write(f'{board.name}\n')
+
+
+def parse_args() -> Namespace:
+    parser = ArgumentParser()
+    parser.add_argument('action', help='What action to run: build/clean/configure')
+    parser.add_argument('-b', '--board', help='Board to build')
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    args = parse_args()
+    board = args.board
+    action = args.action.lower()
+
+    w = 80
+    print('*' * w)
+
+    try:
+        if action == 'clean':
+            print('Cleaning build dir')
+            print()
+            
+            os.system(f'rm -rf {BUILD_DIR}/*')
+
+        elif action == 'build':
+            board = read_board_from_config_file()
+
+            print(f'Building for board {board}')
+            print()
+
+            os.system(f'make -C {BUILD_DIR} -j$(nproc)')
+
+            print('Done')
+        
+        elif action == 'config':
+            board = get_board(board)
+            print(f'Configuring board {board}')
+            print()
+            write_config_file(board)
+            hal_flag = f'-DHAL={board.hal.upper()} -DCMAKE_EXPORT_COMPILE_COMMANDS=1'
+            os.system(f'cd {ROOT_DIR} && cmake -B {BUILD_DIR} {hal_flag}')
+            
+        elif action == 'upload':
+            board = read_board_from_config_file()
+
+            if board.hal in ['RP2040', 'RP2350']:
+                print(f'Uploading firmware to {board.name}')
+                cmd = f'picotool load -f {BUILD_DIR / TARGET}.uf2'
+                os.system(cmd)
+            else:
+                print(f'Upload to HAL {board.hal} is not supported yet!')
+
+    finally:
+        print('*' * w)
