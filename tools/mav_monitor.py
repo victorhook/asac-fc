@@ -9,27 +9,45 @@ import typing as t
 from threading import Thread, Event
 import time
 from datetime import datetime
+from serial.serialutil import SerialException
 
 params = {}
 t0 = time.time()
-
+last_heartbeat = 0
 
 def parse_args() -> Namespace:
     parser = ArgumentParser()
-    parser.add_argument('port', default='/dev/ttyACM0', help='Serial port')
+    parser.add_argument('-p', '--port', default='/dev/ttyACM0', help='Serial port')
     parser.add_argument('-b', '--baud', default=921600, type=int,help='Baud rate')
     parser.add_argument('-o', '--out', default=None, help='Output file to write results to')
     return parser.parse_args()
 
 
 def reader(master: t.Union[mavtcp, mavserial], done_flag: Event) -> None:
+    global last_heartbeat
+    heatbeat_log = True
+
     while not done_flag.is_set():
-        msg: MAVLink_message = master.recv_match(blocking=True)
+        msg: MAVLink_message = master.recv_match(blocking=True, timeout=1)
+        uptime_ms = int((time.time() - t0) * 1000)
         
         if msg:
             msg_type = msg.get_type()
-            uptime_ms = int((time.time() - t0) * 1000)
-            print(f'[{uptime_ms}] {msg_type}')
+            if msg_type == 'STATUSTEXT':
+                print(f'[{msg.severity}] {msg.text}')
+            elif msg_type == 'HEARTBEAT':
+                last_heartbeat = time.time()
+                if heatbeat_log:
+                    print(f'{uptime_ms} HEARTBEAT')
+                    heatbeat_log = False
+            else:
+                print(f'[{uptime_ms}] {msg_type}')
+        else:
+            if (time.time() - last_heartbeat) > 3:
+                print('Long time since heartbeat!')
+                heatbeat_log = True
+
+            
 
 
 if __name__ == '__main__':
