@@ -7,17 +7,9 @@
 #define SPI_RX_BUFF_SIZE 256
 #define SPI_TX_BUFF_SIZE 256
 
-typedef struct
-{
-    uint8_t nbr;
-    ringbuf_t rx_buf;
-    ringbuf_t tx_buf;
-} spi_t;
-
 
 typedef struct
 {
-    uint8_t nbr;
     uint8_t mosi;
     uint8_t miso;
     uint8_t clk;
@@ -25,6 +17,13 @@ typedef struct
     uint32_t freq;
 } bus_config_spi_t;
 
+typedef struct
+{
+    uint8_t          nbr;
+    ringbuf_t        rx_buf;
+    ringbuf_t        tx_buf;
+    bus_config_spi_t config;
+} spi_t;
 
 int hal_spi_init(const bus_config_spi_t config);
 

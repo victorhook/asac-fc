@@ -61,8 +61,13 @@ int hal_adc_init(const int channel);
 void hal_adc_read(const int channel, int* value);
 
 // -- GPIO -- //
-int hal_gpio_init(const uint8_t pin, const hal_gpio_function_t function, const uint8_t value);
 
+/** Initializes the GPIO with given `pin` to the `function` with default value `default_value` */
+int hal_gpio_init(const uint8_t pin, const hal_gpio_function_t function, const uint8_t default_value);
+
+void hal_gpio_set(const uint8_t pin, const uint8_t value);
+
+// -- Log -- //
 
 uint32_t hal_log_get_next_id();
 

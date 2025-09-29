@@ -65,14 +65,11 @@ int hal_do_init()
     multicore_lockout_victim_init();
 }
 
-int hal_gpio_init(const uint8_t pin, const hal_gpio_function_t function, const uint8_t value)
-{
-    return 0;
-}
 
 bool usb_connected()
 {
-    return gpio_get(PIN_VUSB_SENSE) != 0;
+    //return gpio_get(PIN_VUSB_SENSE) != 0;
+    return tud_cdc_connected();
 }
 
 void system_reboot()

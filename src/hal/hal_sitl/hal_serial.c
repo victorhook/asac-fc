@@ -51,7 +51,7 @@ static void* serial_thread(void* arg) {
             // --- RX ---
             int n = recv(clientfd, buf, sizeof(buf), MSG_DONTWAIT);
             if (n > 0) {
-                ringbuf_add_bytes(&impl->serial->rx_buf, buf, n);
+                ringbuf_write(&impl->serial->rx_buf, buf, n);
             } else if (n == 0) {
                 printf("[HAL] Client disconnected\n");
                 break;
@@ -129,7 +129,7 @@ int hal_serial_init(serial_t* serial, const uint8_t serial_nbr, const uint32_t b
 int hal_serial_write(serial_t* serial, const uint8_t* data, const uint16_t len) {
     int written = 0;
     for (int i = 0; i < len; i++) {
-        if (ringbuf_add(&serial->tx_buf, data[i])) {
+        if (ringbuf_write_byte(&serial->tx_buf, data[i])) {
             written++;
         } else {
             break;

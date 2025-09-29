@@ -9,18 +9,19 @@
 
 typedef struct
 {
-    uint8_t nbr;
-    ringbuf_t rx_buf;
-    ringbuf_t tx_buf;
-} i2c_t;
+    uint8_t  sda;
+    uint8_t  scl;
+    uint32_t freq;
+} bus_config_i2c_t;
 
 typedef struct
 {
-    uint8_t nbr;
-    uint8_t sda;
-    uint8_t scl;
-    uint32_t freq;
-} bus_config_i2c_t;
+    uint8_t          nbr;
+    ringbuf_t        rx_buf;
+    ringbuf_t        tx_buf;
+    bus_config_i2c_t config;
+} i2c_t;
+
 
 int hal_i2c_init(const bus_config_i2c_t config);
 
