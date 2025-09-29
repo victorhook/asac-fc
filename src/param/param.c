@@ -98,6 +98,9 @@ float brd_imu_type;
 float brd_imu_bus;
 float brd_imu_ss;
 
+// Scheduler
+float sched_loop_rate;
+
 
 mav_param_t mav_params[] = {
     // Motor
@@ -185,7 +188,10 @@ mav_param_t mav_params[] = {
 
     {"BRD_IMU_TYPE",  &brd_imu_type}, // Type of IMU, options are: [1=MPU6050, 2=BMI270]
     {"BRD_IMU_BUS",   &brd_imu_bus},  // Which bus the IMU talks on, options are: [1=i2c1, 2=i2c2, 3=spi1, 4=spi2]
-    {"BRD_IMU_SS",    &brd_imu_ss}
+    {"BRD_IMU_SS",    &brd_imu_ss},
+
+    // Scheduler
+    {"SCHED_LOOP_RATE",    &sched_loop_rate} // Loop rate of scheduler, in Hz
 };
 
 const uint16_t nbr_of_parameters = (sizeof(mav_params) / sizeof(mav_param_t));
@@ -245,6 +251,9 @@ void reset_to_default_parameters()
     brd_serial1_protocol = SERIAL_PROTOCOL_CRSF;
     brd_serial2_baud = 115200;
     brd_serial2_protocol = SERIAL_PROTOCOL_MAVLINK;
+
+    // Scheduler
+    sched_loop_rate = 1000;
 }
 
 void read_parameters()
