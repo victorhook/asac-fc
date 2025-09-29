@@ -1,6 +1,7 @@
 #include "param.h"
 
 #include "hal.h"
+#include "serial.h"
 #include "util/flightmode.h"
 #include "mavlink_driver/mavlink_driver.h"
 
@@ -75,9 +76,22 @@ float brd_spi2_miso;
 float brd_spi2_clk;
 float brd_spi2_freq;
 
+// Serial 1
+float brd_serial1_rx;
+float brd_serial1_tx;
+float brd_serial1_baud;
+float brd_serial1_protocol;
+
+// Serial 2
+float brd_serial2_rx;
+float brd_serial2_tx;
+float brd_serial2_baud;
+float brd_serial2_protocol;
+
 // LEDs
 float brd_led1;
 float brd_led2;
+float brd_led3;
 
 // IMU
 float brd_imu_type;
@@ -155,8 +169,19 @@ mav_param_t mav_params[] = {
     {"BRD_SPI2_CLK",  &brd_spi2_clk},
     {"BRD_SPI2_FREQ", &brd_spi2_freq},
 
+    {"BRD_SERIAL1_RX",   &brd_serial1_rx},
+    {"BRD_SERIAL1_TX",   &brd_serial1_tx},
+    {"BRD_SERIAL1_BAUD", &brd_serial1_baud},
+    {"BRD_SERIAL1_PROT", &brd_serial1_protocol},
+
+    {"BRD_SERIAL2_RX",   &brd_serial2_rx},
+    {"BRD_SERIAL2_TX",   &brd_serial2_tx},
+    {"BRD_SERIAL2_BAUD", &brd_serial2_baud},
+    {"BRD_SERIAL2_PROT", &brd_serial2_protocol},
+
     {"BRD_LED1",      &brd_led1},
     {"BRD_LED2",      &brd_led2},
+    {"BRD_LED3",      &brd_led3},
 
     {"BRD_IMU_TYPE",  &brd_imu_type}, // Type of IMU, options are: [1=MPU6050, 2=BMI270]
     {"BRD_IMU_BUS",   &brd_imu_bus},  // Which bus the IMU talks on, options are: [1=i2c1, 2=i2c2, 3=spi1, 4=spi2]
@@ -216,6 +241,10 @@ void reset_to_default_parameters()
     max_yaw_rate = 360;
     
     // Hardware - Board specific
+    brd_serial1_baud = 115200;
+    brd_serial1_protocol = SERIAL_PROTOCOL_CRSF;
+    brd_serial2_baud = 115200;
+    brd_serial2_protocol = SERIAL_PROTOCOL_MAVLINK;
 }
 
 void read_parameters()
