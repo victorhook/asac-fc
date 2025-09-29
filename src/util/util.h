@@ -16,6 +16,9 @@ typedef struct
     };
 } vec3f_t;
 
+bool withinf(const float value, const float min_value, const float max_value);
+
+bool within(const int value, const int min_value, const int max_value);
 
 int constrain(int value, int from, int to);
 

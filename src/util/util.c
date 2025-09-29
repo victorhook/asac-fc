@@ -1,6 +1,16 @@
 #include "util.h"
 
 
+bool withinf(const float value, const float min_value, const float max_value)
+{
+    return (value >= min_value) && (value <= max_value);
+}
+
+bool within(const int value, const int min_value, const int max_value)
+{
+    return (value >= min_value) && (value <= max_value);
+}
+
 int constrain(int value, int from, int to)
 {
     if (value <= from) return from;
