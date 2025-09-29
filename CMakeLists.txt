@@ -42,6 +42,7 @@ add_library(asac-core
     # Utils
     src/util/util.c
     src/util/ringbuf.c
+    src/util/lpf.c
     # RX
     src/rc/rc.c
     src/rc/ibus.c
@@ -55,6 +56,8 @@ add_library(asac-core
     src/imu/imu_mpu6050.c
     src/imu/imu_bmi270.c
     src/imu/imu_sitl.c
+    # Scheduler
+    src/scheduler.c
     # Vendor - BMI270
     vendor/BMI270-Sensor-API/bmi2_ois.c
     vendor/BMI270-Sensor-API/bmi270.c
@@ -90,6 +93,7 @@ if ("${HAL}" STREQUAL "RP2040")  # -- RP2040 -- #
         src/hal/hal_rp2040/hal_i2c.c
         src/hal/hal_rp2040/hal_spi.c
         src/hal/hal_rp2040/hal_serial.c
+        src/hal/hal_rp2040/hal_gpio.c
     )
 
     # Add PIO programs
