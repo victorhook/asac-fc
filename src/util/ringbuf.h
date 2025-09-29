@@ -14,17 +14,26 @@ typedef struct
     uint16_t items;
 } ringbuf_t;
 
+/** Function to write data directly from the underlying buffer */
+typedef int (*ringbuf_producer_fn)(void* ctx, const uint8_t* data, const uint32_t len);
+
+/** Function to read data directly from the underlying buffer calling ringbuf_consumer_fn(data, len) */
+typedef int (*ringbuf_consumer_fn)(void* ctx, uint8_t* data, const uint32_t len);
+
 /** Initializes the ringbuffer */
 void ringbuf_init(ringbuf_t* buf, uint8_t* data, const uint32_t size);
 
 /** Returns a byte from the byte buffer. Returns true if successful (eg it was not empty) */
-bool ringbuf_get(ringbuf_t* buf, uint8_t* byte);
+bool ringbuf_read_byte(ringbuf_t* buf, uint8_t* byte);
+
+/** Returns `len` bytes from the byte buffer. Returns true if all bytes read */
+bool ringbuf_read(ringbuf_t* buf, uint8_t* data, const uint32_t len);
 
 /** Adds a byte to the ringbuffer. If the buffer is full the byte is discarded. Returns true if successful. */
-bool ringbuf_add(ringbuf_t* buf, const uint8_t byte);
+bool ringbuf_write_byte(ringbuf_t* buf, const uint8_t byte);
 
 /** Adds number of bytes to the ringbuffer. If the buffer is full the bytes are discarded. Returns true if successful. */
-bool ringbuf_add_bytes(ringbuf_t* buf, const uint8_t* data, const uint16_t len);
+bool ringbuf_write(ringbuf_t* buf, const uint8_t* data, const uint32_t len);
 
 /** 
     Returns a number containing the longest contiguous block and sets ptr to the internal raw buffer.
@@ -33,7 +42,15 @@ bool ringbuf_add_bytes(ringbuf_t* buf, const uint8_t* data, const uint16_t len);
 uint32_t ringbuf_peek(const ringbuf_t* buf, uint8_t** ptr);
 
 /** Advances the read buffer index with `nbr_of_bytes` */
-void ringbuf_advance(ringbuf_t* buf, const uint32_t nbr_of_bytes);
+bool ringbuf_advance(ringbuf_t* buf, const uint32_t nbr_of_bytes);
+
+
+
+/** Drains the ringbuffer (or max `max_bytes` if it's not `0`) by writing all data by calling function `ringbuf_consumer_fn`  */
+bool ringbuf_consume(ringbuf_t* buf, ringbuf_consumer_fn consumer, void* ctx, const uint32_t max_bytes);
+
+/** Fill the ringbuffer (or max `max_bytes` if it's not `0`) by reading data by calling function `ringbuf_producer_fn` */
+bool ringbuf_produce(ringbuf_t* buf, ringbuf_producer_fn producer, void* ctx, const uint32_t max_bytes);
 
 
 /** Returns the number of items in the ringbuffer */
