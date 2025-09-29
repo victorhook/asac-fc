@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "lpf.h"
 
 typedef struct
 {
