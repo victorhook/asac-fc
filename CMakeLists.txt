@@ -22,6 +22,8 @@ endif()
 
 
 project(asac-fc C CXX ASM)
+enable_testing()
+include(CTest)
 
 if ("${HAL}" STREQUAL "RP2040")
     # Initialise the Raspberry Pi Pico SDK, must be done after project()
@@ -140,6 +142,24 @@ elseif("${HAL}" STREQUAL "SITL")  # -- SITL -- #
         asac-core
         m
     )
+
+    # Unity testing framework
+    add_library(unity vendor/unity/src/unity.c)
+    target_include_directories(unity PUBLIC vendor/unity/src)
+
+    # Unit test executable
+    add_executable(unit_tests
+        tests/test_main.c
+        tests/test_ringbuf.c
+    )
+
+    target_link_libraries(unit_tests PRIVATE
+        asac-core
+        unity
+        m
+    )
+
+    add_test(NAME CoreTests COMMAND unit_tests)
 
 endif()
 
