@@ -79,11 +79,6 @@ target_include_directories(asac-core PUBLIC
   ${CMAKE_CURRENT_LIST_DIR}/vendor/c_library_v2/ardupilotmega
 )
 
-# Add compiler flags to the target
-# -Wno-address-of-packed-member: Known from MAVLINK. Hopefully doesn't crash anything.
-target_compile_options(asac-core PRIVATE -Wno-address-of-packed-member)
-
-
 if ("${HAL}" STREQUAL "RP2040")  # -- RP2040 -- #
     add_executable(asac-fc
         src/hal/hal_rp2040/uart_tx.pio
