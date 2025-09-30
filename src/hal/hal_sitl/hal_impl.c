@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 #include "util.h"
-
+ 
 
 static inline uint64_t micros64();
 
@@ -41,10 +41,6 @@ int hal_do_init()
     return 0;
 }
 
-int hal_gpio_init(const uint8_t pin, const hal_gpio_function_t function, const uint8_t value)
-{
-    return 0;
-}
 
 uint32_t hal_micros(void) {
     return (uint32_t)micros64();  // wraps at ~71 min

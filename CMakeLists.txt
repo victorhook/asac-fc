@@ -138,6 +138,7 @@ elseif("${HAL}" STREQUAL "SITL")  # -- SITL -- #
         src/hal/hal_sitl/hal_serial.c
         src/hal/hal_sitl/hal_spi.c
         src/hal/hal_sitl/hal_i2c.c
+        src/hal/hal_sitl/hal_gpio.c
     )
 
     target_link_libraries(asac-fc
