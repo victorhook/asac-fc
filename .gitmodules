@@ -11,3 +11,6 @@
 [submodule "vendor/c_library_v2"]
 	path = vendor/c_library_v2
 	url = git@github.com:mavlink/c_library_v2.git
+[submodule "vendor/unity"]
+	path = vendor/unity
+	url = https://github.com/ThrowTheSwitch/Unity
