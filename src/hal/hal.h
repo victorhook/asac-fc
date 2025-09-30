@@ -11,16 +11,6 @@
 #include "i2c.h"
 
 
-// Pull in correct HAL
-#if defined(HAL_RP2040)
-    #warning "Using RP2040 HAL"
-    #include "hal_rp2040/hal_impl.h"
-#elif defined(HAL_SITL)
-    #warning "Using SITL HAL"
-    #include "hal_rp2040/hal_impl.h"
-#endif
-
-
 typedef enum
 {
     BUS_TYPE_I2C  = 1,
