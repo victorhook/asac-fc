@@ -7,6 +7,7 @@
 #include "util/flightmode.h"
 
 #include <stdarg.h> // For printf
+#include <stdio.h>
 
 #include "mavlink.h"
 
@@ -398,7 +399,21 @@ static void handle_mavlink_message(mavlink_message_t* msg, mavlink_status_t* sta
     }
 }
 
-
+#if HAL_SITL
+const char* mav_severity_to_str(MAV_SEVERITY sev) {
+    switch (sev) {
+    case MAV_SEVERITY_EMERGENCY: return "EMERGENCY";
+    case MAV_SEVERITY_ALERT:     return "ALERT";
+    case MAV_SEVERITY_CRITICAL:  return "CRITICAL";
+    case MAV_SEVERITY_ERROR:     return "ERROR";
+    case MAV_SEVERITY_WARNING:   return "WARNING";
+    case MAV_SEVERITY_NOTICE:    return "NOTICE";
+    case MAV_SEVERITY_INFO:      return "INFO";
+    case MAV_SEVERITY_DEBUG:     return "DEBUG";
+    default:                     return "UNKNOWN";
+    }
+}
+#endif
 
 void gcs_vprintf(const uint8_t severity, const char* fmt, va_list args) {
     char string_buf[256];
@@ -417,6 +432,10 @@ void gcs_vprintf(const uint8_t severity, const char* fmt, va_list args) {
         );
         mav_send(&gcs_handler, &msg);
     }
+
+    #if HAL_SITL
+        printf("[%s] %s\n", mav_severity_to_str(severity), string_buf);
+    #endif
 }
 
 void gcs_printf(const uint8_t severity, const char* fmt, ...)
