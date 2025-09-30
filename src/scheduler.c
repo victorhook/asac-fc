@@ -77,11 +77,14 @@ void scheduler_init(task_t* tasks, const uint32_t nbr_of_tasks)
 
 void scheduler_run()
 {
-    frame = 1;
-    next_frame_us = hal_micros() + loop_period_us;
+    frame = 0;
+    next_frame_us = hal_micros();
 
     while (1)
     {
+        next_frame_us += loop_period_us;
+        frame++;
+
         for (int i = 0; i < _nbr_of_tasks; i++)
         {
             task_t* task = &_tasks[i];
@@ -118,9 +121,6 @@ void scheduler_run()
                 task->run_at_frame += task->loop_divider;
             }
         }
-
-        next_frame_us += loop_period_us;
-        frame++;
 
         // Calculate cpu load metrics and wait for next frame
         int time_to_sleep_us = next_frame_us - hal_micros();
