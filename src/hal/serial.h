@@ -55,7 +55,7 @@ int hal_serial_write(serial_t* serial, const uint8_t* data, const uint32_t len);
 /** Reads number of bytes into `data`. Returns the number of bytes read. */
 int hal_serial_read(serial_t* serial, uint8_t* data, const uint32_t len);
 
-void hal_serial_update(serial_t* serial);
+void hal_serial_update();
 
 
 #endif
