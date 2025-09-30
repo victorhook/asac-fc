@@ -61,7 +61,7 @@ void scheduler_init(task_t* tasks, const uint32_t nbr_of_tasks)
     cpu_load_max = 0;
     lpf_init(&cpu_load_filter, 0.1);
 
-    loop_rate = constrainf(sched_loop_rate, SCHEDULER_LOOP_RATE_MIN, SCHEDULER_LOOP_RATE_MAX);
+    loop_rate = constrain(sched_loop_rate, SCHEDULER_LOOP_RATE_MIN, SCHEDULER_LOOP_RATE_MAX);
     loop_period_us = 1000000 / loop_rate;
 
     for (int i = 0; i < nbr_of_tasks; i++)
