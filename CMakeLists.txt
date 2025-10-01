@@ -81,6 +81,8 @@ target_include_directories(asac-core PUBLIC
   ${CMAKE_CURRENT_LIST_DIR}/vendor/c_library_v2/ardupilotmega
 )
 
+target_compile_definitions(asac-core PUBLIC HAL_${HAL}=1)
+
 if ("${HAL}" STREQUAL "RP2040")  # -- RP2040 -- #
     add_executable(asac-fc
         src/hal/hal_rp2040/uart_tx.pio
