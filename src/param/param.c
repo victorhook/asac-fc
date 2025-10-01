@@ -54,6 +54,10 @@ float imu_accelcal_x;
 float imu_accelcal_x;
 
 // -- Hardware - Board specific -- //
+// Battery pins
+float brd_bat_volt;
+float brd_bat_curr;
+
 // I2C 2
 float brd_i2c1_sda;
 float brd_i2c1_scl;
@@ -154,6 +158,9 @@ mav_param_t mav_params[] = {
     {"ATC_RAT_YAW_MAX", &max_yaw_rate},
 
     // Hardware - Board specific
+    {"BRD_BAT_VOLT",  &brd_bat_volt},
+    {"BRD_BAT_CURR",  &brd_bat_curr},
+
     {"BRD_I2C1_SDA",  &brd_i2c1_sda},
     {"BRD_I2C1_SCL",  &brd_i2c1_scl},
     {"BRD_I2C1_FREQ", &brd_i2c1_freq},
@@ -247,6 +254,9 @@ void reset_to_default_parameters()
     max_yaw_rate = 360;
     
     // Hardware - Board specific
+    brd_bat_volt = -1;
+    brd_bat_curr = -1;
+
     brd_serial1_baud = 115200;
     brd_serial1_protocol = SERIAL_PROTOCOL_CRSF;
     brd_serial2_baud = 115200;

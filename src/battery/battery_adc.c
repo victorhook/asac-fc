@@ -1,4 +1,5 @@
 #include "battery_adc.h"
+#include "hal.h"
 
 /*
 #define ADC_VREF 3.3

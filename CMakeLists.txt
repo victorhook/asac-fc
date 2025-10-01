@@ -45,6 +45,8 @@ add_library(asac-core
     src/util/util.c
     src/util/ringbuf.c
     src/util/lpf.c
+    # Battery
+    src/battery/battery.c
     # RX
     src/rc/rc.c
     src/rc/ibus.c
