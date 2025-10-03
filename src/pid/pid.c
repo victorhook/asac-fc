@@ -28,14 +28,14 @@ float pid_update(pid_t* pid, const float target, const float actual, const bool 
     }
     else
     {
-        pid->i += pid->error * pid->Ki * dt;
+        pid->i += pid->error * pid->Ki * clampf_low(dt, 1e-6f);
         // Simple anti-windup by limiting sum
         pid->i = constrainf(pid->i, -pid->imax, pid->imax);
     }
 
     // D
     pid->d_err = pid->error - pid->prev_error;
-    pid->d = pid->d_err * pid->Kd / dt;
+    pid->d = pid->d_err * pid->Kd / clampf_low(dt, 1e-6f);
 
     // Feed forward
     pid->ff = pid->Kff * target;    
