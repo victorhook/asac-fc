@@ -13,6 +13,8 @@ typedef struct
     uint32_t capacity_used_mah;
 } battery_t;
 
+int battery_init();
+
 void battery_update();
 
 extern battery_t bat1;
