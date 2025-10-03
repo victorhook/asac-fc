@@ -1,6 +1,7 @@
 #include "param.h"
 
 #include "hal.h"
+#include "rc/rc.h"
 #include "serial.h"
 #include "util/flightmode.h"
 #include "mavlink_driver/mavlink_driver.h"
@@ -8,19 +9,25 @@
 // -- Motor -- //
 float mot_pwm_min;
 float mot_pwm_max;
-float mot_pwm_arm;
+float mot_spin_arm;
+float mot_spin_max;
 
 // -- Flight modes and channels -- //
-float fltmode_channel;
 float fltmode1;
 float fltmode2;
 float fltmode3;
-float arm_channel;
-float arm_pwm;
+float fltmode_channel;
 float roll_channel;
 float pitch_channel;
 float yaw_channel;
 float throttle_channel;
+float arm_channel;
+float arm_pwm_min;
+float arm_pwm_max;
+
+// -- RC -- //
+float rc_protocol;
+float rc_timeout;
 
 // -- Tuning -- //
 float atc_rat_rll_p;
@@ -110,7 +117,9 @@ mav_param_t mav_params[] = {
     // Motor
     {"MOT_PWM_MIN", &mot_pwm_min},
     {"MOT_PWM_MAX", &mot_pwm_max},
-    {"MOT_PWM_ARM", &mot_pwm_arm},
+    {"MOT_SPIN_ARM", &mot_spin_arm},
+    {"MOT_SPIN_MAX", &mot_spin_max},
+    
 
     // Flight modes and channels
     {"FLTMODE_CH", &fltmode_channel},
@@ -118,11 +127,17 @@ mav_param_t mav_params[] = {
     {"FLTMODE2",   &fltmode2},
     {"FLTMODE3",   &fltmode3},
     {"ARM_CH",     &arm_channel},
-    {"ARM_PWM",    &arm_pwm},
+    {"ARM_PWM_MIN",    &arm_pwm_min},
+    {"ARM_PWM_MAX",    &arm_pwm_max},
     {"RLL_CH",     &roll_channel},
     {"PIT_CH",    &pitch_channel},
     {"YAW_CH",    &yaw_channel},
     {"THR_CH",    &throttle_channel},
+
+    // RC
+    {"RC_PROTOCOL", &rc_protocol},
+    {"RC_TIMEOUT", &rc_timeout},
+
 
     // Tuning
     {"ATC_RAT_RLL_P",    &atc_rat_rll_p},
@@ -208,7 +223,8 @@ void reset_to_default_parameters()
     // MOTOR
     mot_pwm_min = 1000;
     mot_pwm_max = 2000;
-    mot_pwm_arm = 1175;
+    mot_spin_arm = 0.1;
+    mot_spin_max = 1.0;
 
     // Flight modes and channels (0-based)
     fltmode_channel = 5;
@@ -216,11 +232,16 @@ void reset_to_default_parameters()
     fltmode2 = FLIGHTMODE_ACRO; // Only support ACRO atm :)
     fltmode3 = FLIGHTMODE_ACRO; // Only support ACRO atm :)
     arm_channel = 4;
-    arm_pwm = 1500;
+    arm_pwm_min = 1500;
+    arm_pwm_max = 2000;
     roll_channel = 0;
     pitch_channel = 1;
     yaw_channel = 3;
     throttle_channel = 2;
+
+    // RC
+    rc_protocol = RC_PROTOCOL_ELRS;
+    rc_timeout = 1000;
 
     // Tuning - These are divided by 100 when used by the PIDs
     atc_rat_rll_p = 0.01;
