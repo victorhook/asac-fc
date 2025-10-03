@@ -152,23 +152,24 @@ elseif("${HAL}" STREQUAL "SITL")  # -- SITL -- #
         m
     )
 
-    # Unity testing framework
+    # Unity framework
     add_library(unity vendor/unity/src/unity.c)
     target_include_directories(unity PUBLIC vendor/unity/src)
 
-    # Unit test executable
-    add_executable(unit_tests
-        tests/test_main.c
-        tests/test_ringbuf.c
-    )
+    # Test: PID
+    add_executable(test_pid tests/test_pid.c src/pid/pid.c)
+    target_link_libraries(test_pid PRIVATE asac-core unity m)
+    add_test(NAME PID COMMAND test_pid)
 
-    target_link_libraries(unit_tests PRIVATE
-        asac-core
-        unity
-        m
-    )
+    # Test: Util
+    add_executable(test_util tests/test_util.c src/util/util.c)
+    target_link_libraries(test_util PRIVATE asac-core unity m)
+    add_test(NAME UTIL COMMAND test_util)
 
-    add_test(NAME CoreTests COMMAND unit_tests)
+    # Test: Ringbuf
+    add_executable(test_ringbuf tests/test_ringbuf.c src/util/ringbuf.c)
+    target_link_libraries(test_ringbuf PRIVATE asac-core unity m)
+    add_test(NAME RINGBUF COMMAND test_ringbuf)
 
 endif()
 
