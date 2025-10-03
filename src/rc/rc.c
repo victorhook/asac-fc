@@ -2,13 +2,9 @@
 #include "ibus.h"
 #include "crsf.h"
 #include "mavlink_driver/mavlink_driver.h"
-#include <string.h>
 
-// TODO: Fix where this should come from
-rc_config_t config =
-{
-    .protocol = RC_PROTOCOL_ELRS
-};
+#include "hal.h"
+
 
 typedef int (*rc_do_init)();
 typedef bool (*rc_parse_byte)(const uint8_t, rc_input_t*);
@@ -25,12 +21,17 @@ typedef struct
     rc_do_scale_channel scale;
 } backend_t;
 
-
 static backend_t backend;
 
+rc_input_t rc_input_raw;
+rc_input_t rc_input_scaled;
+
+extern float rc_protocol;
+extern float rc_timeout;
+extern float mot_pwm_min;
 
 int rc_init() {
-    switch (config.protocol)
+    switch ((rc_protocol_t) rc_protocol)
     {
         case RC_PROTOCOL_IBUS:
             backend.init = ibus_init;
@@ -46,14 +47,14 @@ int rc_init() {
             backend.init = dummy_init;
             backend.parse_byte = dummy_parse_byte;
             backend.scale = dummy_scale_channel;
-            gcs_printf(MAV_SEVERITY_WARNING, "Invalid RC protocol %d", config.protocol);
+            gcs_printf(MAV_SEVERITY_WARNING, "Invalid RC protocol %d", (int) rc_protocol);
             return -1;
     }
 
     return backend.init();
 }
 
-void rc_update(rc_input_t* rc_input)
+void rc_update()
 {
     // TODO
     //return rc_handler->parse_byte
@@ -64,4 +65,27 @@ uint16_t receiver_scale_channel(const uint16_t raw)
     return backend.scale(raw);
 }
 
+bool is_rc_connected()
+{
+    return ((hal_millis() - rc_input_scaled.timestamp) < ((uint32_t) rc_timeout));
+}
 
+uint16_t rc_get_channel(const uint8_t channel)
+{
+    if (channel > RC_MAX_NBR_OF_CHANNELS) return mot_pwm_min;
+    return rc_input_scaled.channels[channel];
+}
+
+
+/*
+
+static void rc_constrain(rc_input_t* constrained, const rc_input_t* unconstrained) {
+    // TODO: Move this to receiver!
+    //crsf_scale_rc_channels(unconstrained, constrained);
+    for (int i = 0; i < RC_MAX_NBR_OF_CHANNELS ; i++) {
+        uint16_t rc_scaled = receiver_scale_channel(unconstrained->channels[i]);
+        constrained->channels[i] = constrain(rc_scaled, 1000, 2000);
+    }
+}
+
+*/

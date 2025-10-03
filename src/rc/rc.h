@@ -29,9 +29,6 @@ typedef struct
 } rc_config_t;
 
 
-
-void rc_update(rc_input_t* rc_input);
-
 /*
  * Initializes the receiver.
  * Depending on which RX protocol is found in the settings, this
@@ -44,10 +41,18 @@ int rc_init();
  * Fills `rc_input` with the curent state of the receiver
  * This state includes the latest received packet as well as statistics of the RX link.
  */
-void rc_update(rc_input_t* rc_input);
+void rc_update();
 
 
-uint16_t receiver_scale_channel(const uint16_t raw);
+bool is_rc_connected();
+
+
+uint16_t rc_get_channel(const uint8_t channel);
+
+
+extern rc_input_t rc_input_raw;
+
+extern rc_input_t rc_input_scaled;
 
 
 #endif /* RC_H */
