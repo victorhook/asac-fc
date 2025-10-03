@@ -32,8 +32,10 @@ endif()
 
 add_library(asac-core
     src/main.c
-    src/battery/battery_adc.c
     src/pid/pid.c
+    # Control
+    src/control/attitude_rate_controller.c
+    src/control/throttle_controller.c
     src/control/controller.c
     # Motor
     src/motor/oneshot.c
@@ -45,8 +47,11 @@ add_library(asac-core
     src/util/util.c
     src/util/ringbuf.c
     src/util/lpf.c
+    # AHRS
+    src/ahrs/ahrs.c
     # Battery
     src/battery/battery.c
+    src/battery/battery_adc.c
     # RX
     src/rc/rc.c
     src/rc/ibus.c
