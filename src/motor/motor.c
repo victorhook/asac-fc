@@ -1,6 +1,6 @@
 #include "motor.h"
 #include "oneshot.h"
-
+#include "util.h"
 
 typedef enum {
     ESC_PROTOCOL_PWM,         // Pulse duration: 1000us - 2000us, Freq: 50 Hz
@@ -24,6 +24,13 @@ typedef struct {
 static esc_protocol_t esc_protocol = ESC_PROTOCOL_ONESHOT_42;
 static float pulse_width = ONESHOT_125_PULSE_WIDTH;
 
+
+extern float mot_pwm_max;
+extern float mot_pwm_min;
+extern float mot_spin_arm;
+extern float mot_spin_max;
+
+
 #define MOTOR_PWM_LEVEL_SCALER ((uint16_t) 10000)
 
 static pwm_t pwm_m1;
@@ -31,6 +38,8 @@ static pwm_t pwm_m2;
 static pwm_t pwm_m3;
 static pwm_t pwm_m4;
 static pwm_t pwm_m_debug;
+
+motor_output_t motors;
 
 static pwm_t* pwm_motors[] = {
     &pwm_m_debug,
@@ -112,7 +121,7 @@ void set_motor_pwm(const uint8_t motor, const float pwm) {
 
 }
 
-void set_all_motors_pwm(const motor_command_t* motor_command) {
+void set_all_motors_pwm(const motor_output_t* motor_command) {
     set_motor_pwm(MOTOR_1, motor_command->m1);
     set_motor_pwm(MOTOR_2, motor_command->m2);
     set_motor_pwm(MOTOR_3, motor_command->m3);
@@ -153,3 +162,85 @@ static void init_pwm(pwm_t* pwm, uint32_t gpio, float clk_divider, uint16_t wrap
     pwm_set_enabled(pwm->slice, true);
     */
 }
+
+void motor_mixer_update(motor_output_t* output, const float roll, const float pitch, const float yaw, const float throttle)
+{
+    // This is mainly used for debugging and knowing if the mixer is saturated or not
+    // motors.total = roll + pitch + yaw + throttle;
+    // motors.c_total = constrain(motors.total, -1, 1);
+    
+    // Assuming Betaflights motor standard X:
+    //  4 2
+    //  3 1
+
+    // Using Ardupilot default body frame, NED
+    //  Roll positive  - Right
+    //  Pitch positive - Upwards
+    //  Yaw positive   - Right
+
+    // Calculate throttle for each motor
+    motors.m1 = -roll +  pitch + yaw + throttle;
+    motors.m2 = -roll + -pitch - yaw + throttle;
+    motors.m3 =  roll +  pitch - yaw + throttle;
+    motors.m4 =  roll + -pitch + yaw + throttle;
+
+    // Check if any motor is below 0. This would indicate that it should spin less than 0 which we can't.
+    // In this case, we shift all motor outputs with this amount, to ensure we're in limits
+    float min_motor = minf(minf(motors.m1, motors.m2), minf(motors.m3, motors.m4));
+    if (min_motor < 0)
+    {
+        // Eg:        M1   M2   M3   M4
+        //            0.6  0.2  0.5  -0.3
+        // -> (+0.3)  0.9  0.5  0.8  0
+        float shift = -min_motor;
+        motors.m1 += shift;
+        motors.m2 += shift;
+        motors.m3 += shift;
+        motors.m4 += shift;
+    }
+
+    // Check if any motor output is above 1, which means we're saturated too.
+    // If this happens we scale all motor outputs evenly, so they are within 0-1.
+    float max_motor = maxf(maxf(motors.m1, motors.m2), maxf(motors.m3, motors.m4));
+    if (max_motor > 1)
+    {
+        // Eg:         M1   M2   M3   M4
+        //             1.4  0.9  1.2  0.8
+        // -> (*0.71)  1    0.6  0.9  0.6
+        float scale = 1.0f / max_motor;
+        motors.m1 *= scale;
+        motors.m2 *= scale;
+        motors.m3 *= scale;
+        motors.m4 *= scale;
+    }
+
+    float pwm_min = mot_pwm_min + ((mot_pwm_max - mot_pwm_min) * mot_spin_arm);
+    float pwm_max = mot_pwm_min + ((mot_pwm_max - mot_pwm_min) * mot_spin_max);
+ 
+    // Map to pwm values
+    output->m1 = (uint16_t) mapf(motors.m1, 0, 1, pwm_min, pwm_max);
+    output->m2 = (uint16_t) mapf(motors.m2, 0, 1, pwm_min, pwm_max);
+    output->m3 = (uint16_t) mapf(motors.m3, 0, 1, pwm_min, pwm_max);
+    output->m4 = (uint16_t) mapf(motors.m4, 0, 1, pwm_min, pwm_max);
+}
+
+
+    /*
+        M4   M2
+          \ /
+          / \
+        M3   M1
+
+        M1 1, -1,  1, -1  <- Rear right
+        M2 1, -1, -1,  1  <- Front right
+        M3 1,  1,  1,  1  <- Rear left
+        M4 1,  1, -1, -1  <- Front left
+    */
+
+    // if (throttle < THROTTLE_MIN) {
+    //     throttle = THROTTLE_MIN;
+    // }
+    // motor_command->m1 = throttle - adjust->roll + adjust->pitch - adjust->yaw;
+    // motor_command->m2 = throttle - adjust->roll - adjust->pitch + adjust->yaw;
+    // motor_command->m3 = throttle + adjust->roll + adjust->pitch + adjust->yaw;
+    // motor_command->m4 = throttle + adjust->roll - adjust->pitch - adjust->yaw;
