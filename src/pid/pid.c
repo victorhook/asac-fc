@@ -30,7 +30,7 @@ float pid_update(pid_t* pid, const float target, const float actual, const bool 
     {
         pid->i += pid->error * pid->Ki * dt;
         // Simple anti-windup by limiting sum
-        constrain(pid->i, -pid->imax, pid->imax);
+        pid->i = constrainf(pid->i, -pid->imax, pid->imax);
     }
 
     // D
