@@ -2,7 +2,7 @@
 #define ATTITUDE_CONTROLLER_H
 
 #include "pid/pid.h"
-
+#include "util.h"
 
 int atrc_controller_init();
 
