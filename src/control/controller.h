@@ -9,10 +9,16 @@
 #include "battery/battery_adc.h"
 
 
-typedef struct {
+typedef struct
+{
+    bool armed;
     uint16_t throttle;
-    rates_t rates;
-} setpoint_t;
+    union
+    {
+        vec3f_t attitude_rate;
+        vec3f_t attitude;
+    };
+} rc_target_t;
 
 
 int controller_init();
