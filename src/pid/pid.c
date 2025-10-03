@@ -1,6 +1,5 @@
 #include "pid.h"
-#include "hal.h" 
-
+#include "util.h"
 
 void pid_reset(pid_t* pid)
 {
@@ -23,13 +22,13 @@ float pid_update(pid_t* pid, const float target, const float actual, const bool 
 
     // I
     if (skip_integrator)
-    {
+    {   // On certain occasions we don't want I-term to build up
         pid->i = 0;
     }
     else
     {
         pid->i += pid->error * pid->Ki * clampf_low(dt, 1e-6f);
-        // Simple anti-windup by limiting sum
+        // Limit sum of I-term to prevent build-up
         pid->i = constrainf(pid->i, -pid->imax, pid->imax);
     }
 

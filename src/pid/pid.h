@@ -1,7 +1,7 @@
 #ifndef PID_H
 #define PID_H
 
-#include "util.h"
+#include <stdbool.h>
 
 typedef struct
 {
