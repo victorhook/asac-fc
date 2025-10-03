@@ -37,4 +37,16 @@ int max(const int value1, const int value2);
 
 float maxf(const float value1, const float value2);
 
+float clampf_low(const float value, const float low);
+
+float clampf_high(const float value, const float high);
+
+float clampf(const float value, const float low, const float high);
+
+int clamp_low(const int value, const int low);
+
+int clamp_high(const int value, const int high);
+
+int clamp(const int value, const int low, const int high);
+
 #endif

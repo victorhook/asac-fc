@@ -41,7 +41,7 @@ float mapf(float value, float from_min, float from_max, float to_min, float to_m
 
 int min(const int value1, const int value2)
 {
-    return (value1 < value2) ? value1 : value2;
+    return (value1 < value2) ?  value1 : value2;
 }
 
 float minf(const float value1, const float value2)
@@ -57,4 +57,39 @@ int max(const int value1, const int value2)
 float maxf(const float value1, const float value2)
 {
     return (value1 > value2) ? value1 : value2;
+}
+
+
+float clampf_low(const float value, const float low)
+{
+    return (value < low) ? low : value;
+}
+
+float clampf_high(const float value, const float high)
+{
+    return (value > high) ? high : value;
+}
+
+float clampf(const float value, const float low, const float high)
+{
+    if (value < low) return low;
+    if (value > high) return high;
+    return value;
+}
+
+int clamp_low(const int value, const int low)
+{
+    return (value < low) ? low : value;
+}
+
+int clamp_high(const int value, const int high)
+{
+    return (value > high) ? high : value;
+}
+
+int clamp(const int value, const int low, const int high)
+{
+    if (value < low) return low;
+    if (value > high) return high;
+    return value;
 }
