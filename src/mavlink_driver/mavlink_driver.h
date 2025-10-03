@@ -26,7 +26,7 @@ void mavlink_driver_update();
 
 
 // Global variable. This is used to set motor throttle from mavlink
-extern motor_command_t motor_command_test;
+extern motor_output_t motor_command_test;
 
 
 void gcs_printf(const uint8_t severity, const char* fmt, ...);

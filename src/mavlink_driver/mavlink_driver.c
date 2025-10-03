@@ -12,7 +12,7 @@
 #include "mavlink.h"
 
 mavlink_channel_handler_t gcs_handler;
-motor_command_t motor_command_test;
+motor_output_t motor_command_test;
 
 // Periodic mavlink messages
 #define HEARTBEAT_MSG_PERIOD_MS  1000
