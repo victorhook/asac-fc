@@ -1,5 +1,5 @@
-#ifndef BATTERY_H
-#define BATTERY_H
+#ifndef BATTERY_ADC_H
+#define BATTERY_ADC_H
 
 
 /* Initializes the battery ADC. */
@@ -9,4 +9,4 @@ int battery_adc_init();
 float battery_adc_read();
 
 
-#endif /* BATTERY_H */
+#endif /* BATTERY_ADC_H */
