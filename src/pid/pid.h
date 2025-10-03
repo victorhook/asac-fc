@@ -3,44 +3,26 @@
 
 #include "util.h"
 
-typedef struct {
+typedef struct
+{
     float Kp;
     float Ki;
     float Kd;
     float Kff;
+    float imax;
+    float error;
+    float prev_error;
+    float d_err;
     float p;
     float i;
     float d;
     float ff;
-    float err;
-    float err_integral;
-    float last_err;
-    float d_err;
-    float pid;
-    float integral_limit_threshold;
-    bool  integral_disabled;
-    uint32_t integral_disabled_timestamp;
-} pid_state_t;
+    float out;
+} pid_t;
 
+void pid_reset(pid_t* pid);
 
-// Rotation rates in degrees per second (deg/s)
-typedef struct {
-    float roll;
-    float pitch;
-    float yaw;
-} rates_t;
-
-
-// The pid adjust are used to know how much to adjust each motor speed, depending
-// on the pid parameter values, and the error. This is the result of a pid update loop.
-typedef struct {
-    float roll;
-    float pitch;
-    float yaw;
-} pid_adjust_t;
-
-
-float pid_update(pid_state_t* pid, const float measured, const float desired, const uint16_t throttle, const float dt_s);
+float pid_update(pid_t* pid, const float target, const float actual, const bool skip_integrator, const float dt);
 
 
 #endif /* PID_H */

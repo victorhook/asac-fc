@@ -1,60 +1,50 @@
 #include "pid.h"
 #include "hal.h" 
 
-float pid_update(pid_state_t* pid, const float measured, const float desired, const uint16_t throttle, const float dt_s) {
-    // Calculate error
-    pid->err = desired - measured;
 
-    // Calculate difference with error
-    pid->d_err = (pid->err - pid->last_err) / dt_s;
+void pid_reset(pid_t* pid)
+{
+    pid->error = 0;
+    pid->prev_error = 0;
+    pid->d_err = 0;
+    pid->p = 0;
+    pid->i = 0;
+    pid->d = 0;
+    pid->ff = 0;
+    pid->out = 0;
+}
 
-    // If the throttle is very low, we probably don't want the integrator
-    // to run. Image holding the drone and making full pitch, which would
-    // cause the integral to increase.
-    //
-    // Input throttle is 1000-2000, so the limit of ~1100-1200 seems ok
-    if (throttle < 1175) {
-        pid->integral_disabled = true;
-    } else {
-        // Update integral sum
-        pid->err_integral += pid->err * dt_s;
+float pid_update(pid_t* pid, const float target, const float actual, const bool skip_integrator, const float dt)
+{
+    pid->error = target - actual;
 
-        if (pid->integral_disabled) {
-            if ((pid->err_integral > -pid->integral_limit_threshold) &&
-                (pid->err_integral < pid->integral_limit_threshold)) {
-                // Anti-windup STOP
-                pid->integral_disabled = false;
-            }
-        } else {
-            // Check if we need to disable I-term, anti-windup
-            if ((pid->err_integral > pid->integral_limit_threshold) ||
-                (pid->err_integral < -pid->integral_limit_threshold)) {
-                // Anti-windup START
-                pid->integral_disabled = true;
-                pid->integral_disabled_timestamp = hal_micros();
-            }
-        }
-    }
+    // P
+    pid->p = pid->error * pid->Kp;
 
-    // Cap error integral sum to windup limit
-    pid->err_integral = constrain(pid->err_integral, -pid->integral_limit_threshold, pid->integral_limit_threshold);
-
-    pid->p = pid->Kp * pid->err;
-
-    if (pid->integral_disabled) {
+    // I
+    if (skip_integrator)
+    {
         pid->i = 0;
-    } else {
-        pid->i = pid->Ki * pid->err_integral;
     }
+    else
+    {
+        pid->i += pid->error * pid->Ki * dt;
+        // Simple anti-windup by limiting sum
+        constrain(pid->i, -pid->imax, pid->imax);
+    }
+
+    // D
+    pid->d_err = pid->error - pid->prev_error;
+    pid->d = pid->d_err * pid->Kd / dt;
 
     // Feed forward
-    pid->ff = pid->Kff * desired;
+    pid->ff = pid->Kff * target;    
 
-    pid->d = pid->Kd * pid->d_err;
+    // Summarize all parts
+    pid->out = pid->p + pid->i + pid->d + pid->ff;
 
-    pid->last_err = pid->err;
+    // Update previous error for next run
+    pid->prev_error = pid->error;
 
-    pid->pid = pid->p + pid->i + pid->d + pid->ff;
-
-    return pid->pid;
+    return pid->out;
 }
