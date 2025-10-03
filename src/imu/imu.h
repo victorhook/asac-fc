@@ -17,6 +17,7 @@ typedef struct {
     float acc_x;
     float acc_y;
     float acc_z;
+    float temp;
     uint32_t timestamp_us;
 }__attribute__((packed)) imu_reading_t;
 
