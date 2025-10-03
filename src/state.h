@@ -12,11 +12,12 @@ typedef enum {
 } drone_mode_t;
 
 typedef struct {
-    bool         is_armed;
-    bool         is_force_armed;
-    bool         is_rc_connected;
-    bool         is_usb_connected;
-    bool         can_run_motors;
+    bool is_armed;
+    bool is_force_armed;
+    bool is_rc_connected;
+    bool is_usb_connected;
+    bool run_motor_test;    
+
     drone_mode_t mode;
 
     float        roll;
