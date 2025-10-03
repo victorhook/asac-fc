@@ -79,13 +79,28 @@ target_compile_options(asac-core PRIVATE -Wno-address-of-packed-member)
 
 # Add the standard include files to the build
 target_include_directories(asac-core PUBLIC
-  ${CMAKE_CURRENT_LIST_DIR}
-  ${CMAKE_CURRENT_LIST_DIR}/src
-  ${CMAKE_CURRENT_LIST_DIR}/src/hal
-  ${CMAKE_CURRENT_LIST_DIR}/src/util
-  ${CMAKE_CURRENT_LIST_DIR}/vendor/BMI270-Sensor-API/
-  ${CMAKE_CURRENT_LIST_DIR}/vendor/c_library_v2/
-  ${CMAKE_CURRENT_LIST_DIR}/vendor/c_library_v2/ardupilotmega
+  src
+  src/hal
+  src/util
+  src/ahrs
+  src/battery
+  src/control
+  src/drivers
+  src/hal
+  src/imu
+  src/led
+  src/log
+  src/mavlink_driver
+  src/motor
+  src/param
+  src/pid
+  src/rc
+  src/sensors
+  src/serial4way
+  src/util
+  vendor/BMI270-Sensor-API/
+  vendor/c_library_v2/
+  vendor/c_library_v2/ardupilotmega
 )
 
 target_compile_definitions(asac-core PUBLIC HAL_${HAL}=1)
