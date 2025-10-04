@@ -49,6 +49,10 @@ int hal_serial_do_read(serial_t* serial, uint8_t* data, const uint32_t len)
     return 0;
 }
 
+bool usb_connected()
+{
+    return tud_cdc_connected();
+}
 
 void hal_serial_do_update()
 {

@@ -55,12 +55,6 @@ int hal_do_init()
 }
 
 
-bool usb_connected()
-{
-    //return gpio_get(PIN_VUSB_SENSE) != 0;
-    return tud_cdc_connected();
-}
-
 void hal_reboot()
 {
     watchdog_reboot(0, 0, 0);
