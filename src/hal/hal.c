@@ -114,6 +114,7 @@ static int bus_serial_init(serial_t* serial, const uint8_t number, const int rx,
 
 static int bus_i2c_init(i2c_t* i2c, const uint8_t bus, const int sda, const int scl, const uint32_t freq, uint8_t* rx_buf, uint8_t* tx_buf, const uint16_t rx_buf_size, const uint16_t tx_buf_size)
 {
+    i2c->initialized = false;
     if ((scl < 0) || (sda < 0) || (freq <= 0)) return -1;
     i2c->config.sda = sda;
     i2c->config.scl = scl;
