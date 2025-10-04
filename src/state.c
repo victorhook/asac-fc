@@ -18,3 +18,9 @@ state_t state = {
     .pos_y            = 0,
     .pos_z            = 0
 };
+
+
+bool allow_rebooting()
+{
+    return !state.is_armed && !state.is_force_armed;
+}

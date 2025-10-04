@@ -39,5 +39,7 @@ typedef struct {
 
 extern state_t state;
 
+bool allow_rebooting();
+
 
 #endif /* STATE_H */
