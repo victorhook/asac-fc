@@ -277,9 +277,26 @@ void reset_to_default_parameters()
     // Hardware - Board specific
     brd_bat_volt = -1;
     brd_bat_curr = -1;
-
+    brd_i2c1_sda = -1;
+    brd_i2c1_scl = -1;
+    brd_i2c1_freq = 400000;
+    brd_i2c2_sda = -1;
+    brd_i2c2_scl = -1;
+    brd_i2c2_freq = 400000;
+    brd_spi1_mosi = -1;
+    brd_spi1_miso = -1;
+    brd_spi1_clk = -1;
+    brd_spi1_freq = 1000000;
+    brd_spi2_mosi = -1;
+    brd_spi2_miso = -1;
+    brd_spi2_clk = -1;
+    brd_spi2_freq = 1000000;
+    brd_serial1_rx = -1;
+    brd_serial1_tx = -1;
     brd_serial1_baud = 115200;
     brd_serial1_protocol = SERIAL_PROTOCOL_CRSF;
+    brd_serial2_rx = -1;
+    brd_serial2_tx = -1;
     brd_serial2_baud = 115200;
     brd_serial2_protocol = SERIAL_PROTOCOL_MAVLINK;
 
