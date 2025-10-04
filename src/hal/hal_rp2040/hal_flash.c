@@ -3,8 +3,7 @@
 #include <hardware/flash.h>
 #include "util.h"
 
-// 16 MB
-#define BOARD_FLASH_SIZE        (16 * 1024 * 1024)
+#define BOARD_FLASH_SIZE        (2 * 1024 * 1024)
 
 // Inspired by: https://www.makermatrix.com/blog/read-and-write-data-with-the-pi-pico-onboard-flash/
 
