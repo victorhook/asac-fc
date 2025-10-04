@@ -63,6 +63,7 @@ add_library(asac-core
     # IMU
     src/imu/imu.c
     src/imu/imu_mpu6050.c
+    src/imu/imu_mpu6500.c
     src/imu/imu_bmi270.c
     src/imu/imu_sitl.c
     # Scheduler
