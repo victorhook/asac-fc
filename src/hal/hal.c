@@ -144,7 +144,7 @@ int hal_init()
     res |= bus_serial_init(&serial2, 2, brd_serial2_rx, brd_serial2_tx, brd_serial2_baud, serial2_rx_buf, serial2_tx_buf, SERIAL_RX_BUFF_SIZE, SERIAL_TX_BUFF_SIZE);
 
     res |= bus_i2c_init(&hal_i2c1, 1, brd_i2c1_sda, brd_i2c1_scl, brd_i2c1_freq, i2c1_rx_buf, i2c1_tx_buf, I2C_RX_BUFF_SIZE, I2C_TX_BUFF_SIZE);
-    res |= bus_i2c_init(&hal_i2c1, 2, brd_i2c2_sda, brd_i2c2_scl, brd_i2c2_freq, i2c2_rx_buf, i2c2_tx_buf, I2C_RX_BUFF_SIZE, I2C_TX_BUFF_SIZE);
+    res |= bus_i2c_init(&hal_i2c2, 2, brd_i2c2_sda, brd_i2c2_scl, brd_i2c2_freq, i2c2_rx_buf, i2c2_tx_buf, I2C_RX_BUFF_SIZE, I2C_TX_BUFF_SIZE);
 
     res |= bus_spi_init(1, brd_spi1_mosi, brd_spi1_miso, brd_spi1_clk, brd_spi1_freq, spi1_rx_buf, spi1_tx_buf, SPI_RX_BUFF_SIZE, SPI_TX_BUFF_SIZE);
     res |= bus_spi_init(2, brd_spi2_mosi, brd_spi2_miso, brd_spi2_clk, brd_spi2_freq, spi2_rx_buf, spi2_tx_buf, SPI_RX_BUFF_SIZE, SPI_TX_BUFF_SIZE);
