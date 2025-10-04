@@ -1,4 +1,5 @@
 #include "mavlink_driver.h"
+#include "hal.h"
 #include "serial.h"
 #include "state.h"
 #include "control/controller.h"
