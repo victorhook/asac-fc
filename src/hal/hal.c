@@ -97,7 +97,8 @@ const int nbr_of_i2c = sizeof(i2cs) / sizeof(i2c_t*);
 
 static int bus_serial_init(serial_t* serial, const uint8_t number, const int rx, const int tx, const uint32_t baudrate, uint8_t* rx_buf, uint8_t* tx_buf, const uint16_t rx_buf_size, const uint16_t tx_buf_size)
 {
-    if ((rx < 0) || (tx < 0)) return -1;
+    // Serial 0 is reserved for USB, so we won't check pins/baud rate for that
+    if (number != 0 && ((rx < 0) || (tx < 0) || (baudrate <= 0))) return -1;
 
     bus_config_serial_t config =
     {
