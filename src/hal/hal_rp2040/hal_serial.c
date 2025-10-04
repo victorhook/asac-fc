@@ -34,7 +34,7 @@ int hal_serial_init(const bus_config_serial_t config, const uint8_t nbr)
 
 int hal_serial_do_write(serial_t* serial, const uint8_t* data, const uint32_t len)
 {
-    if (serial->nbr == 0)
+    if (serial->nbr == 0 && usb_connected())
     {
         return hal_usb_serial_write(data, len);
     }
@@ -42,7 +42,7 @@ int hal_serial_do_write(serial_t* serial, const uint8_t* data, const uint32_t le
 
 int hal_serial_do_read(serial_t* serial, uint8_t* data, const uint32_t len)
 {
-    if (serial->nbr == 0)
+    if (serial->nbr == 0 && usb_connected())
     {
         return hal_usb_serial_read(data, len);
     }
