@@ -100,12 +100,12 @@ static void init_uart(const uint32_t baudrate, const uart_parity_t parity) {
 
 void hal_sleep_us(const uint32_t us)
 {
-    sleep_us(us);
+    busy_wait_us(us);
 }
 
 void hal_sleep_ms(const uint32_t ms)
 {
-    sleep_ms(ms);
+    busy_wait_ms(ms);
 }
 
 uint32_t hal_millis()
