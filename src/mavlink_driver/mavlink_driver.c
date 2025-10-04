@@ -162,6 +162,12 @@ static void handle_command_long(mavlink_message_t* msg)
     //printf("COMMAND LONG: %d\n", cmd.command);
     switch (cmd.command)
     {
+        case MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN:
+            if (cmd.param1 == 1 && allow_rebooting())
+            {
+                hal_reboot();
+            }
+            break;
         case MAV_CMD_COMPONENT_ARM_DISARM:
             armed_force = cmd.param1 == 1;
             break;
