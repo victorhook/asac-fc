@@ -14,6 +14,8 @@
 #include <stdlib.h>
 
 #include "hal.h"
+#include "mavlink.h"
+#include "mavlink_driver.h"
 #include "util.h"
  
 
@@ -124,8 +126,7 @@ bool usb_connected()
     return true;
 }
 
-void system_reboot()
+void hal_reboot()
 {
-    
+    gcs_printf(MAV_SEVERITY_WARNING, "Reboot not supported in SITL yet :)");
 }
-

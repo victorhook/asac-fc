@@ -61,7 +61,7 @@ bool usb_connected()
     return tud_cdc_connected();
 }
 
-void system_reboot()
+void hal_reboot()
 {
     watchdog_reboot(0, 0, 0);
 }

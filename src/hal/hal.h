@@ -46,6 +46,8 @@ int hal_init();
 
 int hal_do_init();
 
+void hal_reboot();
+
 // -- ADC -- //
 
 int hal_adc_init(const int channel);
@@ -90,11 +92,6 @@ void hal_pre_pid_loop();
 void hal_post_pid_loop();
 
 bool usb_connected();
-
-
-void system_init();
-
-void system_reboot();
 
 
 // Bus defines
