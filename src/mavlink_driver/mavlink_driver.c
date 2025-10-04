@@ -119,6 +119,31 @@ MAV_STATE_ACTIVE
     mav_send(channel, &msg);
 }
 
+static void scan_i2c_bus(const uint8_t bus)
+{
+    if (bus > 2)
+    {
+        gcs_printf(MAV_SEVERITY_ERROR, "Invalid i2c bus %d\n", bus);
+        return;
+    }
+
+    uint8_t devices[20];
+    uint8_t devices_found = 0;
+    gcs_printf(MAV_SEVERITY_INFO, "Probing i2c bus %d", bus);
+    hal_i2c_probe_bus(bus, devices, &devices_found);
+    if (devices_found == 0)
+    {
+        gcs_printf(MAV_SEVERITY_INFO, "No devices found");   
+    }
+    else
+    {
+        for (int i = 0; i < devices_found; i++)
+        {
+            gcs_printf(MAV_SEVERITY_INFO, "[%d] Found device: 0x%02x (%d)", i+1, devices[i], devices[i]);   
+        }
+    }
+}
+
 
 static void handle_command_int(mavlink_message_t* msg)
 {
@@ -126,6 +151,9 @@ static void handle_command_int(mavlink_message_t* msg)
     mavlink_msg_command_int_decode(msg, &cmd);
     switch (cmd.command)
     {
+        case MAV_CMD_USER_1:
+            scan_i2c_bus(cmd.param1);
+            break;
         case MAV_CMD_DO_MOTOR_TEST:
             /*motor = (uint8_t) mavlink_command.param1;
             motor_test_throttle_type = (uint8_t) mavlink_command.param2;
