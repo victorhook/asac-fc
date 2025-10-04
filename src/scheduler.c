@@ -139,6 +139,10 @@ void scheduler_run()
 
         if (time_to_sleep_us > 0)
         {
+            if (time_to_sleep_us > loop_period_us)
+            {
+                time_to_sleep_us = loop_period_us;
+            }
             hal_sleep_us(time_to_sleep_us);
         }
         
