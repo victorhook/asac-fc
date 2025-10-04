@@ -197,7 +197,8 @@ int hal_serial_available(const serial_t* serial)
 
 void hal_i2c_probe_bus(const uint8_t bus, uint8_t devices[20], uint8_t* devices_found)
 {
-    i2c_t* i2c = i2cs[bus];
+    i2c_t* i2c = i2cs[bus-1];
+
     if (!i2c->initialized) return;
 
     int device = 0;
@@ -210,4 +211,6 @@ void hal_i2c_probe_bus(const uint8_t bus, uint8_t devices[20], uint8_t* devices_
             device = (device + 1) % 20; // Prevent going out of buffer size, 20 is PLENTY enough... :)
         }
     }
+
+    *devices_found = device;
 }
