@@ -287,36 +287,54 @@ void reset_to_default_parameters()
     sched_loop_rate = 1000;
 }
 
-void read_parameters()
+bool read_params(const uint32_t expected_nbr_of_params, const uint32_t expected_crc, float* params)
 {
-    float params_eeprom[nbr_of_parameters];
-    uint32_t param_size = sizeof(params_eeprom);
     uint32_t crc;
-    
-    if (!hal_read_param(param_size, &crc, (uint8_t*) &params_eeprom))
+    uint32_t params_size;
+    if (!hal_read_param(&params_size, &crc, (uint8_t*) params))
+    {   // Something really failed with reading from flash... Hardware issue etc?
+        return false;
+    }
+
+    // Check that number of parameters match
+    uint32_t nbr_of_parameters_found = params_size / 4;
+    if (nbr_of_parameters_found != expected_nbr_of_params)
     {
-        gcs_printf(0, "Failed to read parameters from eeprom, using default values\n");
-        // Reset parameter to default values, then write then to eeprom
+        return false;
+    }
+
+    // Check crc: TODO!
+
+    return true;
+}
+
+int params_init()
+{
+    // NOTE: This is called before HAL is initialized as well as certain buffers assigned.
+    // Thus, we cannot send anything to gcs at this stage, so DON'T do gcs_printf().
+
+    float params[nbr_of_parameters];
+    uint32_t correct_crc;
+
+    if (!read_params(nbr_of_parameters, correct_crc, params))
+    {
+        // Reset parameter to default values, then write
         reset_to_default_parameters();
         write_parameters();
 
-        if (!hal_read_param(param_size, &crc, (uint8_t*) &params_eeprom))
-        {
-            gcs_printf(0, "Still failed to read params... Something is off!\n");
-            return;
+        if (!read_params(nbr_of_parameters, correct_crc, params))
+        {   // If we still fail to read, even after we've reset, then something is very wrong
+            return -1;
         }
     }
     
+    // Copy values into parameters
     for (int i = 0; i < nbr_of_parameters; i++)
     {
-        *mav_params[i].value = params_eeprom[i];
+        *mav_params[i].value = params[i];
     }
 
-    for (int i = 0; i < nbr_of_parameters; i++)
-    {
-        mav_param_t* param = &mav_params[i];
-        printf(" %s: %f\n", param->id, *param->value);
-    }
+    return 0;
 }
 
 void write_parameters()

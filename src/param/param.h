@@ -10,8 +10,7 @@ typedef struct
     float* value;
 } mav_param_t;
 
-
-void read_parameters();
+int params_init();
 
 void write_parameters();
 
