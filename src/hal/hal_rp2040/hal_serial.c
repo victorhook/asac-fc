@@ -1,7 +1,6 @@
 #include "hal.h"
 #include "ringbuf.h"
-#include "vendor/pico-sdk/lib/tinyusb/src/class/cdc/cdc_device.h"
-#include "vendor/pico-sdk/lib/tinyusb/src/device/usbd.h"
+#include "tusb.h"
 
 #include <pico/stdio.h>
 

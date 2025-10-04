@@ -2,7 +2,7 @@
 
 #include "hal.h"
 #include "pico/stdio.h"
-#include "vendor/pico-sdk/lib/tinyusb/src/tusb.h"
+#include "tusb.h"
 #include <hardware/timer.h>
 #include <pico/stdio_usb.h>
 #include <pico/time.h>
