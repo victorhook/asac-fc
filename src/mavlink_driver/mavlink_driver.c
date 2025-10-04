@@ -124,7 +124,6 @@ static void handle_command_int(mavlink_message_t* msg)
 {
     mavlink_command_int_t cmd;
     mavlink_msg_command_int_decode(msg, &cmd);
-    printf("COMMAND INT: %d\n", cmd.command);
     switch (cmd.command)
     {
         case MAV_CMD_DO_MOTOR_TEST:
@@ -151,7 +150,9 @@ static void handle_command_int(mavlink_message_t* msg)
             // Force arm!
             state.is_force_armed = true;*/
             break;
-
+        default:
+            gcs_printf(MAV_SEVERITY_WARNING, "Unsupported command: %d\n", cmd.command);
+            break;
     }
 }
 
