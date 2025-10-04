@@ -10,8 +10,6 @@
 #define FLASH_TARGET_OFFSET    (BOARD_FLASH_SIZE - FLASH_SECTOR_SIZE)
 #define FLASH_PAGES_PER_SECTOR (FLASH_SECTOR_SIZE / FLASH_PAGE_SIZE)
 
-#define SETTINGS_NBR_OF_FLASH_PAGES ((sizeof(system_settings_t) / FLASH_PAGE_SIZE) + 1)
-#define SETTINGS_FLASH_SIZE (SETTINGS_NBR_OF_FLASH_PAGES * FLASH_PAGE_SIZE)
 
 static uint32_t* params_size_ptr = (uint32_t*) (XIP_BASE + FLASH_TARGET_OFFSET + 0);
 static uint32_t* params_crc_ptr  = (uint32_t*) (XIP_BASE + FLASH_TARGET_OFFSET + 4);
