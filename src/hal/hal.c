@@ -191,3 +191,20 @@ int hal_serial_available(const serial_t* serial)
 {
     return ringbuf_items(&serial->rx_buf);
 }
+
+void hal_i2c_probe_bus(const uint8_t bus, uint8_t devices[20], uint8_t* devices_found)
+{
+    i2c_t* i2c = i2cs[bus];
+    if (!i2c->initialized) return;
+
+    int device = 0;
+
+    for (int addr = 1; addr < 127; addr++)
+    {
+        if (hal_i2c_probe(i2c, addr))
+        {
+            devices[device] = addr;
+            device = (device + 1) % 20; // Prevent going out of buffer size, 20 is PLENTY enough... :)
+        }
+    }
+}

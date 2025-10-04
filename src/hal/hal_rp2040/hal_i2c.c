@@ -58,3 +58,9 @@ int hal_i2c_write_reg(i2c_t* i2c, const uint8_t addr, const uint8_t data)
 {
     return i2c_write_blocking(i2c->ctx, addr, &data, 1, false);
 }
+
+bool hal_i2c_probe(const i2c_t* i2c, uint8_t addr)
+{
+    uint8_t dummy;
+    return i2c_read_blocking(i2c->ctx, addr, &dummy, 1, false) != -1;
+}

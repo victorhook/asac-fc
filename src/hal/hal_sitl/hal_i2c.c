@@ -25,3 +25,8 @@ int hal_i2c_write_byte(i2c_t* i2c, const uint8_t addr, const uint8_t *data, cons
 {
     return 0;
 }
+
+bool hal_i2c_probe(const i2c_t* i2c, uint8_t addr)
+{
+    return false;
+}
