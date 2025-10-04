@@ -4,6 +4,4 @@
 
 #include "hal.h"
 
-#define MAX_EEPROM_SIZE 4096
-
 #endif

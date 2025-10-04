@@ -13,6 +13,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+#include "hal.h"
 #include "util.h"
  
 
@@ -99,7 +100,7 @@ bool hal_write_param(const uint32_t param_size, const uint32_t crc, const uint8_
     return true;
 }
 
-bool hal_read_param(uint32_t param_size, uint32_t* crc, uint8_t* buf)
+bool hal_read_param(uint32_t* param_size, uint32_t* crc, uint8_t* buf)
 {
     FILE* f = fopen("eeprom.bin", "rb");
     if (!f)
@@ -108,12 +109,9 @@ bool hal_read_param(uint32_t param_size, uint32_t* crc, uint8_t* buf)
         return false;
     }
 
-    uint32_t size;
-    fread(&size, sizeof(uint32_t), 1, f);
-    if (size != param_size) return false;
-
+    fread(param_size, sizeof(uint32_t), 1, f);
     fread(crc, sizeof(uint32_t), 1, f);
-    fread(buf, max(param_size, MAX_EEPROM_SIZE), 1, f);
+    fread(buf, min(*param_size, MAX_PARAMS_STORAGE_DATA_SIZE), 1, f);
 
     fclose(f);
 
