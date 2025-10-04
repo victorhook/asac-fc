@@ -115,6 +115,7 @@ if ("${HAL}" STREQUAL "RP2040")  # -- RP2040 -- #
         src/hal/hal_rp2040/hal_spi.c
         src/hal/hal_rp2040/hal_serial.c
         src/hal/hal_rp2040/hal_gpio.c
+        src/hal/hal_rp2040/hal_flash.c
     )
 
     # Add PIO programs
