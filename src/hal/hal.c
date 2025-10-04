@@ -121,8 +121,10 @@ static int bus_i2c_init(i2c_t* i2c, const uint8_t bus, const int sda, const int 
     return hal_i2c_init(i2c);
 }
 
-static int bus_spi_init(const uint8_t bus, const uint8_t mosi, const uint8_t miso, const uint8_t clk, const uint32_t freq, uint8_t* rx_buf, uint8_t* tx_buf, const uint16_t rx_buf_size, const uint16_t tx_buf_size)
+static int bus_spi_init(const uint8_t bus, const int mosi, const int miso, const int clk, const uint32_t freq, uint8_t* rx_buf, uint8_t* tx_buf, const uint16_t rx_buf_size, const uint16_t tx_buf_size)
 {
+    if ((mosi < 0) || (miso < 0) || (clk < 0)) return -1;
+
     bus_config_spi_t config =
     {
         .mosi = mosi,

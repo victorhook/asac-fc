@@ -20,7 +20,7 @@ int hal_spi_write(spi_t* spi, const uint8_t addr, const uint8_t *data, const uin
     return 0;
 }
 
-int hal_spi_write_byte(spi_t* spi, const uint8_t addr, const uint8_t *data, const uint32_t len)
+int hal_spi_write_byte(spi_t* spi, const uint8_t addr, const uint8_t byte)
 {
     return 0;
 }
