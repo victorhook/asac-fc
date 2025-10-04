@@ -97,7 +97,8 @@ void mav_send(mavlink_channel_handler_t* channel, const mavlink_message_t* msg)
 {
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
     uint16_t len = mavlink_msg_to_send_buffer(buf, msg);
-    if (hal_serial_write(channel->serial, buf, len) != len)
+    int bytes_written = hal_serial_write(channel->serial, buf, len);
+    if (bytes_written != (int) len)
     {
         discarded_tx_packets++;
     }
