@@ -14,9 +14,9 @@
 #define SETTINGS_NBR_OF_FLASH_PAGES ((sizeof(system_settings_t) / FLASH_PAGE_SIZE) + 1)
 #define SETTINGS_FLASH_SIZE (SETTINGS_NBR_OF_FLASH_PAGES * FLASH_PAGE_SIZE)
 
-static int* params_size_ptr     = (int*)     (XIP_BASE + FLASH_TARGET_OFFSET + 0);
-static int* params_crc_ptr      = (int*)     (XIP_BASE + FLASH_TARGET_OFFSET + 4);
-static uint8_t* params_data_ptr = (uint8_t*) (XIP_BASE + FLASH_TARGET_OFFSET + 8);
+static uint32_t* params_size_ptr = (uint32_t*) (XIP_BASE + FLASH_TARGET_OFFSET + 0);
+static uint32_t* params_crc_ptr  = (uint32_t*) (XIP_BASE + FLASH_TARGET_OFFSET + 4);
+static uint8_t* params_data_ptr  = (uint8_t*)  (XIP_BASE + FLASH_TARGET_OFFSET + 8);
 
 
 bool hal_write_param(const uint32_t param_size, const uint32_t crc, const uint8_t* buf)
@@ -28,6 +28,8 @@ bool hal_read_param(uint32_t* param_size, uint32_t* crc, uint8_t* buf)
 {
     *param_size = *params_size_ptr;
     *crc = *params_crc_ptr;
-    memcpy(buf, params_data_ptr, min(*param_size, MAX_PARAMS_STORAGE_DATA_SIZE));
+    int size = min(*param_size, MAX_PARAMS_STORAGE_DATA_SIZE);
+    if (size < 0) return false; // If flash is erased it's usually filled with 0xFF, which is unsigned -1...
+    memcpy(buf, params_data_ptr, size);
     return true;
 }
