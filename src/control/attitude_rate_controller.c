@@ -19,28 +19,28 @@ extern float atc_rat_yaw_d;
 extern float atc_rat_yaw_ff;
 extern float atc_rat_yaw_imax;
 
-pid_t pid_roll;
-pid_t pid_pitch;
-pid_t pid_yaw;
+pid_handle_t pid_roll;
+pid_handle_t pid_pitch;
+pid_handle_t pid_yaw;
 
 
 int atrc_controller_init()
 {
-    memset(&pid_roll, 0, sizeof(pid_t));
+    memset(&pid_roll, 0, sizeof(pid_handle_t));
     pid_roll.Kp = atc_rat_rll_p;
     pid_roll.Ki = atc_rat_rll_i;
     pid_roll.Kd = atc_rat_rll_d;
     pid_roll.Kff = atc_rat_rll_ff;
     pid_roll.imax = atc_rat_rll_imax;
 
-    memset(&pid_pitch, 0, sizeof(pid_t));
+    memset(&pid_pitch, 0, sizeof(pid_handle_t));
     pid_pitch.Kp = atc_rat_pit_p;
     pid_pitch.Ki = atc_rat_pit_i;
     pid_pitch.Kd = atc_rat_pit_d;
     pid_pitch.Kff = atc_rat_pit_ff;
     pid_pitch.imax = atc_rat_pit_imax;
 
-    memset(&pid_yaw, 0, sizeof(pid_t));
+    memset(&pid_yaw, 0, sizeof(pid_handle_t));
     pid_yaw.Kp = atc_rat_yaw_p;
     pid_yaw.Ki = atc_rat_yaw_i;
     pid_yaw.Kd = atc_rat_yaw_d;

@@ -11,9 +11,9 @@ void atrc_controller_update(const vec3f_t* desired, const vec3f_t* measured, con
 void atcr_controller_reset();
 
 
-extern pid_t pid_roll;
-extern pid_t pid_pitch;
-extern pid_t pid_yaw;
+extern pid_handle_t pid_roll;
+extern pid_handle_t pid_pitch;
+extern pid_handle_t pid_yaw;
 
 
 #endif

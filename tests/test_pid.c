@@ -5,7 +5,7 @@
 
 #define FLOAT_TOL 1e-5f
 
-static pid_t pid;
+static pid_handle_t pid;
 
 void setUp(void)
 {

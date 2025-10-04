@@ -1,7 +1,7 @@
 #include "pid.h"
 #include "util.h"
 
-void pid_reset(pid_t* pid)
+void pid_reset(pid_handle_t* pid)
 {
     pid->error = 0;
     pid->prev_error = 0;
@@ -13,7 +13,7 @@ void pid_reset(pid_t* pid)
     pid->out = 0;
 }
 
-float pid_update(pid_t* pid, const float target, const float actual, const bool skip_integrator, const float dt)
+float pid_update(pid_handle_t* pid, const float target, const float actual, const bool skip_integrator, const float dt)
 {
     pid->error = target - actual;
 
