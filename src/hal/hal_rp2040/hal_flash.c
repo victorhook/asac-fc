@@ -18,7 +18,38 @@ static uint8_t* params_data_ptr  = (uint8_t*)  (XIP_BASE + FLASH_TARGET_OFFSET +
 
 bool hal_write_param(const uint32_t param_size, const uint32_t crc, const uint8_t* buf)
 {
-    
+    if (param_size > MAX_PARAMS_STORAGE_DATA_SIZE) return false;
+
+    uint32_t ints = save_and_disable_interrupts();
+
+    // Erase 1 sector (required before we write), on pico this is 4096 bytes
+    flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
+
+    uint8_t page[FLASH_PAGE_SIZE];
+    memset(page, 0xFF, FLASH_PAGE_SIZE);
+
+    // Copy size and crc into first part of page.
+    memcpy(&page[0], &param_size, 4);
+    memcpy(&page[4], &crc, 4);
+
+    int offset = FLASH_PAGE_SIZE - 8;
+    int first_page_data = min(offset, (int) param_size);
+    memcpy(&page[8], buf, first_page_data);
+    // Write first page, which includes the header
+    flash_range_program(FLASH_TARGET_OFFSET, page, FLASH_PAGE_SIZE);
+
+    int pages_written = 1;
+    while (offset < param_size)
+    {
+        int bytes_left = param_size - offset;
+        // Copy into page buffer
+        memcpy(page, &buf[offset], min(bytes_left, FLASH_PAGE_SIZE));
+        flash_range_program(FLASH_TARGET_OFFSET+(pages_written*FLASH_PAGE_SIZE), page, FLASH_PAGE_SIZE);
+        offset += FLASH_PAGE_SIZE;
+        pages_written++;
+    }
+
+    restore_interrupts(ints);
 }
 
 bool hal_read_param(uint32_t* param_size, uint32_t* crc, uint8_t* buf)
