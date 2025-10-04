@@ -58,9 +58,4 @@ void hal_serial_do_update()
 {
     // Must call tud task to poll the USB controller
     tud_task();
-
-    if (usb_connected())
-    {
-        //hal_usb_serial_read(uint8_t *data, const uint32_t len)
-    }
 }
