@@ -96,8 +96,8 @@ void system_reboot();
 
 
 // Bus defines
-extern i2c_t i2c1;
-extern i2c_t i2c2;
+extern i2c_t hal_i2c1;
+extern i2c_t hal_i2c2;
 
 extern spi_t spi1;
 extern spi_t spi2;

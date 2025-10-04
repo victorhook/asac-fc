@@ -20,17 +20,25 @@ typedef struct
     ringbuf_t        rx_buf;
     ringbuf_t        tx_buf;
     bus_config_i2c_t config;
+    void*            ctx;
+    bool             initialized;
 } i2c_t;
 
 
-int hal_i2c_init(const bus_config_i2c_t config);
+int hal_i2c_init(i2c_t* i2c);
+
+uint8_t hal_i2c_read_reg(i2c_t* i2c, const uint8_t addr);
 
 int hal_i2c_read(i2c_t* i2c, const uint8_t addr, uint8_t *data, const uint32_t len);
 
-int hal_i2c_read_byte(i2c_t* i2c, const uint8_t addr, uint8_t *byte);
+uint8_t hal_i2c_read_byte(i2c_t* i2c);
 
 int hal_i2c_write(i2c_t* i2c, const uint8_t addr, const uint8_t *data, const uint32_t len);
 
-int hal_i2c_write_byte(i2c_t* i2c, const uint8_t addr, const uint8_t *data, const uint32_t len);
+int hal_i2c_write_reg(i2c_t* i2c, const uint8_t addr, const uint8_t data);
+
+void hal_i2c_probe_bus(const uint8_t bus, uint8_t devices[20], uint8_t* devices_found);
+
+bool hal_i2c_probe(const i2c_t* i2c, uint8_t addr);
 
 #endif
