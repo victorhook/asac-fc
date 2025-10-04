@@ -39,6 +39,8 @@ typedef enum
 #define HAL_GPIO_HIGH 1
 #define HAL_GPIO_LOW  0
 
+#define MAX_PARAMS_STORAGE_DATA_SIZE 4096
+
 /** Initializes primary HAL stuff */
 int hal_init();
 
@@ -68,7 +70,7 @@ uint32_t hal_log_write(const uint8_t* data, const uint16_t size);
 
 bool hal_write_param(const uint32_t param_size, const uint32_t crc, const uint8_t* buf);
 
-bool hal_read_param(uint32_t param_size, uint32_t* crc, uint8_t* buf);
+bool hal_read_param(uint32_t* param_size, uint32_t* crc, uint8_t* buf);
 
 
 int hal_pwm_set(const int channel, const int gpio, const uint16_t value);

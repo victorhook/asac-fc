@@ -24,17 +24,6 @@ static uint32_t serial_available()
     //return tud_cdc_connected() && tud_cdc_available();
 }
 
-
-bool hal_write_param(const uint32_t param_size, const uint32_t crc, const uint8_t* buf)
-{
-    
-}
-
-bool hal_read_param(uint32_t param_size, uint32_t* crc, uint8_t* buf)
-{
-
-}
-
 int hal_adc_init(const int channel)
 {
     return 0;
