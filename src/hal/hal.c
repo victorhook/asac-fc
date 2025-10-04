@@ -165,12 +165,12 @@ static uint32_t do_write(void* serial, const uint8_t* data, const uint32_t len)
 
 void hal_serial_update()
 {
+    // Call hal-specific updates (if needed)
+    hal_serial_do_update();
+
     for (int i = 0; i < nbr_of_serials; i++)
     {
         serial_t* serial = serials[i];
-
-        // Call hal-specific updates (if needed)
-        hal_serial_do_update(serial);
 
         // Read from TX buffer into HAL
         ringbuf_consume(&serial->tx_buf, (ringbuf_consumer_fn) hal_serial_do_write, serial, 0);
