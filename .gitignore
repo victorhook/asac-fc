@@ -11,3 +11,4 @@ mav.tlog*
 .cache/
 eeprom.bin
 compile_commands.json
+.vscode/settings.json

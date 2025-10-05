@@ -5,7 +5,36 @@
   "version": "0.2.0",
   "configurations": [
     {
+    "name": "Pico Debug (Attach to OpenOCD)",
+    "cwd": "${workspaceFolder}",
+    "executable": "${workspaceFolder}/build/asac-fc.elf",
+    "request": "launch",
+    "type": "cortex-debug",
+    "servertype": "external",
+    "device": "RP2040",
+    "gdbTarget": "localhost:3333",
+    "svdFile": "${env:PICO_SDK_PATH}/src/rp2040/hardware_regs/rp2040.svd"
+    },
+    {
       "name": "Pico Debug",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/asac-fc.elf",
+      "request": "launch",
+      "type": "cortex-debug",
+      "servertype": "openocd",
+      "device": "RP2040",
+      "configFiles": [
+        "interface/cmsis-dap.cfg",
+        "target/rp2040.cfg"
+      ],
+      "openOCDLaunchCommands": [
+        "adapter speed 5000",
+        "set USE_CORE 0"
+      ],
+      "svdFile": "${env:PICO_SDK_PATH}/src/rp2040/hardware_regs/rp2040.svd",
+    },
+    {
+      "name": "Pico Debug (old)",
       "cwd": "${workspaceRoot}",
       "executable": "build/asac-fc.elf",//"${command:cmake.launchTargetPath}",
       "request": "launch",
@@ -27,24 +56,43 @@
           "continue"
       ]
       },
-              {
-              "name": "Debug SITL",
-              "type": "cppdbg",
-              "request": "launch",
-              "program": "${workspaceFolder}/build/asac-fc",
-              "args": [],
-              "stopAtEntry": false,
-              "cwd": "${workspaceFolder}",
-              "environment": [],
-              "externalConsole": false,
-              "MIMode": "gdb",
-              "setupCommands": [
-                  {
-                      "description": "Enable pretty-printing",
-                      "text": "-enable-pretty-printing",
-                      "ignoreFailures": true
-                  }
-              ]
-          }
+      {
+        "name": "Debug SITL",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/asac-fc",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "setupCommands": [
+            {
+                "description": "Enable pretty-printing",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }
+        ]
+      },
+      {
+        "name": "Test",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/test_pid",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "setupCommands": [
+            {
+                "description": "Enable pretty-printing",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }
+        ]
+      }
   ]
 }
