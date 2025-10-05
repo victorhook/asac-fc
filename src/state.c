@@ -2,12 +2,17 @@
 
 
 state_t state = {
-    .is_armed         = false,
-    .is_force_armed   = false,
-    .is_rc_connected  = false,
-    .is_usb_connected = false,
+    .armed         = false,
+    .force_armed   = false,
+    .rc_connected  = false,
+    .usb_connected = false,
+    .imu_is_working   = false,
     .run_motor_test   = false,
     .mode             = MODE_BOOTING,
+    .flightmode       = FLIGHTMODE_ACRO,
+    .bat_volt_mv      = 0,
+    .bat_curr_ma      = -1,
+    .bat_remain       = -1,
     .roll             = 0,
     .pitch            = 0,
     .yaw              = 0,
@@ -22,5 +27,13 @@ state_t state = {
 
 bool allow_rebooting()
 {
-    return !state.is_armed && !state.is_force_armed;
+    return !state.armed && !state.force_armed;
+}
+
+int arming_check()
+{
+    return
+        (state.rc_connected)   &&
+        (state.imu_is_working) &&
+        (!state.usb_connected);
 }
