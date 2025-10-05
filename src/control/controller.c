@@ -88,10 +88,6 @@ void controller_pid_loop()
 
     run_arming_check();
 
-    imu_read(&imu_raw);
-
-    imu_filter(&imu_filtered, &imu_raw);
-
     // Check if we're connected (gotten radio packet within ~X ms)
     bool rc_connected = is_rc_connected(&rc_input_raw);
     if (rc_connected != state.is_rc_connected)
