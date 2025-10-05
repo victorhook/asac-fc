@@ -19,7 +19,7 @@ typedef struct {
     float acc_z;
     float temp;
     uint32_t timestamp_us;
-}__attribute__((packed)) imu_reading_t;
+} imu_reading_t;
 
 typedef struct {
     float gyro_x;
@@ -38,7 +38,7 @@ typedef union
 
 int imu_init();
 
-void imu_update(imu_reading_t* reading);
+void imu_update();
 
 bool imu_calibrate_gyro();
 
@@ -53,5 +53,7 @@ void imu_filter(imu_reading_t* filtered, const imu_reading_t* raw);
 // Abstract
 void imu_read(imu_reading_t* reading);
 
+extern imu_reading_t imu_raw;
+extern imu_reading_t imu_filtered;
 
 #endif
