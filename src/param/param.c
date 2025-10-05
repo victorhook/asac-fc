@@ -3,8 +3,9 @@
 #include "hal.h"
 #include "rc/rc.h"
 #include "serial.h"
-#include "util/flightmode.h"
 #include "mavlink_driver/mavlink_driver.h"
+#include "state.h"
+#include "ahrs.h"
 
 // -- Motor -- //
 float mot_pwm_min;
@@ -109,6 +110,9 @@ float brd_imu_type;
 float brd_imu_bus;
 float brd_imu_ss;
 
+// AHRS
+float ahrs_orientation;
+
 // Scheduler
 float sched_loop_rate;
 
@@ -212,6 +216,8 @@ mav_param_t mav_params[] = {
     {"BRD_IMU_BUS",   &brd_imu_bus},  // Which bus the IMU talks on, options are: [1=i2c1, 2=i2c2, 3=spi1, 4=spi2]
     {"BRD_IMU_SS",    &brd_imu_ss},
 
+    {"AHRS_ORIENTATION", &ahrs_orientation},
+
     // Scheduler
     {"SCHED_LOOP_RATE",    &sched_loop_rate} // Loop rate of scheduler, in Hz
 };
@@ -299,6 +305,8 @@ void reset_to_default_parameters()
     brd_serial2_tx = -1;
     brd_serial2_baud = 115200;
     brd_serial2_protocol = SERIAL_PROTOCOL_MAVLINK;
+
+    ahrs_orientation = AHRS_ORIENTATION_NONE;
 
     // Scheduler
     sched_loop_rate = 1000;
