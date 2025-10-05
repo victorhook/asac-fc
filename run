@@ -6,6 +6,7 @@ from pathlib import Path
 from dataclasses import dataclass
 import yaml
 import typing as t
+import subprocess
 
 ROOT_DIR = Path(__file__).absolute().parent
 BUILD_DIR = ROOT_DIR / 'build'
@@ -133,15 +134,34 @@ if __name__ == '__main__':
             hal_flag = f'-DHAL={board.hal.upper()} -DCMAKE_EXPORT_COMPILE_COMMANDS=1'
             os.system(f'cd {ROOT_DIR} && cmake -B {BUILD_DIR} {hal_flag}')
             
-        elif action == 'upload':
+        elif action == 'test':
+            os.system(f'make -C {BUILD_DIR} test')
+
+        elif action == 'con':
+            cmd = 'mavproxy.py --master=/dev/pico'
+            subprocess.call(cmd, shell=True)
+
+        elif action == 'consitl':
+            cmd = 'mavproxy.py --master=tcp:localhost:5050'
+            subprocess.call(cmd, shell=True)
+
+        elif action == 'upload' or action == 'upload_swd':
             board = read_board_from_config_file()
 
             if board.hal in ['RP2040', 'RP2350']:
                 print(f'Uploading firmware to {board.name}')
-                cmd = f'picotool load -f {BUILD_DIR / TARGET}.uf2'
+
+                if action == 'upload':
+                    cmd = f'picotool load -f {BUILD_DIR / TARGET}.uf2'
+                else:
+                    cmd = f'openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 5000" -c "program {BUILD_DIR / TARGET}.elf verify reset exit"'
+
                 os.system(cmd)
             else:
                 print(f'Upload to HAL {board.hal} is not supported yet!')
+
+        else:
+            print(f'Unknown action "{action}"')
 
     finally:
         print('*' * w)
