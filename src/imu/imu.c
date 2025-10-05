@@ -143,6 +143,25 @@ int imu_init()
     return 0;
 }
 
+static inline void imu_apply_ahrs_orientation(imu_reading_t* rotated, const imu_reading_t* in, const ahrs_orientation_t ori)
+{
+    switch (ori)
+    {
+        default:
+        case AHRS_ORIENTATION_NONE:
+            *rotated = *in;
+            break;
+        case AHRS_ORIENTATION_ROLL180:
+            rotated->acc_x  =  in->acc_x;
+            rotated->acc_y  = -in->acc_y;
+            rotated->acc_z  = -in->acc_z;
+
+            rotated->gyro_x =  in->gyro_x;
+            rotated->gyro_y = -in->gyro_y;
+            rotated->gyro_z = -in->gyro_z;
+            break;
+    }
+}
 
 void imu_update()
 {
