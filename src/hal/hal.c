@@ -54,16 +54,16 @@ extern float brd_serial2_protocol;
 // SERIAL0
 uint8_t   serial0_rx_buf[SERIAL_RX_BUFF_SIZE];
 uint8_t   serial0_tx_buf[SERIAL_TX_BUFF_SIZE];
-serial_t  serial0;
+serial_t  hal_serial0;
 
 // SERIAL1
 uint8_t   serial1_rx_buf[SERIAL_RX_BUFF_SIZE];
 uint8_t   serial1_tx_buf[SERIAL_TX_BUFF_SIZE];
-serial_t  serial1;
+serial_t  hal_serial1;
 
 uint8_t   serial2_rx_buf[SERIAL_RX_BUFF_SIZE];
 uint8_t   serial2_tx_buf[SERIAL_TX_BUFF_SIZE];
-serial_t  serial2;
+serial_t  hal_serial2;
 
 // I2C1
 uint8_t i2c1_rx_buf[I2C_RX_BUFF_SIZE];
@@ -78,16 +78,16 @@ i2c_t   hal_i2c2;
 // SPI1
 uint8_t spi1_rx_buf[SPI_RX_BUFF_SIZE];
 uint8_t spi1_tx_buf[SPI_TX_BUFF_SIZE];
-spi_t   spi1;
+spi_t   hal_spi1;
 
 // SPI2
 uint8_t spi2_rx_buf[SPI_RX_BUFF_SIZE];
 uint8_t spi2_tx_buf[SPI_TX_BUFF_SIZE];
-spi_t   spi2;
+spi_t   hal_spi2;
 
 
-serial_t* serials[] = {&serial0, &serial1, &serial2};
-spi_t* spis[] = {&spi1, &spi2};
+serial_t* serials[] = {&hal_serial0, &hal_serial1, &hal_serial2};
+spi_t* spis[] = {&hal_spi1, &hal_spi2};
 i2c_t* i2cs[] = {&hal_i2c1, &hal_i2c2};
 
 const int nbr_of_serials = sizeof(serials) / sizeof(serial_t*);

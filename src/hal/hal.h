@@ -13,20 +13,11 @@
 
 typedef enum
 {
-    BUS_TYPE_I2C  = 1,
-    BUS_TYPE_SPI  = 2,
-    BUS_TYPE_SITL = 3
+    BUS_TYPE_I2C    = 1,
+    BUS_TYPE_SPI    = 2,
+    BUS_TYPE_SERIAL = 3,
+    BUS_TYPE_SITL   = 4
 } bus_type_t;
-
-typedef struct
-{
-    bus_type_t bus;
-    union
-    {
-        bus_config_i2c_t i2c;
-        bus_config_spi_t spi;
-    };
-} bus_config_t;
 
 
 typedef enum
@@ -98,11 +89,12 @@ bool usb_connected();
 extern i2c_t hal_i2c1;
 extern i2c_t hal_i2c2;
 
-extern spi_t spi1;
-extern spi_t spi2;
+extern spi_t hal_spi1;
+extern spi_t hal_spi2;
 
-extern serial_t serial0;
-extern serial_t serial1;
+extern serial_t hal_serial0;
+extern serial_t hal_serial1;
+extern serial_t hal_serial2;
 
 
 #endif
