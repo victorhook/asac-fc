@@ -1,9 +1,14 @@
 #include "imu_mpu6050.h"
 #include "hal.h"
+#include "imu.h"
 
 
-int imu_mpu6050_do_init()
+static i2c_t* i2c;
+
+
+int imu_mpu6050_do_init(imu_backend_bus_t* bus)
 {
+    i2c = bus->i2c;
     return 0;
 }
 

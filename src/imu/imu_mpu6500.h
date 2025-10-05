@@ -5,7 +5,7 @@
 #include "imu.h"
 
 
-int imu_mpu6500_do_init(const bus_config_t config);
+int imu_mpu6500_do_init(imu_backend_bus_t* bus);
 
 bool imu_mpu6500_do_read(imu_reading_t* imu_reading);
 

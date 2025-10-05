@@ -30,8 +30,10 @@ typedef struct
 {
     imu_do_init init;
     imu_do_read read;
+    bus_type_t  bus_type;
+    uint8_t     bus_nbr;
+    imu_backend_bus_t bus;
 } backend_t;
-
 
 // Params
 extern float imu_calib_gyro_on_boot;
@@ -47,9 +49,45 @@ extern float imu_accelcal_x;
 static imu_calibration_t imu_calib = { 0 };
 
 static backend_t backend;
+static bool initialized = false;
 
 int imu_init()
 {
+    if (initialized) return -1;
+
+    memset(&imu_raw, 0, sizeof(imu_reading_t));
+    memset(&imu_filtered, 0, sizeof(imu_reading_t));
+
+    switch ((int) brd_imu_bus)
+    {   // 1=i2c1, 2=i2c2, 3=spi1, 4=spi2
+        case 1:
+            backend.bus.i2c = &hal_i2c1;
+            backend.bus_nbr = 1;
+            break;
+        case 2:
+            backend.bus.i2c = &hal_i2c2;
+            backend.bus_nbr = 2;
+            break;
+        case 3:
+            backend.bus.spi = &hal_spi1;
+            backend.bus_nbr = 1;
+            break;
+        case 4:
+            backend.bus.spi = &hal_spi2;
+            backend.bus_nbr = 2;
+            break;
+        default:
+            gcs_printf(MAV_SEVERITY_WARNING, "Invalid IMU bus chosen (%d)", (int) brd_imu_bus);
+            return -1;    
+    }
+
+    bool is_initialized  = (backend.bus_type == BUS_TYPE_I2C) ? backend.bus.i2c->initialized : backend.bus.spi->initialized;
+    if (!is_initialized)
+    {
+        gcs_printf(MAV_SEVERITY_WARNING, "IMU bus type %d (nbr: %d) not initialized", backend.bus_type, backend.bus_nbr);
+        return -1;
+    }
+
     switch ((imu_type_t) brd_imu_type)
     {
         case IMU_TYPE_BMI270:
@@ -71,7 +109,7 @@ int imu_init()
             break;
     }
 
-    int result = backend.init();
+    int result = backend.init(&backend.bus);
     if (result != 0)
     {
         gcs_printf(MAV_SEVERITY_ERROR, "IMU init failed: %d", result);

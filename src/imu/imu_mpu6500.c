@@ -82,7 +82,7 @@ static mpu6500_gyro_range_t current_gyro_range   = MPU6500_GYRO_RANGE_250DPS;
 static float acc_scale;
 static float gyro_scale;
 static uint8_t ss = 0;
-spi_t* spi;
+static spi_t* spi;
 
 
 static inline void cs_low()
@@ -132,17 +132,10 @@ static void mpu6500_set_gyro_range(mpu6500_gyro_range_t range)
     gyro_scale = gyro_sensitivity[range >> 3];
 }
 
-
-
-int imu_mpu6500_do_init(const bus_config_t config)
+int imu_mpu6500_do_init(imu_backend_bus_t* bus)
 {
-    if (config.bus != BUS_TYPE_SPI)
-    {
-        return -1;
-    }
-
+    spi = bus->spi;
     ss = (uint8_t) brd_imu_ss;
-    spi = (spi_t*) &config.spi;
 
         
     // Sanity check WHO_AM_I, expect 0x70.

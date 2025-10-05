@@ -30,6 +30,11 @@ typedef struct {
     float acc_z;
 } imu_calibration_t;
 
+typedef union
+{
+    i2c_t* i2c;
+    spi_t* spi;
+} imu_backend_bus_t;
 
 int imu_init();
 

@@ -1,6 +1,6 @@
 #include "imu_sitl.h"
 
-int imu_sitl_do_init()
+int imu_sitl_do_init(imu_backend_bus_t* bus)
 {
     return 0;
 }
