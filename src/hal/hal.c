@@ -95,7 +95,7 @@ const int nbr_of_spi = sizeof(spis) / sizeof(spi_t*);
 const int nbr_of_i2c = sizeof(i2cs) / sizeof(i2c_t*);
 
 
-static int bus_serial_init(serial_t* serial, const uint8_t number, const int rx, const int tx, const uint32_t baudrate, uint8_t* rx_buf, uint8_t* tx_buf, const uint16_t rx_buf_size, const uint16_t tx_buf_size)
+static int bus_serial_init(serial_t* serial, const uint8_t number, const int rx, const int tx, const uint32_t baudrate, serial_protocol_t protocol, uint8_t* rx_buf, uint8_t* tx_buf, const uint16_t rx_buf_size, const uint16_t tx_buf_size)
 {
     // Serial 0 is reserved for USB, so we won't check pins/baud rate for that
     if (number != 0 && ((rx < 0) || (tx < 0) || (baudrate <= 0))) return -1;
@@ -107,6 +107,7 @@ static int bus_serial_init(serial_t* serial, const uint8_t number, const int rx,
         .baud = baudrate
     };
     serial->nbr = number;
+    serial->protocol = protocol;
     ringbuf_init(&serial->rx_buf, rx_buf, rx_buf_size);
     ringbuf_init(&serial->tx_buf, tx_buf, tx_buf_size);
     return hal_serial_init(config, number);
@@ -140,9 +141,9 @@ static int bus_spi_init(const uint8_t bus, const int mosi, const int miso, const
 int hal_init()
 {
     int res = 0;
-    res |= bus_serial_init(&serial0, 0, 921600, 0, 0, serial0_rx_buf, serial0_tx_buf, SERIAL_RX_BUFF_SIZE, SERIAL_TX_BUFF_SIZE);
-    res |= bus_serial_init(&serial1, 1, brd_serial1_rx, brd_serial1_tx, brd_serial1_baud, serial1_rx_buf, serial1_tx_buf, SERIAL_RX_BUFF_SIZE, SERIAL_TX_BUFF_SIZE);
-    res |= bus_serial_init(&serial2, 2, brd_serial2_rx, brd_serial2_tx, brd_serial2_baud, serial2_rx_buf, serial2_tx_buf, SERIAL_RX_BUFF_SIZE, SERIAL_TX_BUFF_SIZE);
+    res |= bus_serial_init(&hal_serial0, 0, 921600, 0, 0, 0, serial0_rx_buf, serial0_tx_buf, SERIAL_RX_BUFF_SIZE, SERIAL_TX_BUFF_SIZE);
+    res |= bus_serial_init(&hal_serial1, 1, brd_serial1_rx, brd_serial1_tx, brd_serial1_baud, brd_serial1_protocol, serial1_rx_buf, serial1_tx_buf, SERIAL_RX_BUFF_SIZE, SERIAL_TX_BUFF_SIZE);
+    res |= bus_serial_init(&hal_serial2, 2, brd_serial2_rx, brd_serial2_tx, brd_serial2_baud, brd_serial2_protocol, serial2_rx_buf, serial2_tx_buf, SERIAL_RX_BUFF_SIZE, SERIAL_TX_BUFF_SIZE);
 
     res |= bus_i2c_init(&hal_i2c1, 1, brd_i2c1_sda, brd_i2c1_scl, brd_i2c1_freq, i2c1_rx_buf, i2c1_tx_buf, I2C_RX_BUFF_SIZE, I2C_TX_BUFF_SIZE);
     res |= bus_i2c_init(&hal_i2c2, 2, brd_i2c2_sda, brd_i2c2_scl, brd_i2c2_freq, i2c2_rx_buf, i2c2_tx_buf, I2C_RX_BUFF_SIZE, I2C_TX_BUFF_SIZE);

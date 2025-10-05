@@ -15,20 +15,21 @@ typedef struct
     uint32_t baud;
 } bus_config_serial_t;
 
-typedef struct
-{
-    uint8_t             nbr;
-    ringbuf_t           rx_buf;
-    ringbuf_t           tx_buf;
-    bus_config_serial_t config;
-} serial_t;
-
 typedef enum
 {
     SERIAL_PROTOCOL_DISABLED = 0,
     SERIAL_PROTOCOL_CRSF     = 1,
     SERIAL_PROTOCOL_MAVLINK  = 2,
 } serial_protocol_t;
+
+typedef struct
+{
+    uint8_t             nbr;
+    ringbuf_t           rx_buf;
+    ringbuf_t           tx_buf;
+    bus_config_serial_t config;
+    serial_protocol_t   protocol;
+} serial_t;
 
 
 // -- Abstract -- //
