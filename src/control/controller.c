@@ -90,7 +90,7 @@ void controller_pid_loop()
 
     // Check if we're connected (gotten radio packet within ~X ms)
     bool rc_connected = is_rc_connected(&rc_input_raw);
-    if (rc_connected != state.is_rc_connected)
+    if (rc_connected != state.rc_connected)
     {
         if (rc_connected)
         {
@@ -104,7 +104,7 @@ void controller_pid_loop()
 
     // Check if we're connected to USB
     bool is_usb_connected = usb_connected();
-    if (is_usb_connected != state.is_usb_connected)
+    if (is_usb_connected != state.usb_connected)
     {
         if (is_usb_connected) {
             on_usb_connect();
@@ -116,7 +116,7 @@ void controller_pid_loop()
     // Map receiver data to desired rotation rates.
     rc_convert_to_desired(&rc_desired, &rc_input_scaled);
 
-    if (rc_desired.armed != state.is_armed)
+    if (rc_desired.armed != state.armed)
     {
         if (rc_desired.armed)
         {
@@ -136,7 +136,7 @@ void controller_pid_loop()
         }
     }
 
-    if (state.is_armed)
+    if (state.armed)
     {
         if (state.run_motor_test)
         {
@@ -174,36 +174,36 @@ void controller_pid_loop()
 static void on_rc_disconnect()
 {
     led3_off();
-    state.is_rc_connected = false;
+    state.rc_connected = false;
 }
 
 static void on_rc_connect()
 {
     led3_on();
-    state.is_rc_connected = true;
+    state.rc_connected = true;
 }
 
 static void on_usb_connect()
 {
-    state.is_usb_connected = true;
+    state.usb_connected = true;
 }
 
 static void on_usb_disconnect()
 {
-    state.is_usb_connected = false;
+    state.usb_connected = false;
 }
 
 static void on_arm()
 {
     led1_on();
-    state.is_armed = true;
+    state.armed = true;
     atcr_controller_reset();
 }
 
 static void on_disarm()
 {
     led1_off();
-    state.is_armed = false;
+    state.armed = false;
     atcr_controller_reset();
 }
 
