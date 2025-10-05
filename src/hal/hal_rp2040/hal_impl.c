@@ -40,6 +40,7 @@ static void core1_entry();
 
 int hal_do_init()
 {
+    timer_hw->dbgpause = 0;
     return 0;
 
     // Initialize misc system stuff that isn't covered by any specific driver
