@@ -27,15 +27,15 @@ typedef struct
 
 int hal_i2c_init(i2c_t* i2c);
 
-uint8_t hal_i2c_read_reg(i2c_t* i2c, const uint8_t addr);
+uint8_t hal_i2c_read_reg(i2c_t* i2c, const uint8_t addr, const uint8_t reg);
 
-int hal_i2c_read(i2c_t* i2c, const uint8_t addr, uint8_t *data, const uint32_t len);
+int hal_i2c_read(i2c_t* i2c, const uint8_t addr, const uint8_t reg, uint8_t *data, const uint32_t len);
 
 uint8_t hal_i2c_read_byte(i2c_t* i2c);
 
 int hal_i2c_write(i2c_t* i2c, const uint8_t addr, const uint8_t *data, const uint32_t len);
 
-int hal_i2c_write_reg(i2c_t* i2c, const uint8_t addr, const uint8_t data);
+int hal_i2c_write_reg(i2c_t* i2c, const uint8_t addr, const uint8_t reg, const uint8_t data);
 
 void hal_i2c_probe_bus(const uint8_t bus, uint8_t devices[20], uint8_t* devices_found);
 
