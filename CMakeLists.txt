@@ -52,10 +52,11 @@ add_library(asac-core
     # Battery
     src/battery/battery.c
     src/battery/battery_adc.c
-    # RX
+    # RC
     src/rc/rc.c
     src/rc/ibus.c
     src/rc/crsf.c
+    src/rc/rc_mavlink.c
     # Params
     src/param/param.c
     # HAL
@@ -76,7 +77,7 @@ add_library(asac-core
 
 # Add compiler flags to the target
 # -Wno-address-of-packed-member: Known from MAVLINK. Hopefully doesn't crash anything.
-target_compile_options(asac-core PRIVATE -Wno-address-of-packed-member)
+target_compile_options(asac-core PUBLIC -Wno-address-of-packed-member)
 
 # Add the standard include files to the build
 target_include_directories(asac-core PUBLIC
