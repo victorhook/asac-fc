@@ -1,36 +1,35 @@
 #include "mavlink_driver.h"
 #include "hal.h"
+#include "imu.h"
+#include "mavlink_types.h"
+#include "scheduler.h"
 #include "serial.h"
 #include "state.h"
-#include "control/controller.h"
+#include "controller.h"
 #include "util.h"
-#include "param/param.h"
-#include "util/flightmode.h"
+#include "param.h"
+#include "rc.h"
 
 #include <stdarg.h> // For printf
 #include <stdio.h>
 
 #include "mavlink.h"
 
-mavlink_channel_handler_t gcs_handler;
-motor_output_t motor_command_test;
 
-// Periodic mavlink messages
-#define HEARTBEAT_MSG_PERIOD_MS  1000
-#define BATTERY_STATUS_PERIOD_MS 500
-#define ATTITUDE_MSG_PERIOD_MS   100
-#define RC_CHANNEL_MSG_PERIOD_MS 100
-static uint32_t last_sent_heartbeat;
-static uint32_t last_sent_battery_status;
-static uint32_t last_sent_attitude;
-static uint32_t last_sent_rc_channels;
+typedef void (*mavlink_message_transmission_fn)(mavlink_channel_handler_t* channel);
+
+typedef struct
+{
+    mavlink_message_transmission_fn send;
+    uint16_t period_ms;
+    uint32_t last_sent;
+} message_interval_t;
+
 
 #define MAVLINK_INTENRAL_BUF_SIZE 10
 
-bool armed_force;
-bool armed;
-flightmode_t flightmode;
-
+mavlink_channel_handler_t gcs_handler;
+motor_output_t motor_command_test;
 static bool send_param_request = false;
 static uint32_t param_index = 0;
 
@@ -39,22 +38,6 @@ static inline void send_mavlink_msg(const mavlink_message_t* mav_msg);
 
 static void handle_mavlink_message(mavlink_message_t* msg, mavlink_status_t* status);
 
-
-int mavlink_driver_init()
-{
-    last_sent_heartbeat      = 0;
-    last_sent_battery_status = 0;
-    last_sent_attitude       = 0;
-    last_sent_rc_channels    = 0;
-
-    // TODO: Separate this?
-    gcs_handler.channel = 0;
-    gcs_handler.serial = &hal_serial0;
-    return 0;
-}
-
-
-#define SEND_IF_TIME_FOR(function)
 
 // -- Private -- //
 
@@ -104,7 +87,7 @@ void mav_send(mavlink_channel_handler_t* channel, const mavlink_message_t* msg)
     }
 }
 
-void mav_send_heartbeat(mavlink_channel_handler_t* channel)
+void send_heartbeat(mavlink_channel_handler_t* channel)
 {
     mavlink_message_t msg;
     mavlink_msg_heartbeat_pack(
@@ -113,8 +96,8 @@ void mav_send_heartbeat(mavlink_channel_handler_t* channel)
         &msg,
         MAV_TYPE_QUADROTOR,
         MAV_AUTOPILOT_GENERIC,
-        MAV_MODE_FLAG_CUSTOM_MODE_ENABLED | ((armed) ? MAV_MODE_FLAG_SAFETY_ARMED : 0),
-    flightmode,
+        MAV_MODE_FLAG_CUSTOM_MODE_ENABLED | ((state.armed) ? MAV_MODE_FLAG_SAFETY_ARMED : 0),
+    state.flightmode,
 MAV_STATE_ACTIVE
 );
     mav_send(channel, &msg);
@@ -199,7 +182,7 @@ static void handle_command_long(mavlink_message_t* msg)
             }
             break;
         case MAV_CMD_COMPONENT_ARM_DISARM:
-            armed_force = cmd.param1 == 1;
+            state.force_armed = cmd.param1 == 1;
             break;
 
         case MAV_CMD_GET_HOME_POSITION:
@@ -211,7 +194,7 @@ static void handle_command_long(mavlink_message_t* msg)
     }
 }
 
-static void mav_send_battery_status() {
+static void send_battery_status() {
     /*
     int16_t voltages[10];
     memset(voltages, 0xff, 20);
@@ -234,13 +217,14 @@ static void mav_send_battery_status() {
     send_mavlink_msg(&msg_tx);*/
 }
 
-static void mav_send_raw_imu() {
-    /*
+static void send_raw_imu(mavlink_channel_handler_t* channel) {
+    mavlink_message_t msg;
+
     mavlink_msg_scaled_imu_pack_chan(
         MAVLINK_SYSTEM_ID,
-        MAV_COMP_ID_IMU,
+        MAVLINK_COMPONENT_ID,
         MAVLINK_CHANNEL_SERIAL,
-        &msg_tx,
+        &msg,
         imu_raw.timestamp_us,
         (int16_t) (imu_raw.acc_x * 1000),
         (int16_t) (imu_raw.acc_y * 1000),
@@ -248,14 +232,14 @@ static void mav_send_raw_imu() {
         (int16_t) (imu_raw.gyro_x * 1000),
         (int16_t) (imu_raw.gyro_y * 1000),
         (int16_t) (imu_raw.gyro_z * 1000),
-        0, 0, 0
+        0, 0, 0,
+        imu_raw.temp
     );
 
-    send_mavlink_msg(&msg_tx);
-    */
+    mav_send(channel, &msg);
 }
 
-static void mav_send_attitude() {
+static void send_attitude() {
     /*
     mavlink_msg_attitude_pack_chan(
         MAVLINK_SYSTEM_ID,
@@ -274,7 +258,7 @@ static void mav_send_attitude() {
     send_mavlink_msg(&msg_tx);*/
 }
 
-static void mav_send_rc_channels() {
+static void send_rc_channels() {
     /*
     mavlink_msg_rc_channels_pack_chan(
         MAVLINK_SYSTEM_ID,
@@ -306,17 +290,37 @@ static void mav_send_rc_channels() {
     send_mavlink_msg(&msg_tx);*/
 }
 
-static void mavlink_driver_statustext(const MAV_SEVERITY severity, const char* text) {
-    char buf[50];
-    strncpy(buf, text, 50);
-    //mavlink_msg_statustext_pack_chan(
-    //    MAVLINK_SYSTEM_ID,
-    //    0,
-    //    MAVLINK_CHANNEL_SERIAL,
-    //    &msg_tx,
-    //    severity,
-    //    buf
-    //);
+static void send_sys_status(mavlink_channel_handler_t* channel)
+{
+    mavlink_message_t msg;
+
+    uint32_t present_mask = 0;
+    uint32_t enabled_mask = 0;
+    uint32_t healthy_mask = 0;
+    if (imu_sensor.present) present_mask |= (MAV_SYS_STATUS_SENSOR_3D_GYRO | MAV_SYS_STATUS_SENSOR_3D_ACCEL);
+    if (rc_sensor.present)  present_mask |= MAV_SYS_STATUS_SENSOR_RC_RECEIVER;
+
+    if (imu_sensor.enabled) enabled_mask |= (MAV_SYS_STATUS_SENSOR_3D_GYRO | MAV_SYS_STATUS_SENSOR_3D_ACCEL);
+    if (rc_sensor.enabled)  enabled_mask |= MAV_SYS_STATUS_SENSOR_RC_RECEIVER;
+
+    if (imu_sensor.healthy) healthy_mask |= (MAV_SYS_STATUS_SENSOR_3D_GYRO | MAV_SYS_STATUS_SENSOR_3D_ACCEL);
+    if (rc_sensor.healthy)  healthy_mask |= MAV_SYS_STATUS_SENSOR_RC_RECEIVER;
+
+
+    mavlink_msg_sys_status_pack_chan(MAVLINK_SYSTEM_ID, MAVLINK_COMPONENT_ID, channel->channel, &msg,
+        present_mask,
+        enabled_mask,
+        healthy_mask,
+        scheduler_cpu_load_avg() * 1000,            // 0-1000
+        state.bat_volt_mv,               // mV
+        state.bat_curr_ma * 10,          // cA -1: not sent
+        state.bat_remain,              // %  -1: not sent
+        0,                                // Communication drop rate, (UART, I2C, SPI, CAN), dropped packets on all links
+        0,                                   // 	Communication errors (UART, I2C, SPI, CAN), dropped packets on all links 
+        0, 0, 0, 0,  // Autopilot-specific errors
+        0, 0, 0 // Bitmask extended
+    );
+    mav_send(channel, &msg);
 }
 
 static void send_param_value(const char* param_id, const float param_value, const uint16_t param_index)
@@ -455,7 +459,6 @@ void gcs_vprintf(const uint8_t severity, const char* fmt, va_list args) {
     char string_buf[256];
     int len = vsnprintf(string_buf, sizeof(string_buf), fmt, args);
     if (len > 0) {
-        // assuming serial0 is global or passed in
         mavlink_message_t msg;
         mavlink_msg_statustext_pack(
             MAVLINK_SYSTEM_ID,
@@ -483,14 +486,42 @@ void gcs_printf(const uint8_t severity, const char* fmt, ...)
 }
 
 
+
+message_interval_t message_intervals[] =
+{
+    {.send = send_heartbeat,      .period_ms = 1000},
+    {.send = send_sys_status,     .period_ms = 500},
+    {.send = send_battery_status, .period_ms = 500},
+    {.send = send_attitude,       .period_ms = 100},
+    {.send = send_raw_imu,        .period_ms = 100},
+    {.send = send_rc_channels,    .period_ms = 100},
+};
+
+const int nbr_of_msg_intervals = sizeof(message_intervals) / sizeof(message_interval_t);
+
+
+int mavlink_driver_init()
+{
+    for (int i = 0; i  < nbr_of_msg_intervals; i++)
+    {
+        message_intervals[i].last_sent = 0;
+    }
+
+    // TODO: Separate this?
+    gcs_handler.channel = 0;
+    gcs_handler.serial = &hal_serial0;
+    return 0;
+}
+
+
 void mavlink_driver_update()
 {
-    //if (!usb_connected())
-    //{
-    //    // USB is not connected, so we don't care about wasting computation resources
-    //    // on any type of checks here.
-    //    return;
-    //}
+    if (!usb_connected())
+    {
+        // USB is not connected, so we don't care about wasting computation resources
+        // on any type of checks here.
+        return;
+    }
 
     // Check RX data from buffer
     int bytes_to_read = min(hal_serial_available(gcs_handler.serial), MAVLINK_INTENRAL_BUF_SIZE);
@@ -519,26 +550,14 @@ void mavlink_driver_update()
 
     uint32_t t0 = hal_millis();
 
-    // Check if it's time for any periodic messages to be sent
-    if ((t0 - last_sent_heartbeat) >= HEARTBEAT_MSG_PERIOD_MS)
+    for (int i = 0; i  < nbr_of_msg_intervals; i++)
     {
-        mav_send_heartbeat(&gcs_handler);
-        last_sent_heartbeat = t0;
-    }
-    if ((t0 - last_sent_battery_status) >= BATTERY_STATUS_PERIOD_MS)
-    {
-        mav_send_battery_status();
-        last_sent_battery_status = t0;
-    }
-    if ((t0 - last_sent_attitude) >= ATTITUDE_MSG_PERIOD_MS)
-    {
-        mav_send_attitude();
-        last_sent_attitude = t0;
-    }
-    if ((t0 - last_sent_rc_channels) >= RC_CHANNEL_MSG_PERIOD_MS)
-    {
-        mav_send_rc_channels();
-        last_sent_rc_channels = t0;
+        message_interval_t* msg_interval = &message_intervals[i];
+        if ((t0 - msg_interval->last_sent) > msg_interval->period_ms)
+        {
+            msg_interval->send(&gcs_handler);
+            msg_interval->last_sent = true;
+        }
     }
 
     t0 = hal_micros();
