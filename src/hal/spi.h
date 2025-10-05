@@ -19,6 +19,7 @@ typedef struct
 
 typedef struct
 {
+    bool             initialized;
     uint8_t          nbr;
     ringbuf_t        rx_buf;
     ringbuf_t        tx_buf;
