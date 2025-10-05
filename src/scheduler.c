@@ -52,6 +52,11 @@ float scheduler_cpu_load_avg()
     return cpu_load_filter.value;
 }
 
+unsigned long scheduler_get_frame()
+{
+    return frame;
+}
+
 void scheduler_init(task_t* tasks, const uint32_t nbr_of_tasks)
 {
     if (initialized) return;

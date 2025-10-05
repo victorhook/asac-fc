@@ -40,6 +40,8 @@ static inline uint32_t task_avg_execution(task_t* task)
     return (task->executions == 0) ? 0 : task->exec_time_sum / task->executions;
 }
 
+unsigned long scheduler_get_frame();
+
 float scheduler_cpu_load_min();
 
 float scheduler_cpu_load_max();
