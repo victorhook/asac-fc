@@ -1,4 +1,5 @@
 #include "imu/imu.h"
+#include "ahrs.h"
 #include "hal.h"
 #include "mavlink.h"
 #include "mavlink_driver/mavlink_driver.h"
@@ -19,7 +20,7 @@ static void remove_bias_from_imu_reading(imu_reading_t* imu_no_bias, const imu_r
 //#define CALIBRATE_ON_INIT
 
 #define CALIBRATION_SAMPLES                  1000
-#define CALIBRATION_DELAY_BETWEEN_SAMPLES_MS 1
+#define CALIBRATION_DELAY_BETWEEN_SAMPLES_US 200
 
 static void print_calib();
 
@@ -47,13 +48,18 @@ extern float imu_offset_z;
 extern float imu_accelcal_x;
 extern float imu_accelcal_x;
 extern float imu_accelcal_x;
+extern float ahrs_orientation;
 
 static imu_calibration_t imu_calib = { 0 };
 static backend_t backend;
 static bool initialized = false;
 
+sensor_t imu_sensor;
 imu_reading_t imu_raw;
 imu_reading_t imu_filtered;
+
+
+void imu_filter(imu_reading_t* filtered, const imu_reading_t* raw);
 
 
 int imu_init()
@@ -127,20 +133,37 @@ int imu_init()
     }
 
     imu_sensor.present = true;
+    initialized = true;
+
+    if (imu_calib_gyro_on_boot == 1)
     {
         gcs_printf(MAV_SEVERITY_DEBUG, "Calibrating gyro");
         imu_calibrate_gyro();
+        print_calib();
     }
     else
     {
 
-    }*/
+    }
 
     // TODO: Load calibration from eeprom
 
-    initialized = true;
-
     return 0;
+}
+
+static void remove_calibration_bias(imu_reading_t* reading)
+{
+    reading->acc_x  -= imu_calib.acc_x;
+    reading->acc_y  -= imu_calib.acc_y;
+    reading->acc_z  -= imu_calib.acc_z;
+    reading->gyro_x -= imu_calib.gyro_x;
+    reading->gyro_y -= imu_calib.gyro_y;
+    reading->gyro_z -= imu_calib.gyro_z;
+}
+
+static inline bool imu_read(imu_reading_t* reading)
+{
+    return backend.read(reading);
 }
 
 static inline void imu_apply_ahrs_orientation(imu_reading_t* rotated, const imu_reading_t* in, const ahrs_orientation_t ori)
@@ -167,8 +190,10 @@ void imu_update()
 {
     if (!initialized) return;
 
+    imu_reading_t tmp;
+
     // 1. Read IMU data
-    if (backend.read(&imu_raw))
+    if (!imu_read(&tmp))
     {
         imu_sensor.healthy = false;
         return;
@@ -177,31 +202,22 @@ void imu_update()
     imu_sensor.healthy = true;
 
     // 2. Apply calibration offset bias
-    // apply_calibration_bias();
+    remove_calibration_bias(&tmp);
 
     // 3. Rotate to correct orientation
-    // imu_apply_orientation_rotation();
-    //imu_raw.gyro_x *= IMU_ORIENTATION_X;
-    //imu_raw.gyro_y *= IMU_ORIENTATION_Y;
-    //imu_raw.gyro_z *= IMU_ORIENTATION_Z;
-}
+    imu_apply_ahrs_orientation(&imu_raw, &tmp, ahrs_orientation);
 
-void imu_read(imu_reading_t* reading) {
-    
-}
+    // 4. Filter if needed
+    imu_filter(&imu_filtered, &imu_raw);
 
-static void remove_bias_from_imu_reading(imu_reading_t* imu_no_bias, const imu_reading_t* imu_raw, const imu_reading_t* imu_bias) {
-    imu_no_bias->acc_x  = imu_raw->acc_x  - imu_bias->acc_x;
-    imu_no_bias->acc_y  = imu_raw->acc_y  - imu_bias->acc_y;
-    imu_no_bias->acc_z  = imu_raw->acc_z  - imu_bias->acc_z;
-    imu_no_bias->gyro_x = imu_raw->gyro_x - imu_bias->gyro_x;
-    imu_no_bias->gyro_y = imu_raw->gyro_y - imu_bias->gyro_y;
-    imu_no_bias->gyro_z = imu_raw->gyro_z - imu_bias->gyro_z;
+    imu_raw.timestamp_us = hal_micros();
+    imu_raw.timestamp_us = hal_micros();
 }
 
 
 void imu_filter(imu_reading_t* filtered, const imu_reading_t* raw)
 {
+    memcpy(filtered, raw, sizeof(imu_reading_t));
     // TODO
     /*
 
@@ -230,11 +246,13 @@ void imu_filter(imu_reading_t* filtered, const imu_reading_t* raw)
 
 static void print_calib()
 {
-    gcs_printf(MAV_SEVERITY_DEBUG, "IMU Calibration done, samples: %d, bias: Gx: %f, Gy: %f, Gz: %f, Ax: %f, Ay: %f, Az: %f",
-        CALIBRATION_SAMPLES,
+    gcs_printf(MAV_SEVERITY_DEBUG, "IMU Calibration done, samples: %d", CALIBRATION_SAMPLES);
+    gcs_printf(MAV_SEVERITY_DEBUG, "Gx: %.3f, Gy: %.3f, Gz: %.3f",
         imu_calib.gyro_x,
         imu_calib.gyro_y,
-        imu_calib.gyro_z,
+        imu_calib.gyro_z
+    );
+    gcs_printf(MAV_SEVERITY_DEBUG, "Ax: %.3f, Ay: %.3f, Az: %.3f",
         imu_calib.acc_x,
         imu_calib.acc_y,
         imu_calib.acc_z
@@ -262,7 +280,7 @@ int imu_calibrate(const bool gyro, const bool accel) {
             imu_calib.acc_y   += tmp.acc_y;
             imu_calib.acc_z   += tmp.acc_z;
         }
-        hal_sleep_ms(CALIBRATION_DELAY_BETWEEN_SAMPLES_MS);
+        hal_sleep_us(CALIBRATION_DELAY_BETWEEN_SAMPLES_US);
     }
 
     if (gyro)

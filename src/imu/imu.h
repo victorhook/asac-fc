@@ -51,9 +51,6 @@ void imu_set_calibration(const imu_calibration_t* calibration);
 
 void imu_filter(imu_reading_t* filtered, const imu_reading_t* raw);
 
-// Abstract
-void imu_read(imu_reading_t* reading);
-
 extern sensor_t imu_sensor;
 extern imu_reading_t imu_raw;
 extern imu_reading_t imu_filtered;
