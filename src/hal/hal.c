@@ -216,3 +216,17 @@ void hal_i2c_probe_bus(const uint8_t bus, uint8_t devices[20], uint8_t* devices_
 
     *devices_found = device;
 }
+
+bool get_serial_with_protocol(serial_t* serial, const serial_protocol_t protocol)
+{
+    for (int i = 0; i < nbr_of_serials; i++)
+    {
+        serial_t* _serial = serials[i];
+        if (_serial->protocol == protocol)
+        {
+            serial = _serial;
+            return true;
+        }
+    }
+    return false;
+}

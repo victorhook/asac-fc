@@ -85,6 +85,9 @@ void hal_post_pid_loop();
 bool usb_connected();
 
 
+bool get_serial_with_protocol(serial_t* serial, const serial_protocol_t protocol);
+
+
 // Bus defines
 extern i2c_t hal_i2c1;
 extern i2c_t hal_i2c2;
