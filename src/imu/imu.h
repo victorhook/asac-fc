@@ -2,6 +2,7 @@
 #define IMU_H
 
 #include "hal.h"
+#include "sensor.h"
 
 typedef enum
 {
@@ -53,6 +54,7 @@ void imu_filter(imu_reading_t* filtered, const imu_reading_t* raw);
 // Abstract
 void imu_read(imu_reading_t* reading);
 
+extern sensor_t imu_sensor;
 extern imu_reading_t imu_raw;
 extern imu_reading_t imu_filtered;
 

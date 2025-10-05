@@ -26,17 +26,22 @@ static backend_t backend;
 
 rc_input_t rc_input_raw;
 rc_input_t rc_input_scaled;
+sensor_t rc_sensor;
 
 extern float rc_protocol;
 extern float rc_timeout;
 extern float mot_pwm_min;
-
+static uint32_t last_packet = 0;
 
 
 int rc_init()
 {
     serial_t* serial;
     bool serial_found = false;
+
+    rc_sensor.present = false;
+    rc_sensor.enabled = true;
+    rc_sensor.healthy = false;
 
     switch ((rc_protocol_t) rc_protocol)
     {
@@ -46,13 +51,14 @@ int rc_init()
             backend.scale = ibus_scale_channel;
             break;
         case RC_PROTOCOL_ELRS:
+            serial_found = true;
             serial_found = get_serial_with_protocol(serial, SERIAL_PROTOCOL_CRSF);
             backend.init = crsf_init;
             backend.parse_byte = crsf_parse_byte;
             backend.scale = crsf_scale_channel;
             break;
         default:
-            serial_found = true;
+            rc_sensor.enabled = false;
             backend.init = dummy_init;
             backend.parse_byte = dummy_parse_byte;
             backend.scale = dummy_scale_channel;
@@ -66,13 +72,20 @@ int rc_init()
         return -1;
     }
 
-    return backend.init(serial);
+    int res = backend.init(serial);
+
+    if (res)
+    {
+        rc_sensor.present = true;
+    }
+    return res;
 }
 
 void rc_update()
 {
     // TODO
     //return rc_handler->parse_byte
+    rc_sensor.healthy = ((hal_millis() - last_packet) > rc_timeout);
 }
 
 uint16_t receiver_scale_channel(const uint16_t raw)

@@ -2,6 +2,7 @@
 #define RC_H
 
 #include "hal.h"
+#include "sensor.h"
 #include "stdint.h"
 #include <stdbool.h>
 
@@ -51,8 +52,8 @@ bool is_rc_connected();
 uint16_t rc_get_channel(const uint8_t channel);
 
 
+extern sensor_t rc_sensor;
 extern rc_input_t rc_input_raw;
-
 extern rc_input_t rc_input_scaled;
 
 

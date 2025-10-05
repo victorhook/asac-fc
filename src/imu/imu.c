@@ -60,6 +60,10 @@ int imu_init()
 {
     if (initialized) return -1;
 
+    imu_sensor.present = false;
+    imu_sensor.enabled = true;
+    imu_sensor.healthy = false;
+
     memset(&imu_raw, 0, sizeof(imu_reading_t));
     memset(&imu_filtered, 0, sizeof(imu_reading_t));
 
@@ -109,6 +113,7 @@ int imu_init()
             break;
         default:
             gcs_printf(MAV_SEVERITY_ERROR, "Invalid IMU type %d", (imu_type_t) brd_imu_type);
+            imu_sensor.enabled = false;
             backend.init = dummy_init;
             backend.read = dummy_read;
             break;
@@ -121,7 +126,7 @@ int imu_init()
         return result;
     }
 
-    /*if (imu_calib_gyro_on_boot)
+    imu_sensor.present = true;
     {
         gcs_printf(MAV_SEVERITY_DEBUG, "Calibrating gyro");
         imu_calibrate_gyro();
@@ -146,8 +151,11 @@ void imu_update()
     // 1. Read IMU data
     if (backend.read(&imu_raw))
     {
-        imu_raw.timestamp_us = hal_micros();
+        imu_sensor.healthy = false;
+        return;
     }
+
+    imu_sensor.healthy = true;
 
     // 2. Apply calibration offset bias
     // apply_calibration_bias();
