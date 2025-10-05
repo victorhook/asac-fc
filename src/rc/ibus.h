@@ -7,7 +7,7 @@
  * Initializes the IBUS state machine.
  * Returns 0 on success.
  */
-int ibus_init();
+int ibus_init(serial_t* serial);
 
 /*
  * Processes a single byte in the internal state machine.

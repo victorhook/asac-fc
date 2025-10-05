@@ -7,7 +7,7 @@
  * Initializes the CRSF state machine.
  * Returns 0 on success.
  */
-int crsf_init();
+int crsf_init(serial_t* serial);
 
 /*
  * Parses a single byte in the CRSF state machine.

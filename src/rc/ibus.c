@@ -54,7 +54,7 @@ void ibus_get_statistics(ibus_statistics_t* statistics)
     statistics->packet_rate = packet_rate;
 }
 
-int ibus_init()
+int ibus_init(serial_t* serial)
 {
     ibus_state             = HEADER_FIRST_BYTE;
     bytes_read             = 0;

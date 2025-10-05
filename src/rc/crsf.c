@@ -124,7 +124,7 @@ static uint8_t       payload_bytes_to_receive;
 static uint32_t      parse_errors;
 
 
-int crsf_init()
+int crsf_init(serial_t* serial)
 {
     parse_errors = 0;
     reset_rx_state_machine();

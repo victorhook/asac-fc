@@ -4,9 +4,10 @@
 #include "mavlink_driver/mavlink_driver.h"
 
 #include "hal.h"
+#include "serial.h"
 
 
-typedef int (*rc_do_init)();
+typedef int (*rc_do_init)(serial_t* serial);
 typedef bool (*rc_parse_byte)(const uint8_t, rc_input_t*);
 typedef uint16_t (*rc_do_scale_channel)(const uint16_t);
 
@@ -30,7 +31,13 @@ extern float rc_protocol;
 extern float rc_timeout;
 extern float mot_pwm_min;
 
-int rc_init() {
+
+
+int rc_init()
+{
+    serial_t* serial;
+    bool serial_found = false;
+
     switch ((rc_protocol_t) rc_protocol)
     {
         case RC_PROTOCOL_IBUS:
@@ -39,11 +46,13 @@ int rc_init() {
             backend.scale = ibus_scale_channel;
             break;
         case RC_PROTOCOL_ELRS:
+            serial_found = get_serial_with_protocol(serial, SERIAL_PROTOCOL_CRSF);
             backend.init = crsf_init;
             backend.parse_byte = crsf_parse_byte;
             backend.scale = crsf_scale_channel;
             break;
         default:
+            serial_found = true;
             backend.init = dummy_init;
             backend.parse_byte = dummy_parse_byte;
             backend.scale = dummy_scale_channel;
@@ -51,7 +60,13 @@ int rc_init() {
             return -1;
     }
 
-    return backend.init();
+    if (!serial_found)
+    {
+        gcs_printf(MAV_SEVERITY_WARNING, "Failed to find serial port for RC protocol %d", (int) rc_protocol);
+        return -1;
+    }
+
+    return backend.init(serial);
 }
 
 void rc_update()

@@ -1,6 +1,7 @@
 #ifndef RC_H
 #define RC_H
 
+#include "hal.h"
 #include "stdint.h"
 #include <stdbool.h>
 
