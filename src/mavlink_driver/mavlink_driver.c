@@ -49,8 +49,7 @@ int mavlink_driver_init()
 
     // TODO: Separate this?
     gcs_handler.channel = 0;
-    gcs_handler.serial = &serial0;
-
+    gcs_handler.serial = &hal_serial0;
     return 0;
 }
 
