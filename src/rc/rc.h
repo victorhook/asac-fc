@@ -19,7 +19,8 @@ typedef struct
 typedef enum
 {
     RC_PROTOCOL_ELRS = 1,
-    RC_PROTOCOL_IBUS = 2
+    RC_PROTOCOL_IBUS = 2,
+    RC_PROTOCOL_MAVLINK = 3
 } rc_protocol_t;
 
 typedef int (*rc_do_update)(rc_input_t* rc_input);

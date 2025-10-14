@@ -83,6 +83,12 @@ int rc_init()
             backend.parse_byte = crsf_parse_byte;
             backend.scale = crsf_scale_channel;
             break;
+        case RC_PROTOCOL_MAVLINK:
+            serial_found = true;
+            backend.init = rc_mavlink_init;
+            backend.parse_byte = rc_mavlink_parse_byte;
+            backend.scale = rc_mavlink_scale_channel;
+            break;
         default:
             rc_sensor.enabled = false;
             backend.init = dummy_init;
