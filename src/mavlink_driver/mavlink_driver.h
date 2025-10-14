@@ -24,6 +24,10 @@ int mavlink_driver_init();
  */
 void mavlink_driver_update();
 
+// -- Subscriptions -- //
+typedef void (*on_rc_channels_override_fn)(const mavlink_rc_channels_override_t*);
+bool mavlink_subscribe_to_rc_channels_override(on_rc_channels_override_fn fn);
+
 
 // Global variable. This is used to set motor throttle from mavlink
 extern motor_output_t motor_command_test;

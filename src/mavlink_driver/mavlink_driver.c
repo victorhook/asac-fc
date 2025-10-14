@@ -33,11 +33,20 @@ motor_output_t motor_command_test;
 static bool send_param_request = false;
 static uint32_t param_index = 0;
 
-// Helper functions
-static inline void send_mavlink_msg(const mavlink_message_t* mav_msg);
+// Subscribers
+on_rc_channels_override_fn on_rc_channels_override_handler = NULL;
 
+
+// Helper functions
 static void handle_mavlink_message(mavlink_message_t* msg, mavlink_status_t* status);
 
+
+bool mavlink_subscribe_to_rc_channels_override(on_rc_channels_override_fn fn)
+{
+    if (on_rc_channels_override_handler != NULL) return false;
+    on_rc_channels_override_handler = fn;
+    return true;
+}
 
 // -- Private -- //
 
@@ -69,7 +78,10 @@ static void handle_rc_channels_override(mavlink_message_t* msg)
         rc_channels.chan18_raw
     };
     input.timestamp = hal_millis();
-    //rc_channels_override(&input);
+    if (on_rc_channels_override_handler != NULL)
+    {
+        on_rc_channels_override_handler(&rc_channels);
+    }
 }
 
 // Helpers
