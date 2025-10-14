@@ -97,7 +97,7 @@ target_include_directories(asac-core PUBLIC
   src/param
   src/pid
   src/rc
-  src/sensors
+  src/sensor
   src/serial4way
   src/util
   vendor/BMI270-Sensor-API/
