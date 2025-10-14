@@ -118,6 +118,7 @@ if ("${HAL}" STREQUAL "RP2040")  # -- RP2040 -- #
         src/hal/hal_rp2040/hal_serial.c
         src/hal/hal_rp2040/hal_gpio.c
         src/hal/hal_rp2040/hal_flash.c
+        src/hal/hal_rp2040/hal_pwm.c
     )
 
     # Add PIO programs
@@ -163,6 +164,7 @@ elseif("${HAL}" STREQUAL "SITL")  # -- SITL -- #
         src/hal/hal_sitl/hal_spi.c
         src/hal/hal_sitl/hal_i2c.c
         src/hal/hal_sitl/hal_gpio.c
+        src/hal/hal_sitl/hal_pwm.c
     )
 
     target_link_libraries(asac-fc
