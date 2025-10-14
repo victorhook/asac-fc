@@ -10,11 +10,19 @@
 #define MOTOR_4     4
 
 typedef struct {
-    float m1;
-    float m2;
-    float m3;
-    float m4;
-}__attribute__((packed)) motor_output_t;
+    uint16_t m1;
+    uint16_t m2;
+    uint16_t m3;
+    uint16_t m4;
+} motor_output_t;
+
+typedef enum {
+    ESC_PROTOCOL_PWM = 1,         // Pulse duration: 1000us - 2000us, Freq: 50 Hz
+    ESC_PROTOCOL_ONESHOT_125 = 2, // Pulse duration: 125us - 250us,   Freq: Up to 4 kHz
+    ESC_PROTOCOL_ONESHOT_42 = 3,  // Pulse duration: 42us - 84us,     Freq: Up to 11.9 kHz
+    ESC_PROTOCOL_MULTISHOT = 4,   // Pulse duration: (5us - 25us)      Freq: ? kHz
+    ESC_PROTOCOL_BRUSHED = 5,     // For brushed motors -> Normal PWM, high frequencies
+} esc_protocol_t;
 
 
 /* Initializes all motors and sets output to 0. */

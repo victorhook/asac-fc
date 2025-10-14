@@ -1,27 +1,15 @@
 #include "motor.h"
+#include "mavlink.h"
+#include "mavlink_driver.h"
 #include "oneshot.h"
+#include "pwm.h"
 #include "util.h"
-
-typedef enum {
-    ESC_PROTOCOL_PWM,         // Pulse duration: 1000us - 2000us, Freq: 50 Hz
-    ESC_PROTOCOL_ONESHOT_125, // Pulse duration: 125us - 250us,   Freq: Up to 4 kHz
-    ESC_PROTOCOL_ONESHOT_42,  // Pulse duration: 42us - 84us,     Freq: Up to 11.9 kHz
-    ESC_PROTOCOL_MULTISHOT,   // Pulse duration: (5us - 25us)      Freq: ? kHz
-} esc_protocol_t;
+#include "hal.h"
 
 #define PWM_PULSE_WIDTH          ((float) 0.05)
 #define ONESHOT_125_PULSE_WIDTH  ((float) 0.125)
-
-typedef struct {
-    uint32_t     gpio;
-    uint16_t wrap;
-    uint32_t     slice;
-    uint32_t     channel;
-} pwm_t;
-
 // TODO: Clean up logic here and make this a setting!
 // TODO: Make this ifdef instead perhaps?
-static esc_protocol_t esc_protocol = ESC_PROTOCOL_ONESHOT_42;
 static float pulse_width = ONESHOT_125_PULSE_WIDTH;
 
 
@@ -29,33 +17,19 @@ extern float mot_pwm_max;
 extern float mot_pwm_min;
 extern float mot_spin_arm;
 extern float mot_spin_max;
+extern float mot_pwm_type;
 
+extern float brd_mot1;
+extern float brd_mot2;
+extern float brd_mot3;
+extern float brd_mot4;
 
 #define MOTOR_PWM_LEVEL_SCALER ((uint16_t) 10000)
 
-static pwm_t pwm_m1;
-static pwm_t pwm_m2;
-static pwm_t pwm_m3;
-static pwm_t pwm_m4;
-static pwm_t pwm_m_debug;
+static bool initialzed_ok = false;
+static int8_t motor_ids[4];
 
 motor_output_t motors;
-
-static pwm_t* pwm_motors[] = {
-    &pwm_m_debug,
-    &pwm_m1,
-    &pwm_m2,
-    &pwm_m3,
-    &pwm_m4
-};
-
-// -- Helper functions -- //
-
-static inline void pwm_set(const pwm_t* pwm, const float duty);
-
-static inline void pwm_set_level(const pwm_t* pwm, const uint16_t level);
-
-static void init_pwm(pwm_t* pwm, uint32_t gpio, float clk_divider, uint16_t wrap);
 
 
 // -- Public API -- //
@@ -65,50 +39,49 @@ int motors_init() {
     uint16_t wrap;
     float clk_div;
 
-    switch (esc_protocol) {
+    int res = 0;
+    
+    switch ((esc_protocol_t) mot_pwm_type) {
         case ESC_PROTOCOL_PWM:
-            // Clock divider is given by:
-            // clk_div = sysclk / (freq * wrap)
-            // PWM 50 Hz:
-            wrap = MOTOR_PWM_LEVEL_SCALER;
-            clk_div = 250.0;
-            //init_pwm(&pwm_m1, PIN_M1, clk_div, wrap);
-            //init_pwm(&pwm_m2, PIN_M2, clk_div, wrap);
-            //init_pwm(&pwm_m3, PIN_M3, clk_div, wrap);
-            //init_pwm(&pwm_m4, PIN_M4, clk_div, wrap);
+            res |= hal_pwm_init(brd_mot1, &motor_ids[0]);
+            res |= hal_pwm_init(brd_mot2, &motor_ids[1]);
+            res |= hal_pwm_init(brd_mot3, &motor_ids[2]);
+            res |= hal_pwm_init(brd_mot4, &motor_ids[3]);
             break;
         case ESC_PROTOCOL_ONESHOT_125:
-            //oneshot_init(ONESHOT_TYPE_125);
-            break;
         case ESC_PROTOCOL_ONESHOT_42:
-            //oneshot_init(ONESHOT_TYPE_42);
-            break;
         case ESC_PROTOCOL_MULTISHOT:
-            break;
         default:
-            // Should never happen
+            gcs_printf(MAV_SEVERITY_WARNING, "Invalid ESC protocol: %d", mot_pwm_type);
             return -1;
     }
 
-    set_motor_pwm(MOTOR_1, 0.0);
-    set_motor_pwm(MOTOR_2, 0.0);
-    set_motor_pwm(MOTOR_3, 0.0);
-    set_motor_pwm(MOTOR_4, 0.0);
+    if (res != 0) return res;
 
-    return 0;
+    res |= hal_pwm_set(motor_ids[0], 1000);
+    res |= hal_pwm_set(motor_ids[1], 1000);
+    res |= hal_pwm_set(motor_ids[2], 1000);
+    res |= hal_pwm_set(motor_ids[3], 1000);
+
+    if (res == 0)
+    {
+        initialzed_ok = true;
+    }
+
+    return res;
 }
 
 void set_motor_pwm(const uint8_t motor, const float pwm) {
+    if (!initialzed_ok) return;
+
     float pulse;
     uint16_t pwm_value;
 
-    switch (esc_protocol) {
+    switch ((esc_protocol_t) mot_pwm_type) {
         case ESC_PROTOCOL_PWM:
             // pwm: Value between 0-1.
-            pulse = pulse_width + (pwm * pulse_width);
-            pwm_value = pulse * MOTOR_PWM_LEVEL_SCALER;
             //printf("M: %d, Org: %f, pulse: %f, pwm_value: %d\n", motor, pwm, pulse, pwm_value);
-            pwm_set_level(pwm_motors[motor], pwm_value);
+            hal_pwm_set(motor_ids[motor], pwm);
             break;
         case ESC_PROTOCOL_ONESHOT_125:
         case ESC_PROTOCOL_ONESHOT_42:
@@ -116,6 +89,8 @@ void set_motor_pwm(const uint8_t motor, const float pwm) {
             //oneshot_set(motor-1, pwm);
             break;
         case ESC_PROTOCOL_MULTISHOT:
+            break;
+        default:
             break;
     }
 
@@ -127,8 +102,8 @@ void set_all_motors_pwm(const motor_output_t* motor_command) {
     set_motor_pwm(MOTOR_3, motor_command->m3);
     set_motor_pwm(MOTOR_4, motor_command->m4);
 
-    if ((esc_protocol == ESC_PROTOCOL_ONESHOT_125) ||
-        (esc_protocol == ESC_PROTOCOL_ONESHOT_42))
+    if ((mot_pwm_type == ESC_PROTOCOL_ONESHOT_125) ||
+        (mot_pwm_type == ESC_PROTOCOL_ONESHOT_42))
         {
             // Oneshot doesn't apply the values directly but writes them to
             // buffer, so we need to apply the values here.
@@ -138,31 +113,6 @@ void set_all_motors_pwm(const motor_output_t* motor_command) {
 }
 
 // -- Private -- //
-
-static inline void pwm_set(const pwm_t* pwm, const float duty)
-{
-    //pwm_set_chan_level(pwm->slice, pwm->channel, (duty / 100.0) * pwm->wrap);
-}
-
-static inline void pwm_set_level(const pwm_t* pwm, const uint16_t level)
-{
-    //pwm_set_chan_level(pwm->slice, pwm->channel, level);
-}
-
-static void init_pwm(pwm_t* pwm, uint32_t gpio, float clk_divider, uint16_t wrap)
-{/*
-    gpio_set_function(gpio, GPIO_FUNC_PWM);
-    pwm->slice = pwm_gpio_to_slice_num(gpio);
-    pwm->channel = pwm_gpio_to_channel(gpio);
-    pwm->wrap = wrap;
-
-    pwm_set_clkdiv(pwm->slice, clk_divider);
-    pwm_set_wrap(pwm->slice, pwm->wrap);
-    pwm_set_chan_level(pwm->slice, pwm->channel, 0);
-    pwm_set_enabled(pwm->slice, true);
-    */
-}
-
 void motor_mixer_update(motor_output_t* output, const float roll, const float pitch, const float yaw, const float throttle)
 {
     // This is mainly used for debugging and knowing if the mixer is saturated or not
@@ -179,10 +129,10 @@ void motor_mixer_update(motor_output_t* output, const float roll, const float pi
     //  Yaw positive   - Right
 
     // Calculate throttle for each motor
-    motors.m1 = -roll +  pitch + yaw + throttle;
-    motors.m2 = -roll + -pitch - yaw + throttle;
-    motors.m3 =  roll +  pitch - yaw + throttle;
-    motors.m4 =  roll + -pitch + yaw + throttle;
+    motors.m1 = -roll + pitch + yaw + throttle;
+    motors.m2 = -roll - pitch - yaw + throttle;
+    motors.m3 =  roll + pitch - yaw + throttle;
+    motors.m4 =  roll - pitch + yaw + throttle;
 
     // Check if any motor is below 0. This would indicate that it should spin less than 0 which we can't.
     // In this case, we shift all motor outputs with this amount, to ensure we're in limits
@@ -225,22 +175,22 @@ void motor_mixer_update(motor_output_t* output, const float roll, const float pi
 }
 
 
-    /*
-        M4   M2
-          \ /
-          / \
-        M3   M1
+/*
+    M4   M2
+        \ /
+        / \
+    M3   M1
 
-        M1 1, -1,  1, -1  <- Rear right
-        M2 1, -1, -1,  1  <- Front right
-        M3 1,  1,  1,  1  <- Rear left
-        M4 1,  1, -1, -1  <- Front left
-    */
+    M1 1, -1,  1, -1  <- Rear right
+    M2 1, -1, -1,  1  <- Front right
+    M3 1,  1,  1,  1  <- Rear left
+    M4 1,  1, -1, -1  <- Front left
+*/
 
-    // if (throttle < THROTTLE_MIN) {
-    //     throttle = THROTTLE_MIN;
-    // }
-    // motor_command->m1 = throttle - adjust->roll + adjust->pitch - adjust->yaw;
-    // motor_command->m2 = throttle - adjust->roll - adjust->pitch + adjust->yaw;
-    // motor_command->m3 = throttle + adjust->roll + adjust->pitch + adjust->yaw;
-    // motor_command->m4 = throttle + adjust->roll - adjust->pitch - adjust->yaw;
+// if (throttle < THROTTLE_MIN) {
+//     throttle = THROTTLE_MIN;
+// }
+// motor_command->m1 = throttle - adjust->roll + adjust->pitch - adjust->yaw;
+// motor_command->m2 = throttle - adjust->roll - adjust->pitch + adjust->yaw;
+// motor_command->m3 = throttle + adjust->roll + adjust->pitch + adjust->yaw;
+// motor_command->m4 = throttle + adjust->roll - adjust->pitch - adjust->yaw;
