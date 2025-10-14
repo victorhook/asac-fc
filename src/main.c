@@ -26,6 +26,7 @@ void test_print()
 
 task_t tasks[] =
 {
+    {.update = imu_update,            .name = "IMU",     .loop_divider = 1},
     {.update = controller_pid_loop,   .name = "PID",     .loop_divider = 1},
     {.update = ahrs_update,           .name = "AHRS",    .loop_divider = 1},
     {.update = mavlink_driver_update, .name = "MAVLink", .loop_divider = 1},
