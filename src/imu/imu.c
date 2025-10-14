@@ -73,31 +73,39 @@ int imu_init()
     memset(&imu_raw, 0, sizeof(imu_reading_t));
     memset(&imu_filtered, 0, sizeof(imu_reading_t));
 
+    bool backend_bus_initialized = false;
+
     switch ((int) brd_imu_bus)
     {   // 1=i2c1, 2=i2c2, 3=spi1, 4=spi2
         case 1:
             backend.bus.i2c = &hal_i2c1;
             backend.bus_nbr = 1;
+            backend_bus_initialized = hal_i2c1.initialized;
             break;
         case 2:
             backend.bus.i2c = &hal_i2c2;
             backend.bus_nbr = 2;
+            backend_bus_initialized = hal_i2c2.initialized;
             break;
         case 3:
             backend.bus.spi = &hal_spi1;
             backend.bus_nbr = 1;
+            backend_bus_initialized = hal_spi1.initialized;
             break;
         case 4:
             backend.bus.spi = &hal_spi2;
             backend.bus_nbr = 2;
+            backend_bus_initialized = hal_spi2.initialized;
+            break;
+        case 5:  // SITL
+            backend_bus_initialized = true;
             break;
         default:
             gcs_printf(MAV_SEVERITY_WARNING, "Invalid IMU bus chosen (%d)", (int) brd_imu_bus);
             return -1;    
     }
 
-    bool is_initialized  = (backend.bus_type == BUS_TYPE_I2C) ? backend.bus.i2c->initialized : backend.bus.spi->initialized;
-    if (!is_initialized)
+    if (!backend_bus_initialized)
     {
         gcs_printf(MAV_SEVERITY_WARNING, "IMU bus type %d (nbr: %d) not initialized", backend.bus_type, backend.bus_nbr);
         return -1;
