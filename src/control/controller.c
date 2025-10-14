@@ -214,7 +214,7 @@ static void rc_convert_to_desired(rc_target_t* target, const rc_input_t* rc_inpu
     target->attitude_rate.roll  = mapf(rc_get_channel(roll_channel),  mot_pwm_min, mot_pwm_max, -max_roll_rate,  max_roll_rate);
     target->attitude_rate.pitch = mapf(rc_get_channel(pitch_channel), mot_pwm_min, mot_pwm_max, -max_pitch_rate, max_pitch_rate);
     target->attitude_rate.yaw   = mapf(rc_get_channel(yaw_channel),   mot_pwm_min, mot_pwm_max, -max_yaw_rate,   max_yaw_rate);
-    target->throttle    = rc_get_channel(throttle_channel);
+    target->throttle            = mapf(rc_get_channel(throttle_channel), mot_pwm_min, mot_pwm_max, 0.0f, 1.0f);
 }
 
 static void set_motor_output(motor_output_t* output, const uint16_t pwm)
