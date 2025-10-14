@@ -80,6 +80,22 @@ int controller_init()
     return result;
 }
 
+static void handle_rc_connect_change();
+
+static void handle_usb_connect_change();
+
+static void handle_arming();
+
+
+static void dump_motor_outputs()
+{
+    printf("M: %d, %d, %d, %d\n", motor_outputs.m1, motor_outputs.m2, motor_outputs.m3, motor_outputs.m4);
+}
+static void dump_pids()
+{
+    printf("Pid: P: %.3f, R: %.3f, Y: %.3f, T: %.3f\n", pid_roll.out, pid_pitch.out, pid_yaw.out, target_throttle);
+}
+
 void controller_pid_loop()
 {
     // Average controller update time: ~300us, (measured experimentally)
@@ -88,55 +104,16 @@ void controller_pid_loop()
 
     run_arming_check();
 
-    // Check if we're connected (gotten radio packet within ~X ms)
-    bool rc_connected = is_rc_connected(&rc_input_raw);
-    if (rc_connected != state.rc_connected)
-    {
-        if (rc_connected)
-        {
-            on_rc_connect();
-        }
-        else
-        {
-            on_rc_disconnect();
-        }
-    }
-
-    // Check if we're connected to USB
-    bool is_usb_connected = usb_connected();
-    if (is_usb_connected != state.usb_connected)
-    {
-        if (is_usb_connected) {
-            on_usb_connect();
-        } else {
-            on_usb_disconnect();
-        }
-    }
-
     // Map receiver data to desired rotation rates.
     rc_convert_to_desired(&rc_desired, &rc_input_scaled);
 
-    if (rc_desired.armed != state.armed)
-    {
-        if (rc_desired.armed)
-        {
-            if (arm_check_result == ARMING_CHECK_RESULT_OK)
-            {
-                on_arm();
-            }
-            else if ((hal_millis() - last_logged_arm_failed) > 1000)
-            {
-                gcs_printf(MAV_SEVERITY_WARNING, "Arming check failed: %d\n", arm_check_result);
-                last_logged_arm_failed = hal_millis();
-            }
-        }
-        else
-        {
-            on_disarm();
-        }
-    }
+    handle_rc_connect_change();
 
-    if (state.armed)
+    handle_usb_connect_change();
+
+    handle_arming();
+
+    if (state.armed || state.force_armed)
     {
         if (state.run_motor_test)
         {
@@ -160,6 +137,9 @@ void controller_pid_loop()
     {   // Disarmed, so we'll just set motor output to lowest value
         set_motor_output(&motor_outputs, mot_pwm_min);
     }
+
+    dump_motor_outputs();
+    dump_pids();
 
     // Set motor output
     set_all_motors_pwm(&motor_outputs);
@@ -223,4 +203,57 @@ static void set_motor_output(motor_output_t* output, const uint16_t pwm)
     output->m2 = pwm;
     output->m3 = pwm;
     output->m4 = pwm;
+}
+
+
+static void handle_rc_connect_change()
+{
+    // Check if we're connected (gotten radio packet within ~X ms)
+    bool rc_connected = is_rc_connected(&rc_input_raw);
+    if (rc_connected != state.rc_connected)
+    {
+        if (rc_connected)
+        {
+            on_rc_connect();
+        }
+        else
+        {
+            on_rc_disconnect();
+        }
+    }
+}
+static void handle_usb_connect_change()
+{
+    // Check if we're connected to USB
+    bool is_usb_connected = usb_connected();
+    if (is_usb_connected != state.usb_connected)
+    {
+        if (is_usb_connected) {
+            on_usb_connect();
+        } else {
+            on_usb_disconnect();
+        }
+    }
+}
+static void handle_arming()
+{
+    if (rc_desired.armed != state.armed)
+    {
+        if (rc_desired.armed)
+        {
+            if (arm_check_result == ARMING_CHECK_RESULT_OK)
+            {
+                on_arm();
+            }
+            else if ((hal_millis() - last_logged_arm_failed) > 1000)
+            {
+                gcs_printf(MAV_SEVERITY_WARNING, "Arming check failed: %d\n", arm_check_result);
+                last_logged_arm_failed = hal_millis();
+            }
+        }
+        else
+        {
+            on_disarm();
+        }
+    }
 }
