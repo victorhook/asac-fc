@@ -6,12 +6,14 @@
 #include "mavlink_driver/mavlink_driver.h"
 #include "state.h"
 #include "ahrs.h"
+#include "motor.h"
 
 // -- Motor -- //
 float mot_pwm_min;
 float mot_pwm_max;
 float mot_spin_arm;
 float mot_spin_max;
+float mot_pwm_type;
 
 // -- Flight modes and channels -- //
 float fltmode1;
@@ -29,6 +31,10 @@ float arm_pwm_max;
 // -- RC -- //
 float rc_protocol;
 float rc_timeout;
+float rc_max;
+float rc_mid;
+float rc_min;
+float rc_dz;
 
 // -- Tuning -- //
 float atc_rat_rll_p;
@@ -62,9 +68,16 @@ float imu_accelcal_x;
 float imu_accelcal_x;
 
 // -- Hardware - Board specific -- //
+
 // Battery pins
 float brd_bat_volt;
 float brd_bat_curr;
+
+// Motor
+float brd_mot1;
+float brd_mot2;
+float brd_mot3;
+float brd_mot4;
 
 // I2C 2
 float brd_i2c1_sda;
@@ -119,11 +132,11 @@ float sched_loop_rate;
 
 mav_param_t mav_params[] = {
     // Motor
-    {"MOT_PWM_MIN", &mot_pwm_min},
-    {"MOT_PWM_MAX", &mot_pwm_max},
+    {"MOT_PWM_MIN",  &mot_pwm_min},
+    {"MOT_PWM_MAX",  &mot_pwm_max},
     {"MOT_SPIN_ARM", &mot_spin_arm},
     {"MOT_SPIN_MAX", &mot_spin_max},
-    
+    {"MOT_PWM_TYPE", &mot_pwm_type},
 
     // Flight modes and channels
     {"FLTMODE_CH", &fltmode_channel},
@@ -141,7 +154,10 @@ mav_param_t mav_params[] = {
     // RC
     {"RC_PROTOCOL", &rc_protocol},
     {"RC_TIMEOUT", &rc_timeout},
-
+    {"RC_MAX", &rc_max},
+    {"RC_MID", &rc_mid},
+    {"RC_MIN", &rc_min},
+    {"RC_DZ", &rc_dz},
 
     // Tuning
     {"ATC_RAT_RLL_P",    &atc_rat_rll_p},
@@ -231,6 +247,7 @@ void reset_to_default_parameters()
     mot_pwm_max = 2000;
     mot_spin_arm = 0.1;
     mot_spin_max = 1.0;
+    mot_pwm_type = ESC_PROTOCOL_PWM;
 
     // Flight modes and channels (0-based)
     fltmode_channel = 5;
@@ -248,6 +265,10 @@ void reset_to_default_parameters()
     // RC
     rc_protocol = RC_PROTOCOL_ELRS;
     rc_timeout = 1000;
+    rc_max = 2000;
+    rc_mid = 1500;
+    rc_min = 1000;
+    rc_dz = 30;
 
     // Tuning - These are divided by 100 when used by the PIDs
     atc_rat_rll_p = 0.01;
@@ -283,6 +304,10 @@ void reset_to_default_parameters()
     // Hardware - Board specific
     brd_bat_volt = -1;
     brd_bat_curr = -1;
+    brd_mot1 = -1;
+    brd_mot2 = -1;
+    brd_mot3 = -1;
+    brd_mot4 = -1;
     brd_i2c1_sda = -1;
     brd_i2c1_scl = -1;
     brd_i2c1_freq = 400000;
