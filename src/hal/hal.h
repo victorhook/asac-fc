@@ -9,6 +9,7 @@
 #include "serial.h"
 #include "spi.h"
 #include "i2c.h"
+#include "pwm.h"
 
 
 typedef enum
@@ -65,8 +66,6 @@ bool hal_write_param(const uint32_t param_size, const uint32_t crc, const uint8_
 
 bool hal_read_param(uint32_t* param_size, uint32_t* crc, uint8_t* buf);
 
-
-int hal_pwm_set(const int channel, const int gpio, const uint16_t value);
 
 int hal_pin_set(const uint8_t port, const uint8_t pin, const uint8_t value);
 
