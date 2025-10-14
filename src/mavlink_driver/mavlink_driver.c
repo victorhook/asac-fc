@@ -270,36 +270,50 @@ static void send_attitude() {
     send_mavlink_msg(&msg_tx);*/
 }
 
-static void send_rc_channels() {
-    /*
-    mavlink_msg_rc_channels_pack_chan(
-        MAVLINK_SYSTEM_ID,
-        0,
-        MAVLINK_CHANNEL_SERIAL,
-        &msg_tx,
+static void send_rc_channels(mavlink_channel_handler_t* channel) {
+    mavlink_message_t msg;
+    mavlink_msg_rc_channels_pack_chan(MAVLINK_SYSTEM_ID, MAVLINK_COMPONENT_ID, MAVLINK_CHANNEL_SERIAL, &msg,
         hal_millis(),
-        16,
-        ctrl_rc_input_constrained.channels[0],
-        ctrl_rc_input_constrained.channels[1],
-        ctrl_rc_input_constrained.channels[2],
-        ctrl_rc_input_constrained.channels[3],
-        ctrl_rc_input_constrained.channels[4],
-        ctrl_rc_input_constrained.channels[5],
-        ctrl_rc_input_constrained.channels[6],
-        ctrl_rc_input_constrained.channels[7],
-        ctrl_rc_input_constrained.channels[8],
-        ctrl_rc_input_constrained.channels[9],
-        ctrl_rc_input_constrained.channels[10],
-        ctrl_rc_input_constrained.channels[11],
-        ctrl_rc_input_constrained.channels[12],
-        ctrl_rc_input_constrained.channels[13],
-        ctrl_rc_input_constrained.channels[14],
-        ctrl_rc_input_constrained.channels[15],
-        0xFFFF,
-        0xFFFF,
-        rx_state.statistics.rssi
+        18,
+        rc_input_raw.channels[0],
+        rc_input_raw.channels[1],
+        rc_input_raw.channels[2],
+        rc_input_raw.channels[3],
+        rc_input_raw.channels[4],
+        rc_input_raw.channels[5],
+        rc_input_raw.channels[6],
+        rc_input_raw.channels[7],
+        rc_input_raw.channels[8],
+        rc_input_raw.channels[9],
+        rc_input_raw.channels[10],
+        rc_input_raw.channels[11],
+        rc_input_raw.channels[12],
+        rc_input_raw.channels[13],
+        rc_input_raw.channels[14],
+        rc_input_raw.channels[15],
+        rc_input_raw.channels[16],
+        rc_input_raw.channels[17],
+        rc_input_raw.rssi
     );
-    send_mavlink_msg(&msg_tx);*/
+    mav_send(channel, &msg);
+}
+
+static void send_rc_channels_scaled(mavlink_channel_handler_t* channel) {
+    mavlink_message_t msg;
+    mavlink_msg_rc_channels_scaled_pack_chan(MAVLINK_SYSTEM_ID, MAVLINK_COMPONENT_ID, MAVLINK_CHANNEL_SERIAL, &msg,
+        hal_millis(),
+        0,
+        rc_input_scaled.channels[0],
+        rc_input_scaled.channels[1],
+        rc_input_scaled.channels[2],
+        rc_input_scaled.channels[3],
+        rc_input_scaled.channels[4],
+        rc_input_scaled.channels[5],
+        rc_input_scaled.channels[6],
+        rc_input_scaled.channels[7],
+        rc_input_scaled.rssi
+    );
+    mav_send(channel, &msg);
 }
 
 static void send_sys_status(mavlink_channel_handler_t* channel)
@@ -501,12 +515,13 @@ void gcs_printf(const uint8_t severity, const char* fmt, ...)
 
 message_interval_t message_intervals[] =
 {
-    {.send = send_heartbeat,      .period_ms = 1000},
-    {.send = send_sys_status,     .period_ms = 500},
-    {.send = send_battery_status, .period_ms = 500},
-    {.send = send_attitude,       .period_ms = 100},
-    {.send = send_raw_imu,        .period_ms = 100},
-    {.send = send_rc_channels,    .period_ms = 100},
+    {.send = send_heartbeat,          .period_ms = 1000},
+    {.send = send_sys_status,         .period_ms = 500},
+    {.send = send_battery_status,     .period_ms = 500},
+    {.send = send_attitude,           .period_ms = 100},
+    {.send = send_raw_imu,            .period_ms = 100},
+    {.send = send_rc_channels,        .period_ms = 100},
+    {.send = send_rc_channels_scaled, .period_ms = 100}
 };
 
 const int nbr_of_msg_intervals = sizeof(message_intervals) / sizeof(message_interval_t);
