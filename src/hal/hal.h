@@ -42,7 +42,7 @@ void hal_reboot();
 
 // -- ADC -- //
 
-int hal_adc_init(const int channel);
+int hal_adc_init(const uint8_t pin);
 
 void hal_adc_read(const int channel, int* value);
 

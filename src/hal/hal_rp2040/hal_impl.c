@@ -25,15 +25,7 @@ static uint32_t serial_available()
     //return tud_cdc_connected() && tud_cdc_available();
 }
 
-int hal_adc_init(const int channel)
-{
-    return 0;
-}
 
-void hal_adc_read(const int channel, int* value)
-{
-
-}
 
 static void core1_entry();
 
@@ -41,6 +33,9 @@ static void core1_entry();
 int hal_do_init()
 {
     timer_hw->dbgpause = 0;
+
+    adc_init();
+
     return 0;
 
     // Initialize misc system stuff that isn't covered by any specific driver

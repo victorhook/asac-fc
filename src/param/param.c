@@ -72,6 +72,8 @@ float imu_accelcal_x;
 // Battery pins
 float brd_bat_volt;
 float brd_bat_curr;
+float brd_bat_volt_scaler;
+float brd_bat_curr_scaler;
 
 // Motor
 float brd_mot1;
@@ -195,6 +197,8 @@ mav_param_t mav_params[] = {
     // Hardware - Board specific
     {"BRD_BAT_VOLT",  &brd_bat_volt},
     {"BRD_BAT_CURR",  &brd_bat_curr},
+    {"BRD_VOLT_SCAL", &brd_bat_volt_scaler},
+    {"BRD_CURR_SCAL", &brd_bat_curr_scaler},
 
     {"BRD_I2C1_SDA",  &brd_i2c1_sda},
     {"BRD_I2C1_SCL",  &brd_i2c1_scl},
@@ -304,6 +308,8 @@ void reset_to_default_parameters()
     // Hardware - Board specific
     brd_bat_volt = -1;
     brd_bat_curr = -1;
+    brd_bat_volt_scaler = 0.001;
+    brd_bat_curr_scaler = 0.001;
     brd_mot1 = -1;
     brd_mot2 = -1;
     brd_mot3 = -1;

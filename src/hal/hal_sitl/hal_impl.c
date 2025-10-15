@@ -24,7 +24,7 @@ static inline uint64_t micros64();
 static struct timespec start_time;
 
 
-int hal_adc_init(const int channel)
+int hal_adc_init(const uint8_t pin)
 {
     return 0;
 }
