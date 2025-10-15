@@ -88,7 +88,7 @@ int hal_pwm_set(const int8_t id, const uint16_t value)
     if (id >= MAX_PWM_CHANNELS) return -1;
 
     pwm_t* pwm = &pwms[id];
-    pwm->out = map(value, 1000, 2000, 0, pwm->wrap);
+    pwm->out = constrain(value, 1000, 2000);
     pwm_set_chan_level(pwm->slice, pwm->channel, pwm->out);
 
     return 0;
